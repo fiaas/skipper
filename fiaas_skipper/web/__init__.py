@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, make_response
 import pinject
 
 web = Blueprint("web", __name__)
@@ -7,6 +7,11 @@ web = Blueprint("web", __name__)
 @web.route('/')
 def hello_world():
     return 'Hello World!'
+
+
+@web.route('/healthz')
+def healthcheck():
+    return make_response('', 200)
 
 
 class WebBindings(pinject.BindingSpec):
