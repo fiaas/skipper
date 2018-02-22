@@ -17,6 +17,9 @@ def version():
 
 GENERIC_REQ = [
     "Flask==0.12.2",
+    "pinject == 0.10.2",
+    "k8s == 0.5.0",
+    "ConfigArgParse == 0.12.0",
 ]
 
 CODE_QUALITY_REQ = [
@@ -47,5 +50,5 @@ setup(
         "ci": ["tox==2.9.1", "tox-travis"],
     },
     tests_require=TESTS_REQ,
-    entry_points={"console_scripts": ['skipper=skipper:main']},
+    entry_points={"console_scripts": ['skipper=fiaas_skipper:main']},
 )
