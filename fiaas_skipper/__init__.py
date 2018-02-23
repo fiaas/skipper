@@ -13,6 +13,9 @@ from .config import Configuration
 from .logsetup import init_logging
 from .web import WebBindings
 
+from .crd import create_custom_resource_definitions
+from .tpr import create_third_party_resource_definitions
+
 
 class MainBindings(pinject.BindingSpec):
     def __init__(self, config):
@@ -54,10 +57,18 @@ def init_k8s_client(config):
     k8s_config.debug = config.debug
 
 
+def create_resource_definitions(config):
+    if config.enable_crd_support:
+        create_custom_resource_definitions()
+    if config.enable_tpr_support:
+        create_third_party_resource_definitions()
+
+
 def main():
     cfg = Configuration()
     init_logging(cfg)
     init_k8s_client(cfg)
+    create_resource_definitions(cfg)
     log = logging.getLogger(__name__)
     try:
         log.info("fiaas-deploy-daemon starting with configuration {!r}".format(cfg))
