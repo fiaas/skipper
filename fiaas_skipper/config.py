@@ -14,8 +14,6 @@ class Configuration(Namespace):
     def __init__(self, args=None, **kwargs):
         super(Configuration, self).__init__(**kwargs)
         self._logger = logging.getLogger(__name__)
-        self.image = ""
-        self.version = ""
         self._parse_args(args)
         self._resolve_api_config()
 
