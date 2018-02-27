@@ -5,7 +5,6 @@ from __future__ import absolute_import
 import logging
 
 import pinject
-import requests
 from k8s import config as k8s_config
 
 from .config import Configuration
@@ -19,19 +18,9 @@ from .tpr import create_third_party_resource_definitions
 class MainBindings(pinject.BindingSpec):
     def __init__(self, config):
         self._config = config
-        self._deploy_queue = Queue()
 
     def configure(self, bind):
         bind("config", to_instance=self._config)
-
-    def provide_session(self, config):
-        session = requests.Session()
-        if config.proxy:
-            session.proxies = {scheme: config.proxy for scheme in (
-                "http",
-                "https"
-            )}
-        return session
 
 
 class Main(object):
@@ -70,7 +59,7 @@ def main():
     create_resource_definitions(cfg)
     log = logging.getLogger(__name__)
     try:
-        log.info("fiaas-deploy-daemon starting with configuration {!r}".format(cfg))
+        log.info("fiaas-skipper starting with configuration {!r}".format(cfg))
         binding_specs = [
             MainBindings(cfg),
             WebBindings(),
