@@ -15,18 +15,14 @@ def hello_world():
 
 @web.route('/status')
 def status():
-    res = []
-    configmaps = ConfigMap.list()
-    for c in configmaps:
-        if c.metadata.name == 'fiaas-deploy-daemon':
-            version = c.data.version if 'version' in c.data else 'stable'
-            dep = Deployment.get(name='fiaas-deploy-daemon', namespace=c.metadata.namespace)
-            res.append({
-                'namespace': c.metadata.namespace,
-                'version': version,
-                'status': 'available' if dep.status.availableReplicas >= dep.spec.replicas else 'unavailable'
-            })
-    return make_response(json.dumps(res), 200)
+    deployments = web.cluster.find_deployments('fiaas-deploy-daemon')
+    return make_response(json.dumps(deployments, default=_encode_deployment), 200)
+
+
+def _encode_deployment(obj):
+    if isinstance(obj, Deployment):
+        return obj.__dict__
+    return obj
 
 
 @web.route('/healthz')
@@ -34,8 +30,17 @@ def healthcheck():
     return make_response('', 200)
 
 
+@web.route('/deploy', methods=['POST'])
+def deploy():
+    web.deployer.deploy()
+    return make_response('', 200)
+
+
+
 class WebBindings(pinject.BindingSpec):
-    def provide_webapp(self):
+    def provide_webapp(self, deployer, cluster):
         app = Flask(__name__)
         app.register_blueprint(web)
+        web.cluster = cluster
+        web.deployer = deployer
         return app

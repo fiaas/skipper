@@ -9,6 +9,8 @@ from k8s import config as k8s_config
 
 from .config import Configuration
 from .crd import create_custom_resource_definitions
+from .deploy import DeployBindings
+from .kubernetes import KubernetesBindings
 from .logsetup import init_logging
 from .tpr import create_third_party_resource_definitions
 from .web import WebBindings
@@ -61,6 +63,8 @@ def main():
         log.info("fiaas-skipper starting with configuration {!r}".format(cfg))
         binding_specs = [
             MainBindings(cfg),
+            DeployBindings(),
+            KubernetesBindings(),
             WebBindings(),
         ]
         obj_graph = pinject.new_object_graph(modules=None, binding_specs=binding_specs)
