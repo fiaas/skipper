@@ -2,8 +2,8 @@ import json
 
 import pinject
 from flask import Flask, Blueprint, make_response
-from k8s.models.configmap import ConfigMap
-from k8s.models.deployment import Deployment
+
+from ..deploy.deploy import Deployment
 
 web = Blueprint("web", __name__)
 

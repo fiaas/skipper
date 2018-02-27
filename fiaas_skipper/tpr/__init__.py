@@ -7,7 +7,6 @@ import logging
 from k8s.models.common import ObjectMeta
 from k8s.models.third_party_resource import ThirdPartyResource, APIVersion
 
-
 LOG = logging.getLogger(__name__)
 
 

@@ -8,11 +8,10 @@ import pinject
 from k8s import config as k8s_config
 
 from .config import Configuration
-from .logsetup import init_logging
-from .web import WebBindings
-
 from .crd import create_custom_resource_definitions
+from .logsetup import init_logging
 from .tpr import create_third_party_resource_definitions
+from .web import WebBindings
 
 
 class MainBindings(pinject.BindingSpec):

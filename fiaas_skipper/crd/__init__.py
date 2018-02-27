@@ -5,7 +5,8 @@ from __future__ import absolute_import
 import logging
 
 from k8s.models.common import ObjectMeta
-from k8s.models.custom_resource_definition import CustomResourceDefinition, CustomResourceDefinitionSpec, CustomResourceDefinitionNames
+from k8s.models.custom_resource_definition import CustomResourceDefinition, CustomResourceDefinitionSpec, \
+    CustomResourceDefinitionNames
 
 LOG = logging.getLogger(__name__)
 

@@ -1,9 +1,8 @@
 import logging
+import os
 from argparse import Namespace
 
 import configargparse
-import os
-
 
 DEFAULT_CONFIG_FILE = "/var/run/config/fiaas/fiaas_skipper_config.yaml"
 
