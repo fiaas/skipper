@@ -20,6 +20,8 @@ GENERIC_REQ = [
     "pinject == 0.10.2",
     "k8s == 0.5.0",
     "ConfigArgParse == 0.12.0",
+    "six == 1.10.0",
+    "boto3 == 1.6.1"
 ]
 
 CODE_QUALITY_REQ = [
