@@ -55,19 +55,23 @@ class Cluster(object):
     def __init__(self, k8s):
         self.k8s = k8s
 
-    def find_deployments(self, module_name):
+    def find_deployments(self, name):
         res = []
         configmaps = self.k8s.configmaps()
         for c in configmaps:
-            if c.metadata.name == module_name:
+            if c.metadata.name == name:
                 tag = c.data['tag'] if 'tag' in c.data else 'stable'
-                try:
-                    dep = self.k8s.deployments(name=module_name, namespace=c.metadata.namespace)
-                    status = DeploymentStatus.OK if dep and dep.status.availableReplicas >= dep.spec.replicas else DeploymentStatus.UNAVAILABLE
-                except NotFound:
-                    status = DeploymentStatus.NOTFOUND
-                except Exception as e:
-                    LOG.warn(e, exc_info=True)
-                    status = DeploymentStatus.ERROR
+                status = self._get_status(name=name, namespace=c.metadata.namespace)
                 res.append(Deployment(namespace=c.metadata.namespace, tag=tag, status=status))
         return res
+
+    def _get_status(self, **kwargs):
+        try:
+            dep = self.k8s.deployments(**kwargs)
+            status = DeploymentStatus.OK if dep and dep.status.availableReplicas >= dep.spec.replicas else DeploymentStatus.UNAVAILABLE
+        except NotFound:
+            status = DeploymentStatus.NOTFOUND
+        except Exception as e:
+            LOG.warn(e, exc_info=True)
+            status = DeploymentStatus.ERROR
+        return status

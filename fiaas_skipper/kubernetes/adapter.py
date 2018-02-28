@@ -3,8 +3,10 @@ from k8s.models.deployment import Deployment
 
 
 class K8s(object):
-    def configmaps(self):
+    @staticmethod
+    def configmaps():
         return ConfigMap.list()
 
-    def deployments(self, **kwargs):
+    @staticmethod
+    def deployments(**kwargs):
         return Deployment.get(kwargs)
