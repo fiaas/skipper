@@ -1,0 +1,14 @@
+name: fiaas-skipper
+image:
+  repository: fiaas/skipper
+  tag: "latest"
+  pullPolicy: Always
+ingress:
+  fqdn: fiaas-skipper.yourcluster.local
+  domainName: yourcluster.local
+  enableTLS: true
+deployment:
+  # include the resource requests and limits
+  includeResourceUsage: true
+environment: dev
+infrastructure: diy
