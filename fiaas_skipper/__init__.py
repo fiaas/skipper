@@ -8,11 +8,11 @@ import pinject
 from k8s import config as k8s_config
 
 from .config import Configuration
-from .crd import create_custom_resource_definitions
 from .deploy import DeployBindings
+from .deploy.crd import CrdBindings
+from .deploy.tpr import TprBindings
 from .kubernetes import KubernetesBindings
 from .logsetup import init_logging
-from .tpr import create_third_party_resource_definitions
 from .web import WebBindings
 
 
@@ -46,18 +46,10 @@ def init_k8s_client(config):
     k8s_config.debug = config.debug
 
 
-def create_resource_definitions(config):
-    if config.enable_crd_support:
-        create_custom_resource_definitions()
-    if config.enable_tpr_support:
-        create_third_party_resource_definitions()
-
-
 def main():
     cfg = Configuration()
     init_logging(cfg)
     init_k8s_client(cfg)
-    create_resource_definitions(cfg)
     log = logging.getLogger(__name__)
     try:
         log.info("fiaas-skipper starting with configuration {!r}".format(cfg))
@@ -67,6 +59,10 @@ def main():
             KubernetesBindings(),
             WebBindings(),
         ]
+        if cfg.enable_crd_support:
+            binding_specs.append(CrdBindings())
+        if cfg.enable_tpr_support:
+            binding_specs.append(TprBindings())
         obj_graph = pinject.new_object_graph(modules=None, binding_specs=binding_specs)
         obj_graph.provide(Main).run()
     except BaseException:
