@@ -4,7 +4,7 @@ from argparse import Namespace
 
 import configargparse
 
-DEFAULT_CONFIG_FILE = "/var/run/config/fiaas/fiaas_skipper_config.yaml"
+DEFAULT_CONFIG_FILE = "/var/run/config/fiaas/cluster_config.yaml"
 
 
 class Configuration(Namespace):

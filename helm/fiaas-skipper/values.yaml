@@ -12,3 +12,6 @@ deployment:
   includeResourceUsage: true
 environment: dev
 infrastructure: diy
+TPR: false
+CRD: false
+s3bucket: s3bucket
