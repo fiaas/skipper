@@ -21,7 +21,9 @@ GENERIC_REQ = [
     "k8s == 0.5.0",
     "ConfigArgParse == 0.12.0",
     "six == 1.10.0",
-    "boto3 == 1.6.1"
+    "boto3 == 1.6.1",
+    "PyYAML == 3.12",
+    "pyaml == 16.12.2",
 ]
 
 CODE_QUALITY_REQ = [
