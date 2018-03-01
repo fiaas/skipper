@@ -36,7 +36,6 @@ def deploy():
     return make_response('', 200)
 
 
-
 class WebBindings(pinject.BindingSpec):
     def provide_webapp(self, deployer, cluster):
         app = Flask(__name__)
