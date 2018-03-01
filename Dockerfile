@@ -3,5 +3,5 @@ MAINTAINER fiaas@googlegroups.com
 RUN apk-install python py-pip ca-certificates
 COPY . /skipper
 WORKDIR /skipper
-RUN pip install -e .
+RUN pip install .
 CMD ["skipper"]
