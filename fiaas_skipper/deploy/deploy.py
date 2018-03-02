@@ -2,6 +2,8 @@ import logging
 
 from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
+from k8s.models.job import Job, JobSpec
+from k8s.models.pod import Container, PodSpec, PodTemplateSpec
 
 LOG = logging.getLogger(__name__)
 NAME = 'fiaas-deploy-daemon'
@@ -26,7 +28,22 @@ class Deployer(object):
 
     def _bootstrap(self, deployment):
         LOG.info("Bootstrapping %s in %s", deployment.name, deployment.namespace)
-        # TODO create and run k8s job
+        # TODO create and run k8s job for fdd in bootstrap mode
+        # The following is just a template for running a particular job until completion on kubernetes
+        # Based on the kubernetes api documentation the sample job calculates pi with x number of decimals
+        labels = {"test": "true"}
+        object_meta = ObjectMeta(generateName="calc-pi-", namespace=deployment.namespace, labels=labels)
+        container = Container(
+            name="pi",
+            image="perl",
+            command=["perl", "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+        )
+        pod_spec = PodSpec(containers=[container], serviceAccountName="default", restartPolicy="Never")
+        pod_template_spec = PodTemplateSpec(metadata=ObjectMeta(name="calc-pi"), spec=pod_spec)
+        job_spec = JobSpec(template=pod_template_spec)
+        job = Job(metadata=object_meta, spec=job_spec)
+        job.save()
+
 
     @staticmethod
     def _create_metadata(deployment):
