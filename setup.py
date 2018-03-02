@@ -16,7 +16,6 @@ def version():
 
 
 GENERIC_REQ = [
-    "Flask==0.12.2",
     "pinject == 0.10.2",
     "k8s == 0.5.0",
     "ConfigArgParse == 0.12.0",
@@ -24,6 +23,12 @@ GENERIC_REQ = [
     "boto3 == 1.6.1",
     "PyYAML == 3.12",
     "pyaml == 16.12.2",
+    "prometheus_client == 0.0.19",
+]
+
+WEB_REQ = [
+    "Flask == 0.12",
+    "blinker == 1.4"
 ]
 
 CODE_QUALITY_REQ = [
@@ -47,7 +52,7 @@ setup(
     packages=find_packages(exclude=("tests",)),
     zip_safe=True,
     # Requirements
-    install_requires=GENERIC_REQ,
+    install_requires=GENERIC_REQ + WEB_REQ,
     setup_requires=['pytest-runner', 'wheel', 'setuptools_scm'],
     extras_require={
         "dev": TESTS_REQ + CODE_QUALITY_REQ,
