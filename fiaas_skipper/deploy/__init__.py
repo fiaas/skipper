@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8
 import pinject
 
 from .channel import ReleaseChannelFactory

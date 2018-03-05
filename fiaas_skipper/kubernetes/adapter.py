@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8
 from k8s.models.configmap import ConfigMap
 from k8s.models.deployment import Deployment
 
