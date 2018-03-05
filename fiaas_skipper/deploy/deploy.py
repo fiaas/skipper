@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8
 import logging
+import pinject
 
 from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
@@ -12,10 +13,9 @@ NAME = 'fiaas-deploy-daemon'
 
 
 class Deployer(object):
+    @pinject.copy_args_to_internal_fields
     def __init__(self, cluster, release_channel_factory, k8s):
-        self.cluster = cluster
-        self.release_channel_factory = release_channel_factory
-        self.k8s = k8s
+        pass
 
     def deploy(self):
         deployments = self.cluster.find_deployments(NAME)
@@ -53,11 +53,9 @@ class Deployer(object):
 
 
 class Deployment(object):
-    def __init__(self, namespace, tag, status):
-        self.name = NAME
-        self.namespace = namespace
-        self.tag = tag
-        self.status = status
+    @pinject.copy_args_to_internal_fields
+    def __init__(self, name, namespace, tag, status):
+        pass
 
     def bootstrap(self):
         return self.status == DeploymentStatus.NOTFOUND
@@ -71,8 +69,9 @@ class DeploymentStatus(object):
 
 
 class Cluster(object):
+    @pinject.copy_args_to_internal_fields
     def __init__(self, k8s):
-        self.k8s = k8s
+        pass
 
     def find_deployments(self, name):
         res = []
@@ -81,7 +80,7 @@ class Cluster(object):
             if c.metadata.name == name:
                 tag = c.data['tag'] if 'tag' in c.data else 'stable'
                 status = self._get_status(name=name, namespace=c.metadata.namespace)
-                res.append(Deployment(namespace=c.metadata.namespace, tag=tag, status=status))
+                res.append(Deployment(name=NAME, namespace=c.metadata.namespace, tag=tag, status=status))
         return res
 
     def _get_status(self, **kwargs):

@@ -2,14 +2,14 @@
 # -*- coding: utf-8
 import boto3
 import json
+import pinject
 from botocore.handlers import disable_signing
 
 
 class ReleaseChannel(object):
+    @pinject.copy_args_to_internal_fields
     def __init__(self, name, tag, image):
-        self.name = name
-        self.tag = tag
-        self.image = image
+        pass
 
 
 class ReleaseChannelFactory(object):
