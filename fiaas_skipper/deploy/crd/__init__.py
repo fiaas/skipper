@@ -17,7 +17,6 @@ LOG = logging.getLogger(__name__)
 class CrdBindings(pinject.BindingSpec):
     def configure(self, bind):
         bind("deployer", to_class=CrdDeployer)
-        _create_custom_resource_definitions()
 
 
 def _create(kind, plural, short_names, group):
@@ -30,6 +29,6 @@ def _create(kind, plural, short_names, group):
     LOG.info("Created CustomResourceDefinition with name %s", name)
 
 
-def _create_custom_resource_definitions():
+def bootstrap():
     _create("Application", "applications", ("app", "fa"), "fiaas.schibsted.io")
     _create("Status", "statuses", ("status", "fs"), "fiaas.schibsted.io")

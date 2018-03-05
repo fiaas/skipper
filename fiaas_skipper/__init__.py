@@ -9,8 +9,8 @@ from k8s import config as k8s_config
 
 from .config import Configuration
 from .deploy import DeployBindings
-from .deploy.crd import CrdBindings
-from .deploy.tpr import TprBindings
+from .deploy.crd import CrdBindings, bootstrap as bootstrap_crd
+from .deploy.tpr import TprBindings, bootstrap as bootstrap_tpr
 from .kubernetes import KubernetesBindings
 from .logsetup import init_logging
 from .web import WebBindings
@@ -60,8 +60,10 @@ def main():
             WebBindings(),
         ]
         if cfg.enable_crd_support:
+            bootstrap_crd()
             binding_specs.append(CrdBindings())
         if cfg.enable_tpr_support:
+            bootstrap_tpr()
             binding_specs.append(TprBindings())
         obj_graph = pinject.new_object_graph(modules=None, binding_specs=binding_specs)
         obj_graph.provide(Main).run()

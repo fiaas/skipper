@@ -16,10 +16,9 @@ LOG = logging.getLogger(__name__)
 class TprBindings(pinject.BindingSpec):
     def configure(self, bind):
         bind("deployer", to_class=TprDeployer)
-        _create_third_party_resource_definitions()
 
 
-def _create_third_party_resource_definitions():
+def bootstrap():
     metadata = ObjectMeta(name="paasbeta-application.schibsted.io")
     paasbeta_application_resource = ThirdPartyResource.get_or_create(
         metadata=metadata, description='A paas application definition', versions=[APIVersion(name='v1beta')])
