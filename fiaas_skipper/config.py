@@ -38,7 +38,7 @@ class Configuration(Namespace):
                             action="store_true")
         parser.add_argument("--enable-crd-support", help="Enable Custom Resource Definition support.",
                             action="store_true")
-        parser.add_argument("--s3bucket", help="S3 Bucket containing release channel meta data.")
+        parser.add_argument("--baseurl", help="Url to server hosting release channel meta data.")
         api_parser = parser.add_argument_group("API server")
         api_parser.add_argument("--api-server", help="Address of the api-server to use (IP or name)",
                                 default="https://kubernetes.default.svc.cluster.local")

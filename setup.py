@@ -20,10 +20,10 @@ GENERIC_REQ = [
     "k8s == 0.7.0",
     "ConfigArgParse == 0.12.0",
     "six == 1.10.0",
-    "boto3 == 1.6.1",
     "PyYAML == 3.12",
     "pyaml == 16.12.2",
     "prometheus_client == 0.0.19",
+    'requests==2.13.0',
 ]
 
 WEB_REQ = [

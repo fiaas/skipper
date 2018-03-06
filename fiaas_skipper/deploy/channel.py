@@ -1,26 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8
-import boto3
-import json
+import logging
+
 import pinject
-from botocore.handlers import disable_signing
+import requests
+
+LOG = logging.getLogger(__name__)
 
 
 class ReleaseChannel(object):
-    @pinject.copy_args_to_internal_fields
-    def __init__(self, name, tag, image):
+    @pinject.copy_args_to_public_fields
+    def __init__(self, name, tag, metadata):
         pass
 
 
 class ReleaseChannelFactory(object):
-    def __init__(self, config):
-        self.s3bucket = config.s3bucket
+    @pinject.copy_args_to_internal_fields
+    def __init__(self, baseurl):
+        pass
 
     def __call__(self, name, tag):
-        s3 = boto3.resource('s3')
-        # Use anonymous mode
-        s3.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
-        content_object = s3.Object(self.s3bucket, '%s/%s.json' % (name, tag))
-        file_content = content_object.get()['Body'].read().decode('utf-8')
-        metadata = json.loads(file_content)
-        return ReleaseChannel(name, tag, metadata['image'])
+        r = requests.get('%s/%s/%s.json' % (self._baseurl, name, tag))
+        LOG.debug('Retrieving meta data for %s/%s/%s.json' % (self._baseurl, name, tag))
+        return ReleaseChannel(name, tag, metadata=r.json())

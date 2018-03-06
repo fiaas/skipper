@@ -12,7 +12,7 @@ class TprDeployer(Deployer):
     def _deploy(self, deployment, channel):
         LOG.info("Deploying %s to %s", deployment.name, deployment.namespace)
         pba = PaasbetaApplication(metadata=self._create_metadata(deployment=deployment),
-                                  spec=self._create_paasbetaapplicationspec(deployment, channel.image))
+                                  spec=self._create_paasbetaapplicationspec(deployment, channel.metadata['image']))
         pba.save()
 
     @staticmethod

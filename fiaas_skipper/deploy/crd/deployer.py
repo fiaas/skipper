@@ -15,7 +15,7 @@ class CrdDeployer(Deployer):
         LOG.info("Deploying %s to %s", deployment.name, deployment.namespace)
         try:
             fdd_app = FiaasApplication(metadata=self._create_metadata(deployment=deployment),
-                                       spec=self._create_application_spec(deployment, image=channel.image))
+                                       spec=self._create_application_spec(deployment, image=channel.metadata['image']))
             fdd_app.save()
         except ClientError as e:
             if e.response.json()['reason'] != 'AlreadyExists':
