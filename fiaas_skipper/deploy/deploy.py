@@ -20,9 +20,9 @@ class Deployer(object):
         pass
 
     def deploy(self):
-        deployments = self.cluster.find_deployments(NAME)
+        deployments = self._cluster.find_deployments(NAME)
         for deployment in deployments:
-            channel = self.release_channel_factory(deployment.name, deployment.tag)
+            channel = self._release_channel_factory(deployment.name, deployment.tag)
             self._deploy(deployment, channel)
             if deployment.bootstrap():
                 self._bootstrap(deployment)
@@ -55,7 +55,7 @@ class Deployer(object):
 
 
 class Deployment(object):
-    @pinject.copy_args_to_internal_fields
+    @pinject.copy_args_to_public_fields
     def __init__(self, name, namespace, tag, status):
         pass
 
