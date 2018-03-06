@@ -83,10 +83,6 @@ def init_logging(config):
 
 def _set_special_levels():
     logging.getLogger("werkzeug").setLevel(logging.WARN)
-    # Kafka is really noisy...
-    kafka_logger = logging.getLogger("kafka")
-    if kafka_logger.getEffectiveLevel() < logging.INFO:
-        kafka_logger.setLevel(logging.INFO)
 
 
 def _json_format(config):
