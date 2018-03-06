@@ -89,7 +89,6 @@ class Cluster(object):
     def find_deployment_config_statuses(name):
         res = []
         configmaps = [c for c in ConfigMap.list() if c.metadata.name == name]
-        LOG.info(configmaps)
         for c in configmaps:
             description = None
             try:
