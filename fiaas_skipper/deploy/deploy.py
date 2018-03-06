@@ -6,7 +6,7 @@ import pinject
 from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
 from k8s.models.configmap import ConfigMap
-from k8s.models.deployment import Deployment as K8sDeployment
+from k8s.models.deployment import Deployment
 from k8s.models.job import Job, JobSpec
 from k8s.models.pod import Container, PodSpec, PodTemplateSpec
 
@@ -20,23 +20,23 @@ class Deployer(object):
         pass
 
     def deploy(self):
-        deployments = self._cluster.find_deployments(NAME)
-        for deployment in deployments:
-            channel = self._release_channel_factory(deployment.name, deployment.tag)
-            self._deploy(deployment, channel)
-            if deployment.bootstrap():
-                self._bootstrap(deployment)
+        deployment_configs = self._cluster.find_deployment_configs(NAME)
+        for deployment_config in deployment_configs:
+            channel = self._release_channel_factory(deployment_config.name, deployment_config.tag)
+            self._deploy(deployment_config, channel)
+            if self._requires_bootstrap(deployment_config):
+                self._bootstrap(deployment_config)
 
     def _deploy(self):
         raise NotImplementedError("Subclass must override _deploy")
 
-    def _bootstrap(self, deployment):
-        LOG.info("Bootstrapping %s in %s", deployment.name, deployment.namespace)
+    def _bootstrap(self, deployment_config):
+        LOG.info("Bootstrapping %s in %s", deployment_config.name, deployment_config.namespace)
         # TODO create and run k8s job for fdd in bootstrap mode
         # The following is just a template for running a particular job until completion on kubernetes
         # Based on the kubernetes api documentation the sample job calculates pi with x number of decimals
         labels = {"test": "true"}
-        object_meta = ObjectMeta(generateName="calc-pi-", namespace=deployment.namespace, labels=labels)
+        object_meta = ObjectMeta(generateName="calc-pi-", namespace=deployment_config.namespace, labels=labels)
         container = Container(
             name="pi",
             image="perl",
@@ -48,46 +48,63 @@ class Deployer(object):
         job = Job(metadata=object_meta, spec=job_spec)
         job.save()
 
+    @staticmethod
+    def _requires_bootstrap(deployment_config):
+        try:
+            Deployment.get(name=deployment_config.name, namespace=deployment_config.namespace)
+            return False
+        except NotFound:
+            return True
+        except Exception as e:
+            LOG.warn(e, exc_info=True)
 
     @staticmethod
-    def _create_metadata(deployment):
-        return ObjectMeta(name=deployment.name, namespace=deployment.namespace, labels={"fiaas/bootstrap": "true"})
+    def _create_metadata(deployment_config):
+        return ObjectMeta(name=deployment_config.name, namespace=deployment_config.namespace, labels={"fiaas/bootstrap": "true"})
 
 
-class Deployment(object):
+class DeploymentConfig(object):
     @pinject.copy_args_to_public_fields
-    def __init__(self, name, namespace, tag, status):
+    def __init__(self, name, namespace, tag):
         pass
 
-    def bootstrap(self):
-        return self.status == DeploymentStatus.NOT_FOUND
 
-
-class DeploymentStatus(object):
-    OK = 'ok'
-    UNAVAILABLE = 'unavailable'
-    NOT_FOUND = 'not found' # Needs to be bootstrapped
-    ERROR = 'error'
+class DeploymentConfigStatus(object):
+    @pinject.copy_args_to_public_fields
+    def __init__(self, name, namespace, status, description):
+        pass
 
 
 class Cluster(object):
-    def find_deployments(self, name):
+    @staticmethod
+    def find_deployment_configs(name):
         res = []
-        configmaps = ConfigMap.list()
+        configmaps = [c for c in ConfigMap.list() if c.metadata.name == name]
         for c in configmaps:
-            if c.metadata.name == name:
-                tag = c.data['tag'] if 'tag' in c.data else 'stable'
-                status = self._get_status(name=name, namespace=c.metadata.namespace)
-                res.append(Deployment(name=NAME, namespace=c.metadata.namespace, tag=tag, status=status))
+            tag = c.data['tag'] if 'tag' in c.data else 'stable'
+            res.append(DeploymentConfig(name=NAME, namespace=c.metadata.namespace, tag=tag))
         return res
 
-    def _get_status(self, **kwargs):
-        try:
-            dep = K8sDeployment.get(kwargs)
-            status = DeploymentStatus.OK if dep and dep.status.availableReplicas >= dep.spec.replicas else DeploymentStatus.UNAVAILABLE
-        except NotFound:
-            status = DeploymentStatus.NOT_FOUND
-        except Exception as e:
-            LOG.warn(e, exc_info=True)
-            status = DeploymentStatus.ERROR
-        return status
+    @staticmethod
+    def find_deployment_config_statuses(name):
+        res = []
+        configmaps = [c for c in ConfigMap.list() if c.metadata.name == name]
+        LOG.info(configmaps)
+        for c in configmaps:
+            description = None
+            try:
+                dep = Deployment.get(name=name, namespace=c.metadata.namespace)
+                if dep.status.availableReplicas >= dep.spec.replicas:
+                    status = 'SUCCESS'
+                else:
+                    status = 'FAILED'
+                    description = 'Available replicas does not match the number of replicas in spec'
+            except NotFound:
+                status = 'NOT FOUND'
+                description = 'No deployment found for given namespace - needs bootstrapping'
+            except Exception as e:
+                LOG.warn(e, exc_info=True)
+                status = 'ERROR'
+                description = e.message
+            res.append(DeploymentConfigStatus(name=name, namespace=c.metadata.namespace, status=status, description=description))
+        return res

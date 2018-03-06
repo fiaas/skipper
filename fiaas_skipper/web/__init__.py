@@ -7,7 +7,7 @@ from flask import Flask, Blueprint, make_response, request_started, request_fini
 from prometheus_client import generate_latest, CONTENT_TYPE_LATEST, Counter, Histogram
 
 from .platform_collector import PLATFORM_COLLECTOR
-from ..deploy.deploy import Deployment
+from ..deploy.deploy import DeploymentConfigStatus
 
 PLATFORM_COLLECTOR.collect()
 
@@ -35,12 +35,12 @@ def hello_world():
 @web.route('/status')
 @status_histogram.time()
 def status():
-    deployments = web.cluster.find_deployments('fiaas-deploy-daemon')
-    return make_response(json.dumps(deployments, default=_encode_deployment), 200)
+    deployment_config_statuses = web.cluster.find_deployment_config_statuses('fiaas-deploy-daemon')
+    return make_response(json.dumps(deployment_config_statuses, default=_encode), 200)
 
 
-def _encode_deployment(obj):
-    if isinstance(obj, Deployment):
+def _encode(obj):
+    if isinstance(obj, DeploymentConfigStatus):
         return obj.__dict__
     return obj
 

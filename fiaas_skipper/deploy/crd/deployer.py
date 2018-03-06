@@ -11,16 +11,16 @@ LOG = logging.getLogger(__name__)
 
 
 class CrdDeployer(Deployer):
-    def _deploy(self, deployment, channel):
-        LOG.info("Deploying %s to %s", deployment.name, deployment.namespace)
+    def _deploy(self, deployment_config, channel):
+        LOG.info("Deploying %s to %s", deployment_config.name, deployment_config.namespace)
         try:
-            fdd_app = FiaasApplication(metadata=self._create_metadata(deployment=deployment),
-                                       spec=self._create_application_spec(deployment, image=channel.metadata['image']))
+            fdd_app = FiaasApplication(metadata=self._create_metadata(deployment_config=deployment_config),
+                                       spec=self._create_application_spec(deployment_config, image=channel.metadata['image']))
             fdd_app.save()
         except ClientError as e:
             if e.response.json()['reason'] != 'AlreadyExists':
                 raise
 
     @staticmethod
-    def _create_application_spec(deployment, image):
-        return FiaasApplicationSpec(application=deployment.name, image=image, config={})
+    def _create_application_spec(deployment_config, image):
+        return FiaasApplicationSpec(application=deployment_config.name, image=image, config={})

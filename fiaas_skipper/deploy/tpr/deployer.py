@@ -9,12 +9,12 @@ LOG = logging.getLogger(__name__)
 
 
 class TprDeployer(Deployer):
-    def _deploy(self, deployment, channel):
-        LOG.info("Deploying %s to %s", deployment.name, deployment.namespace)
-        pba = PaasbetaApplication(metadata=self._create_metadata(deployment=deployment),
-                                  spec=self._create_paasbetaapplicationspec(deployment, channel.metadata['image']))
+    def _deploy(self, deployment_config, channel):
+        LOG.info("Deploying %s to %s", deployment_config.name, deployment_config.namespace)
+        pba = PaasbetaApplication(metadata=self._create_metadata(deployment=deployment_config),
+                                  spec=self._create_paasbetaapplicationspec(deployment_config, channel.metadata['image']))
         pba.save()
 
     @staticmethod
-    def _create_paasbetaapplicationspec(deployment, image):
-        return PaasbetaApplicationSpec(application=deployment.name, image=image, config={})
+    def _create_paasbetaapplicationspec(deployment_config, image):
+        return PaasbetaApplicationSpec(application=deployment_config.name, image=image, config={})
