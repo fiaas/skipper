@@ -19,7 +19,7 @@ metrics_histogram = request_histogram.labels("metrics")
 deploy_histogram = request_histogram.labels("deploy")
 
 
-@web.route("/internal-backstage/prometheus")
+@web.route("/_/metrics")
 @metrics_histogram.time()
 def metrics():
     resp = make_response(generate_latest())
