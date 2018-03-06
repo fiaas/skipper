@@ -5,6 +5,8 @@ import pinject
 
 from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
+from k8s.models.configmap import ConfigMap
+from k8s.models.deployment import Deployment as K8sDeployment
 from k8s.models.job import Job, JobSpec
 from k8s.models.pod import Container, PodSpec, PodTemplateSpec
 
@@ -14,7 +16,7 @@ NAME = 'fiaas-deploy-daemon'
 
 class Deployer(object):
     @pinject.copy_args_to_internal_fields
-    def __init__(self, cluster, release_channel_factory, k8s):
+    def __init__(self, cluster, release_channel_factory):
         pass
 
     def deploy(self):
@@ -69,13 +71,9 @@ class DeploymentStatus(object):
 
 
 class Cluster(object):
-    @pinject.copy_args_to_internal_fields
-    def __init__(self, k8s):
-        pass
-
     def find_deployments(self, name):
         res = []
-        configmaps = self.k8s.configmaps()
+        configmaps = ConfigMap.list()
         for c in configmaps:
             if c.metadata.name == name:
                 tag = c.data['tag'] if 'tag' in c.data else 'stable'
@@ -85,7 +83,7 @@ class Cluster(object):
 
     def _get_status(self, **kwargs):
         try:
-            dep = self.k8s.deployments(**kwargs)
+            dep = K8sDeployment.get(kwargs)
             status = DeploymentStatus.OK if dep and dep.status.availableReplicas >= dep.spec.replicas else DeploymentStatus.UNAVAILABLE
         except NotFound:
             status = DeploymentStatus.NOTFOUND

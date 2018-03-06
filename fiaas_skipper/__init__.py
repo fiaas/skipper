@@ -11,7 +11,6 @@ from .config import Configuration
 from .deploy import DeployBindings
 from .deploy.crd import CrdBindings, bootstrap as bootstrap_crd
 from .deploy.tpr import TprBindings, bootstrap as bootstrap_tpr
-from .kubernetes import KubernetesBindings
 from .logsetup import init_logging
 from .web import WebBindings
 
@@ -56,7 +55,6 @@ def main():
         binding_specs = [
             MainBindings(cfg),
             DeployBindings(),
-            KubernetesBindings(),
             WebBindings(),
         ]
         if cfg.enable_crd_support:
