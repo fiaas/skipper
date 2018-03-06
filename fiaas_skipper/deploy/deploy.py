@@ -60,13 +60,13 @@ class Deployment(object):
         pass
 
     def bootstrap(self):
-        return self.status == DeploymentStatus.NOTFOUND
+        return self.status == DeploymentStatus.NOT_FOUND
 
 
 class DeploymentStatus(object):
     OK = 'ok'
     UNAVAILABLE = 'unavailable'
-    NOTFOUND = 'notfound'
+    NOT_FOUND = 'not found' # Needs to be bootstrapped
     ERROR = 'error'
 
 
@@ -86,7 +86,7 @@ class Cluster(object):
             dep = K8sDeployment.get(kwargs)
             status = DeploymentStatus.OK if dep and dep.status.availableReplicas >= dep.spec.replicas else DeploymentStatus.UNAVAILABLE
         except NotFound:
-            status = DeploymentStatus.NOTFOUND
+            status = DeploymentStatus.NOT_FOUND
         except Exception as e:
             LOG.warn(e, exc_info=True)
             status = DeploymentStatus.ERROR
