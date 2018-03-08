@@ -60,7 +60,9 @@ class Deployer(object):
 
     @staticmethod
     def _create_metadata(deployment_config):
-        return ObjectMeta(name=deployment_config.name, namespace=deployment_config.namespace, labels={"fiaas/bootstrap": "true"})
+        return ObjectMeta(name=deployment_config.name,
+                          namespace=deployment_config.namespace,
+                          labels={"fiaas/bootstrap": "true"})
 
 
 class DeploymentConfig(object):
@@ -105,5 +107,8 @@ class Cluster(object):
                 LOG.warn(e, exc_info=True)
                 status = 'ERROR'
                 description = e.message
-            res.append(DeploymentConfigStatus(name=name, namespace=c.metadata.namespace, status=status, description=description))
+            res.append(DeploymentConfigStatus(name=name,
+                                              namespace=c.metadata.namespace,
+                                              status=status,
+                                              description=description))
         return res
