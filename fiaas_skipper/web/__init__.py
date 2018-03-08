@@ -27,11 +27,6 @@ def metrics():
     return resp
 
 
-@web.route('/')
-def hello_world():
-    return 'Hello World!'
-
-
 @web.route('/status')
 @status_histogram.time()
 def status():
