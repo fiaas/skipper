@@ -36,6 +36,7 @@ CODE_QUALITY_REQ = [
 ]
 
 TESTS_REQ = [
+    'mock',
     'tox==2.9.1',
     'pytest-html',
     'pytest-cov',
