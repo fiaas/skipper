@@ -7,8 +7,8 @@ from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
 from k8s.models.configmap import ConfigMap
 from k8s.models.deployment import Deployment
-from k8s.models.job import Job, JobSpec
-from k8s.models.pod import Container, PodSpec, PodTemplateSpec
+
+from fiaas_skipper.deploy.bootstrap import bootstrap, requires_bootstrap
 
 LOG = logging.getLogger(__name__)
 NAME = 'fiaas-deploy-daemon'
@@ -24,39 +24,11 @@ class Deployer(object):
         for deployment_config in deployment_configs:
             channel = self._release_channel_factory(deployment_config.name, deployment_config.tag)
             self._deploy(deployment_config, channel)
-            if self._requires_bootstrap(deployment_config):
-                self._bootstrap(deployment_config)
+            if requires_bootstrap(deployment_config):
+                bootstrap(deployment_config, channel)
 
     def _deploy(self):
         raise NotImplementedError("Subclass must override _deploy")
-
-    def _bootstrap(self, deployment_config):
-        LOG.info("Bootstrapping %s in %s", deployment_config.name, deployment_config.namespace)
-        # TODO create and run k8s job for fdd in bootstrap mode
-        # The following is just a template for running a particular job until completion on kubernetes
-        # Based on the kubernetes api documentation the sample job calculates pi with x number of decimals
-        labels = {"test": "true"}
-        object_meta = ObjectMeta(generateName="calc-pi-", namespace=deployment_config.namespace, labels=labels)
-        container = Container(
-            name="pi",
-            image="perl",
-            command=["perl", "-Mbignum=bpi", "-wle", "print bpi(2000)"]
-        )
-        pod_spec = PodSpec(containers=[container], serviceAccountName="default", restartPolicy="Never")
-        pod_template_spec = PodTemplateSpec(metadata=ObjectMeta(name="calc-pi"), spec=pod_spec)
-        job_spec = JobSpec(template=pod_template_spec)
-        job = Job(metadata=object_meta, spec=job_spec)
-        job.save()
-
-    @staticmethod
-    def _requires_bootstrap(deployment_config):
-        try:
-            Deployment.get(name=deployment_config.name, namespace=deployment_config.namespace)
-            return False
-        except NotFound:
-            return True
-        except Exception as e:
-            LOG.warn(e, exc_info=True)
 
     @staticmethod
     def _create_metadata(deployment_config):
