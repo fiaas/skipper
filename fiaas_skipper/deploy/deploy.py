@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8
 import logging
-import pinject
 
 from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
@@ -15,9 +14,9 @@ NAME = 'fiaas-deploy-daemon'
 
 
 class Deployer(object):
-    @pinject.copy_args_to_internal_fields
     def __init__(self, cluster, release_channel_factory):
-        pass
+        self._cluster = cluster
+        self._release_channel_factory = release_channel_factory
 
     def deploy(self):
         deployment_configs = self._cluster.find_deployment_configs(NAME)
@@ -38,15 +37,18 @@ class Deployer(object):
 
 
 class DeploymentConfig(object):
-    @pinject.copy_args_to_public_fields
     def __init__(self, name, namespace, tag):
-        pass
+        self.name = name
+        self.namespace = namespace
+        self.tag = tag
 
 
 class DeploymentConfigStatus(object):
-    @pinject.copy_args_to_public_fields
     def __init__(self, name, namespace, status, description):
-        pass
+        self.name = name
+        self.namespace = namespace
+        self.status = status
+        self.description = description
 
 
 class Cluster(object):

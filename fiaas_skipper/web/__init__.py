@@ -2,7 +2,6 @@
 # -*- coding: utf-8
 import json
 
-import pinject
 from flask import Flask, Blueprint, make_response, request_started, request_finished, got_request_exception
 from prometheus_client import generate_latest, CONTENT_TYPE_LATEST, Counter, Histogram
 
@@ -61,11 +60,10 @@ def _connect_signals():
     got_request_exception.connect(lambda s, *a, **e: re_counter.inc(), weak=False)
 
 
-class WebBindings(pinject.BindingSpec):
-    def provide_webapp(self, deployer, cluster):
-        app = Flask(__name__)
-        app.register_blueprint(web)
-        web.cluster = cluster
-        web.deployer = deployer
-        _connect_signals()
-        return app
+def create_webapp(deployer, cluster):
+    app = Flask(__name__)
+    app.register_blueprint(web)
+    web.cluster = cluster
+    web.deployer = deployer
+    _connect_signals()
+    return app

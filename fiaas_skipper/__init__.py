@@ -4,29 +4,18 @@ from __future__ import absolute_import
 
 import logging
 
-import pinject
 from k8s import config as k8s_config
 
 from .config import Configuration
-from .deploy import DeployBindings
-from .deploy.crd import CrdBindings, bootstrap as bootstrap_crd
-from .deploy.tpr import TprBindings, bootstrap as bootstrap_tpr
+from .deploy import Cluster, CrdDeployer, TprDeployer, ReleaseChannelFactory, bootstrap_crd, bootstrap_tpr
 from .logsetup import init_logging
-from .web import WebBindings
-
-
-class MainBindings(pinject.BindingSpec):
-    def __init__(self, config):
-        self._config = config
-
-    def configure(self, bind):
-        bind("config", to_instance=self._config)
+from .web import create_webapp
 
 
 class Main(object):
-    @pinject.copy_args_to_internal_fields
     def __init__(self, webapp, config):
-        pass
+        self._webapp = webapp
+        self._config = config
 
     def run(self):
         # Run web-app in main thread
@@ -52,19 +41,16 @@ def main():
     log = logging.getLogger(__name__)
     try:
         log.info("fiaas-skipper starting with configuration {!r}".format(cfg))
-        binding_specs = [
-            MainBindings(cfg),
-            DeployBindings(),
-            WebBindings(),
-        ]
+        cluster = Cluster()
+        release_channel_factory = ReleaseChannelFactory(cfg.baseurl)
         if cfg.enable_crd_support:
             bootstrap_crd()
-            binding_specs.append(CrdBindings())
+            deployer = CrdDeployer(cluster, release_channel_factory)
         if cfg.enable_tpr_support:
             bootstrap_tpr()
-            binding_specs.append(TprBindings())
-        obj_graph = pinject.new_object_graph(modules=None, binding_specs=binding_specs)
-        obj_graph.provide(Main).run()
+            deployer = TprDeployer(cluster, release_channel_factory)
+        webapp = create_webapp(deployer, cluster)
+        Main(webapp=webapp, config=cfg).run()
     except BaseException:
         log.exception("General failure! Inspect traceback and make the code better!")
 

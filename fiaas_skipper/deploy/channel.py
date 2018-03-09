@@ -2,22 +2,21 @@
 # -*- coding: utf-8
 import logging
 
-import pinject
 import requests
 
 LOG = logging.getLogger(__name__)
 
 
 class ReleaseChannel(object):
-    @pinject.copy_args_to_public_fields
     def __init__(self, name, tag, metadata):
-        pass
+        self.name = name
+        self.tag = tag
+        self.metadata = metadata
 
 
 class ReleaseChannelFactory(object):
-    @pinject.copy_args_to_internal_fields
     def __init__(self, baseurl):
-        pass
+        self._baseurl = baseurl
 
     def __call__(self, name, tag):
         r = requests.get('%s/%s/%s.json' % (self._baseurl, name, tag))

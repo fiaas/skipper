@@ -4,18 +4,12 @@ from __future__ import absolute_import
 
 import logging
 
-import pinject
 from k8s.models.common import ObjectMeta
 from k8s.models.third_party_resource import ThirdPartyResource, APIVersion
 
 from .deployer import TprDeployer
 
 LOG = logging.getLogger(__name__)
-
-
-class TprBindings(pinject.BindingSpec):
-    def configure(self, bind):
-        bind("deployer", to_class=TprDeployer)
 
 
 def bootstrap():
