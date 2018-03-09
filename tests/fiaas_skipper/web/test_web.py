@@ -34,7 +34,7 @@ class TestWeb(object):
             response = app.get('/status')
             assert mock.call_args('fiaas-deploy-daemon')
             assert response.status_code == 200
-            assert response.data == '[]'
+            assert json.loads(response.data) == []
 
     def test_status(self, app):
         with patch('fiaas_skipper.deploy.Cluster.find_deployment_config_statuses') as mock:
