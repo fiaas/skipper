@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8
 import logging
+import uuid
 
 from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
@@ -33,7 +34,7 @@ class Deployer(object):
     def _create_metadata(deployment_config):
         return ObjectMeta(name=deployment_config.name,
                           namespace=deployment_config.namespace,
-                          labels={"fiaas/bootstrap": "true"})
+                          labels={"fiaas/bootstrap": "true", "fiaas/deployment_id": str(uuid.uuid4())})
 
 
 class DeploymentConfig(object):
