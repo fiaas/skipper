@@ -1,8 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8
+from __future__ import absolute_import
+
 import logging
 
-from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
-from k8s.models.deployment import Deployment
 from k8s.models.job import JobSpec, Job
 from k8s.models.pod import Container, PodSpec, PodTemplateSpec
 

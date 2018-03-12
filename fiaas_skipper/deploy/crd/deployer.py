@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8
+from __future__ import absolute_import
+
 import logging
 
 from k8s.client import ClientError
 
-from ...deploy import default_config
 from .types import FiaasApplicationSpec, FiaasApplication
 from ..deploy import Deployer
+from ...deploy import default_config
 
 LOG = logging.getLogger(__name__)
 

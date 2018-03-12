@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8
+from __future__ import absolute_import
+
 import json
 
 from flask import Flask, Blueprint, make_response, request_started, request_finished, got_request_exception
