@@ -41,6 +41,9 @@ class Configuration(Namespace):
         parser.add_argument("--enable-crd-support", help="Enable Custom Resource Definition support.",
                             action="store_true")
         parser.add_argument("--baseurl", help="Url to server hosting release channel meta data.")
+        parser.add_argument("--ingress-suffix",
+                            help="Suffix to use for ingress",
+                            default='ingress.cre-pro.schibsted.io')
         api_parser = parser.add_argument_group("API server")
         api_parser.add_argument("--api-server", help="Address of the api-server to use (IP or name)",
                                 default="https://kubernetes.default.svc.cluster.local")

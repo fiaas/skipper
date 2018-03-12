@@ -15,10 +15,11 @@ NAME = 'fiaas-deploy-daemon'
 
 
 class Deployer(object):
-    def __init__(self, cluster, release_channel_factory, bootstrap):
+    def __init__(self, cluster, release_channel_factory, bootstrap, ingress_suffix):
         self._cluster = cluster
         self._release_channel_factory = release_channel_factory
         self._bootstrap = bootstrap
+        self._ingress_suffix = ingress_suffix
 
     def deploy(self):
         deployment_configs = self._cluster.find_deployment_configs(NAME)
@@ -98,3 +99,9 @@ def requires_bootstrap(deployment_config):
         return True
     except Exception as e:
         LOG.warn(e, exc_info=True)
+
+
+def generate_config(template, namespace, ingress_suffix):
+    config = dict(template)
+    config['host'] = "".join([NAME, '-', namespace, '.', ingress_suffix])
+    return config

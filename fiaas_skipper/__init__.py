@@ -44,9 +44,11 @@ def main():
         cluster = Cluster()
         release_channel_factory = ReleaseChannelFactory(cfg.baseurl)
         if cfg.enable_crd_support:
-            deployer = CrdDeployer(cluster, release_channel_factory, bootstrap=CrdBootstrapper())
+            deployer = CrdDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
+                                   bootstrap=CrdBootstrapper(), ingress_suffix=cfg.ingress_suffix)
         if cfg.enable_tpr_support:
-            deployer = TprDeployer(cluster, release_channel_factory, bootstrap=TprBootstrapper())
+            deployer = TprDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
+                                   bootstrap=TprBootstrapper(), ingress_suffix=cfg.ingress_suffix)
         webapp = create_webapp(deployer, cluster)
         Main(webapp=webapp, config=cfg).run()
     except BaseException:

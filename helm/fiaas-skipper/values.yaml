@@ -15,3 +15,4 @@ infrastructure: diy
 TPR: false
 CRD: false
 baseurl: 'http://localhost/release/channel/url'
+ingressSuffix: example.com

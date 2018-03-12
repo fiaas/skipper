@@ -16,4 +16,5 @@ data:
     {{with .Values.infrastructure}}infrastructure: {{.}}{{end}}
     {{with .Values.TPR}}enable-tpr-support: {{.}}{{end}}
     {{with .Values.CRD}}enable-crd-support: {{.}}{{end}}
-    {{with .Values.s3bucket}}s3bucket: {{.}}{{end}}
+    {{with .Values.baseurl}}baseurl: {{.}}{{end}}
+    {{with .Values.ingressSuffix}}ingress-suffix: {{.}}{{end}}

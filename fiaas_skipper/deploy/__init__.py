@@ -6,7 +6,7 @@ import pkg_resources
 import yaml
 
 _resource_stream = pkg_resources.resource_stream(__name__, "fiaas.yml")
-default_config = yaml.load(_resource_stream)
+default_config_template = yaml.load(_resource_stream)
 
 from .deploy import Cluster, DeploymentConfigStatus, DeploymentConfig
 from .channel import ReleaseChannelFactory, ReleaseChannel
