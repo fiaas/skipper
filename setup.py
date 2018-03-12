@@ -60,4 +60,6 @@ setup(
     },
     tests_require=TESTS_REQ,
     entry_points={"console_scripts": ['skipper=fiaas_skipper:main']},
+    include_package_data=True,
+    package_data={'': ['fiaas.yml']},
 )

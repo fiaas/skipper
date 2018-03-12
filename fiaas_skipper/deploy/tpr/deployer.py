@@ -2,6 +2,7 @@
 # -*- coding: utf-8
 import logging
 
+from ...deploy import default_config
 from .types import PaasbetaApplication, PaasbetaApplicationSpec
 from ..deploy import Deployer
 
@@ -17,4 +18,4 @@ class TprDeployer(Deployer):
 
     @staticmethod
     def _create_paasbetaapplicationspec(deployment_config, image):
-        return PaasbetaApplicationSpec(application=deployment_config.name, image=image, config={})
+        return PaasbetaApplicationSpec(application=deployment_config.name, image=image, config=default_config)

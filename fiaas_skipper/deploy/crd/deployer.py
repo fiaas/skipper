@@ -4,6 +4,7 @@ import logging
 
 from k8s.client import ClientError
 
+from ...deploy import default_config
 from .types import FiaasApplicationSpec, FiaasApplication
 from ..deploy import Deployer
 
@@ -23,4 +24,5 @@ class CrdDeployer(Deployer):
 
     @staticmethod
     def _create_application_spec(deployment_config, image):
-        return FiaasApplicationSpec(application=deployment_config.name, image=image, config={})
+        # TODO basic config for deploy-daemon
+        return FiaasApplicationSpec(application=deployment_config.name, image=image, config=default_config)

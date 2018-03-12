@@ -1,0 +1,15 @@
+---
+version: 2
+admin_access: true
+replicas: 1
+resources:
+  requests:
+    memory: 128m
+ports:
+  - target_port: 5000
+healthchecks:
+  liveness:
+    http:
+      path: /healthz
+config:
+  volume: true
