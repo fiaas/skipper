@@ -18,7 +18,10 @@ class TestWeb(object):
     def deployer(self, cluster):
         release_channel_factory = Mock()
         bootstrap = Mock()
-        return Deployer(cluster, release_channel_factory, bootstrap)
+        return Deployer(cluster=cluster,
+                        release_channel_factory=release_channel_factory,
+                        bootstrap=bootstrap,
+                        ingress_suffix='example.com')
 
     @pytest.fixture
     def cluster(self):
