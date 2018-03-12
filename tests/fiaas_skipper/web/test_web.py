@@ -14,7 +14,9 @@ from fiaas_skipper.web import web
 class TestWeb(object):
     @pytest.fixture
     def deployer(self, cluster):
-        return Deployer(cluster, Mock())
+        release_channel_factory = Mock()
+        bootstrap = Mock()
+        return Deployer(cluster, release_channel_factory, bootstrap)
 
     @pytest.fixture
     def cluster(self):

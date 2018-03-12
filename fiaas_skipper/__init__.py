@@ -7,7 +7,7 @@ import logging
 from k8s import config as k8s_config
 
 from .config import Configuration
-from .deploy import Cluster, CrdDeployer, TprDeployer, ReleaseChannelFactory, bootstrap_crd, bootstrap_tpr
+from .deploy import Cluster, CrdDeployer, TprDeployer, ReleaseChannelFactory, CrdBootstrapper, TprBootstrapper
 from .logsetup import init_logging
 from .web import create_webapp
 
@@ -44,11 +44,9 @@ def main():
         cluster = Cluster()
         release_channel_factory = ReleaseChannelFactory(cfg.baseurl)
         if cfg.enable_crd_support:
-            bootstrap_crd()
-            deployer = CrdDeployer(cluster, release_channel_factory)
+            deployer = CrdDeployer(cluster, release_channel_factory, bootstrap=CrdBootstrapper())
         if cfg.enable_tpr_support:
-            bootstrap_tpr()
-            deployer = TprDeployer(cluster, release_channel_factory)
+            deployer = TprDeployer(cluster, release_channel_factory, bootstrap=TprBootstrapper())
         webapp = create_webapp(deployer, cluster)
         Main(webapp=webapp, config=cfg).run()
     except BaseException:

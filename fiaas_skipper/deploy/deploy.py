@@ -8,16 +8,15 @@ from k8s.models.common import ObjectMeta
 from k8s.models.configmap import ConfigMap
 from k8s.models.deployment import Deployment
 
-from fiaas_skipper.deploy.bootstrap import bootstrap, requires_bootstrap
-
 LOG = logging.getLogger(__name__)
 NAME = 'fiaas-deploy-daemon'
 
 
 class Deployer(object):
-    def __init__(self, cluster, release_channel_factory):
+    def __init__(self, cluster, release_channel_factory, bootstrap):
         self._cluster = cluster
         self._release_channel_factory = release_channel_factory
+        self._bootstrap = bootstrap
 
     def deploy(self):
         deployment_configs = self._cluster.find_deployment_configs(NAME)
@@ -25,7 +24,7 @@ class Deployer(object):
             channel = self._release_channel_factory(deployment_config.name, deployment_config.tag)
             self._deploy(deployment_config, channel)
             if requires_bootstrap(deployment_config):
-                bootstrap(deployment_config, channel)
+                self._bootstrap(deployment_config, channel)
 
     def _deploy(self):
         raise NotImplementedError("Subclass must override _deploy")
@@ -87,3 +86,13 @@ class Cluster(object):
                                               status=status,
                                               description=description))
         return res
+
+
+def requires_bootstrap(deployment_config):
+    try:
+        Deployment.get(name=deployment_config.name, namespace=deployment_config.namespace)
+        return False
+    except NotFound:
+        return True
+    except Exception as e:
+        LOG.warn(e, exc_info=True)
