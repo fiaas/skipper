@@ -29,7 +29,7 @@ class Deployer(object):
             if requires_bootstrap(deployment_config):
                 self._bootstrap(deployment_config, channel)
 
-    def _deploy(self):
+    def _deploy(self, deployment_config, channel):
         raise NotImplementedError("Subclass must override _deploy")
 
     @staticmethod
