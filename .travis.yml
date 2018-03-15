@@ -4,4 +4,7 @@ python:
 cache: pip
 install:
   - pip install -e .[ci]
-script: tox
+env:
+  - COVERAGE=""
+  - COVERAGE="-e coverage"
+script: tox ${COVERAGE}
