@@ -17,7 +17,7 @@ class Bootstrapper(object):
 
     def __call__(self, deployment_config, channel):
         LOG.info("Bootstrapping %s in %s", deployment_config.name, deployment_config.namespace)
-        labels = {"test": "true"} # Perhaps we can use this label to track the bootstrap jobs
+        labels = {"test": "true"}  # Perhaps we can use this label to track the bootstrap jobs
         object_meta = ObjectMeta(generateName="bootstrap-fiaas-",
                                  namespace=deployment_config.namespace,
                                  labels=labels)

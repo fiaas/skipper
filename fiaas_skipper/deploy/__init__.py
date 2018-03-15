@@ -2,7 +2,7 @@
 # -*- coding: utf-8
 from __future__ import absolute_import
 
-from .channel import ReleaseChannelFactory, ReleaseChannel
+from .channel import ReleaseChannelFactory
 from .crd import CrdDeployer, CrdBootstrapper
 from .deploy import Cluster, DeploymentConfigStatus
 from .tpr import TprDeployer, TprBootstrapper
