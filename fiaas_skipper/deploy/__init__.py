@@ -2,14 +2,10 @@
 # -*- coding: utf-8
 from __future__ import absolute_import
 
-import pkg_resources
-import yaml
-
-_resource_stream = pkg_resources.resource_stream(__name__, "fiaas.yml")
-default_config_template = yaml.load(_resource_stream)
-
-from .deploy import Cluster, DeploymentConfigStatus, DeploymentConfig
 from .channel import ReleaseChannelFactory, ReleaseChannel
-
-from .tpr import TprDeployer, TprBootstrapper
 from .crd import CrdDeployer, CrdBootstrapper
+from .deploy import Cluster, DeploymentConfigStatus
+from .tpr import TprDeployer, TprBootstrapper
+
+__all__ = ["TprDeployer", "TprBootstrapper", "CrdDeployer", "CrdBootstrapper", "Cluster",
+           "ReleaseChannelFactory", "DeploymentConfigStatus"]

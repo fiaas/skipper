@@ -7,7 +7,7 @@ import logging
 from k8s.models.common import ObjectMeta
 from k8s.models.third_party_resource import ThirdPartyResource, APIVersion
 
-from fiaas_skipper.deploy.bootstrap import Bootstrapper
+from ...deploy.bootstrap import Bootstrapper
 
 LOG = logging.getLogger(__name__)
 

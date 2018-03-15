@@ -5,8 +5,7 @@ from __future__ import absolute_import
 import logging
 
 from .types import PaasbetaApplication, PaasbetaApplicationSpec
-from ..deploy import Deployer, generate_config
-from ...deploy import default_config_template
+from ..deploy import Deployer, generate_config, default_config_template
 
 LOG = logging.getLogger(__name__)
 

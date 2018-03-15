@@ -5,6 +5,8 @@ from __future__ import absolute_import
 import logging
 import uuid
 
+import pkg_resources
+import yaml
 from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
 from k8s.models.configmap import ConfigMap
@@ -105,3 +107,7 @@ def generate_config(template, namespace, ingress_suffix):
     config = dict(template)
     config['host'] = "".join([NAME, '-', namespace, '.', ingress_suffix])
     return config
+
+
+_resource_stream = pkg_resources.resource_stream(__name__, "fiaas.yml")
+default_config_template = yaml.load(_resource_stream)

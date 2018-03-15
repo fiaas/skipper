@@ -7,8 +7,7 @@ import logging
 from k8s.client import ClientError
 
 from .types import FiaasApplicationSpec, FiaasApplication
-from ..deploy import Deployer, generate_config
-from ...deploy import default_config_template
+from ..deploy import Deployer, generate_config, default_config_template
 
 LOG = logging.getLogger(__name__)
 

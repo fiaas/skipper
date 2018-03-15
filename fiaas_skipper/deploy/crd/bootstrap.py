@@ -8,7 +8,7 @@ from k8s.models.common import ObjectMeta
 from k8s.models.custom_resource_definition import CustomResourceDefinition, CustomResourceDefinitionSpec, \
     CustomResourceDefinitionNames
 
-from fiaas_skipper.deploy.bootstrap import Bootstrapper
+from ...deploy.bootstrap import Bootstrapper
 
 LOG = logging.getLogger(__name__)
 
