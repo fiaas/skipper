@@ -16,7 +16,7 @@ spec:
   template:
     metadata:
       annotations:
-        prometheus.io/path: /internal-backstage/prometheus
+        prometheus.io/path: /_/metrics
         prometheus.io/port: http5000
         prometheus.io/scrape: "true"
         checksum/config: {{ include (print $.Template.BasePath "/config_map.yaml") . | sha256sum }}
