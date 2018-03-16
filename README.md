@@ -1,4 +1,4 @@
-SKIPPER
+SKIPPER [![build_status_badge]][build_status] [![codacy_grade_badge]][codacy_grade] [![codacy_coverage_badge]][codacy_coverage]
 ---
 
 Skipper controls deployment and updates of FIAAS components
