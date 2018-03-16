@@ -110,4 +110,4 @@ def generate_config(template, namespace, ingress_suffix):
 
 
 _resource_stream = pkg_resources.resource_stream(__name__, "fiaas.yml")
-default_config_template = yaml.load(_resource_stream)
+default_config_template = yaml.safe_load(_resource_stream)
