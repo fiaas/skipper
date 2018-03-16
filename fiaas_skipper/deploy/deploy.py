@@ -11,9 +11,14 @@ from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
 from k8s.models.configmap import ConfigMap
 from k8s.models.deployment import Deployment
+from prometheus_client import Counter, Gauge
 
 LOG = logging.getLogger(__name__)
 NAME = 'fiaas-deploy-daemon'
+
+last_deploy_gauge = Gauge("last_triggered_deployment", "Timestamp for when last deployment was performed")
+deploy_counter = Counter("deployments_triggered", "Number of deployments triggered and performed")
+fiaas_enabled_namespaces_gauge = Gauge("fiaas_enabled_namespaces", "Number of namespaces that are FIAAS enabled")
 
 
 class Deployer(object):
@@ -24,7 +29,10 @@ class Deployer(object):
         self._ingress_suffix = ingress_suffix
 
     def deploy(self):
+        deploy_counter.inc()
+        last_deploy_gauge.set_to_current_time()
         deployment_configs = self._cluster.find_deployment_configs(NAME)
+        fiaas_enabled_namespaces_gauge.set(len(deployment_configs))
         for deployment_config in deployment_configs:
             channel = self._release_channel_factory(deployment_config.name, deployment_config.tag)
             self._deploy(deployment_config, channel)
