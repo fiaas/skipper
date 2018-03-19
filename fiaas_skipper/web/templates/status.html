@@ -1,0 +1,66 @@
+{%- extends "base.html" %}
+{% import "bootstrap/utils.html" as utils %}
+
+{% block content %}
+  <div class="container">
+  {%- with messages = get_flashed_messages(with_categories=True) %}
+  {%- if messages %}
+    <div class="row">
+      <div class="col-md-12">
+        {{utils.flashed_messages(messages)}}
+      </div>
+    </div>
+  {%- endif %}
+  {%- endwith %}
+    <div>
+      <h1>Status</h1>
+      <p>This lists namespaces in the cluster that have been FIAAS enabled and their status.</p>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Namespace</th>
+          <th scope="col">Status</th>
+          <th scope="col">Description</th>
+        </tr>
+      </thead>
+      <tbody id="tbody" />
+    </table>
+    <p><small>Refreshed periodically</small></p>
+   </div>
+{%- endblock %}
+
+{% block scripts %}
+  {{super()}}
+  <script type="text/javascript">
+  function getStatus() {
+    $.ajax({
+      type: "GET",
+      url: "/api/status",
+      success: function(data) {
+        var json = $.parseJSON(data);
+        console.log(json);
+        var statusmap = {
+         "SUCCESS": "success",
+         "UNKNOWN": "warning",
+         "ERROR": "danger"
+        };
+        $("#tbody").empty();
+        $.each(json, function (index, item) {
+             var eachrow = "<tr class=\"" + statusmap[item.status] + "\">"
+                         + "<th scope=\"row\">" + item.namespace + "</td>"
+                         + "<td>" + item.status + "</td>"
+                         + "<td>" + [item.description].join('') + "</td>"
+                         + "</tr>";
+             $('#tbody').append(eachrow);
+        });
+      }
+    });
+    window.setTimeout(function() { getStatus() }, 5000);
+  }
+
+  $().ready(function() {
+   getStatus();
+  });
+  </script>
+{% endblock %}

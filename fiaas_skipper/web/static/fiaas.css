@@ -1,0 +1,18 @@
+.jumbotron {
+  margin-top: 1em;
+}
+
+.navbar-default {
+  height: 58px;
+}
+
+.navbar-default .navbar-nav > li > a,
+.navbar-brand {
+  padding-top: 3px;
+  padding-bottom: 0;
+  line-height: 58px;
+}
+
+.navbar-form {
+  margin-top: 22px;
+}

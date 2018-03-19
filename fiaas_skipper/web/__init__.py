@@ -2,55 +2,14 @@
 # -*- coding: utf-8
 from __future__ import absolute_import
 
-import json
-
-from flask import Flask, Blueprint, make_response, request_started, request_finished, got_request_exception
-from prometheus_client import generate_latest, CONTENT_TYPE_LATEST, Counter, Histogram
+from flask import Flask, request_started, request_finished, got_request_exception
+from prometheus_client import Counter, Histogram
 
 from .platform_collector import PLATFORM_COLLECTOR
-from ..deploy import DeploymentConfigStatus
 
 PLATFORM_COLLECTOR.collect()
 
-web = Blueprint("web", __name__)
-
 request_histogram = Histogram("web_request_latency", "Request latency in seconds", ["page"])
-status_histogram = request_histogram.labels("status")
-metrics_histogram = request_histogram.labels("metrics")
-deploy_histogram = request_histogram.labels("deploy")
-
-
-@web.route("/_/metrics")
-@metrics_histogram.time()
-def metrics():
-    resp = make_response(generate_latest())
-    resp.mimetype = CONTENT_TYPE_LATEST
-    return resp
-
-
-@web.route('/status')
-@status_histogram.time()
-def status():
-    deployment_config_statuses = web.cluster.find_deployment_config_statuses('fiaas-deploy-daemon')
-    return make_response(json.dumps(deployment_config_statuses, default=_encode), 200)
-
-
-def _encode(obj):
-    if isinstance(obj, DeploymentConfigStatus):
-        return obj.__dict__
-    return obj
-
-
-@web.route('/healthz')
-def healthcheck():
-    return make_response('', 200)
-
-
-@web.route('/deploy', methods=['POST'])
-@deploy_histogram.time()
-def deploy():
-    web.deployer.deploy()
-    return make_response('', 200)
 
 
 def _connect_signals():
@@ -63,9 +22,21 @@ def _connect_signals():
 
 
 def create_webapp(deployer, cluster):
+    from flask_bootstrap import Bootstrap
+    from ..web.api import api
+    from ..web.frontend import frontend
+    from ..web.healthcheck import healthcheck
+    from ..web.metrics import metrics
+    from .nav import nav
     app = Flask(__name__)
-    app.register_blueprint(web)
-    web.cluster = cluster
-    web.deployer = deployer
+    Bootstrap(app)
+    app.config['BOOTSTRAP_SERVE_LOCAL'] = True
+    api.cluster = cluster
+    api.deployer = deployer
+    app.register_blueprint(api)
+    app.register_blueprint(frontend)
+    app.register_blueprint(metrics)
+    app.register_blueprint(healthcheck)
+    nav.init_app(app)
     _connect_signals()
     return app
