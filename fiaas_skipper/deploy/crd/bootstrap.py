@@ -26,7 +26,7 @@ class CrdBootstrapper(Bootstrapper):
 
         def bootstrap():
             _create("Application", "applications", ("app", "fa"), "fiaas.schibsted.io")
-            _create("Status", "statuses", ("status", "fs"), "fiaas.schibsted.io")
+            _create("ApplicationStatus", "application-statuses", ("status", "appstatus", "fs"), "fiaas.schibsted.io")
 
         bootstrap()
         super(CrdBootstrapper, self).__init__(cmd_args=["--enable-crd-support"])
