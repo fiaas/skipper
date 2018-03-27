@@ -1,10 +1,6 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  annotations:
-    {{- range $key, $value := .Values.ingress.annotations }}
-      {{ $key }}: {{ $value | quote }}
-    {{- end }}
   labels:
     app: "{{ .Values.name }}"
   name: "{{ .Values.name }}"
