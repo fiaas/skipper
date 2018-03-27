@@ -58,7 +58,7 @@ setup(
     author_email="fiaas@googlegroups.com",
     version=version(),
     packages=find_packages(exclude=("tests",)),
-    zip_safe=False,
+    zip_safe=True,
     # Requirements
     install_requires=GENERIC_REQ + WEB_REQ,
     setup_requires=['pytest-runner', 'wheel', 'setuptools_scm'],

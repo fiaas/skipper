@@ -1,14 +1,22 @@
-FROM gliderlabs/alpine:3.6
+FROM python:3.6-alpine3.7 as common
 MAINTAINER fiaas@googlegroups.com
-RUN apk-install python3=3.6.1-r3 ca-certificates=20161130-r2 && \
-    python3 -m ensurepip && \
-    rm -r /usr/lib/python*/ensurepip && \
-    pip3 install --upgrade pip && \
-    if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
-    if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
-    rm -r /root/.cache
+# Install any binary package dependencies here
+RUN apk --no-cache add \
+    yaml
+
+FROM common as build
+# Install build tools, and build wheels of all dependencies
+RUN apk --no-cache add \
+    build-base \
+    git \
+    yaml-dev
 COPY . /skipper
 WORKDIR /skipper
+RUN pip wheel . --wheel-dir=/wheels/
+
+FROM common as production
+# Get rid of all build dependencies, install application using only pre-built binary wheels
+COPY --from=build /wheels/ /wheels/
+RUN pip install --no-index --find-links=/wheels/ --only-binary all /wheels/fiaas_skipper*.whl
 EXPOSE 5000
-RUN pip3 install .
 CMD ["skipper"]
