@@ -1,12 +1,12 @@
 FROM python:3.6-alpine3.7 as common
 MAINTAINER fiaas@googlegroups.com
 # Install any binary package dependencies here
-RUN apk update && apk add \
+RUN apk --no-cache add \
     yaml
 
 FROM common as build
 # Install build tools, and build wheels of all dependencies
-RUN apk update && apk add \
+RUN apk --no-cache add \
     build-base \
     git \
     yaml-dev
