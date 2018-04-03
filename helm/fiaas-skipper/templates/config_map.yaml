@@ -10,11 +10,6 @@ metadata:
 data:
   cluster_config.yaml: |-
     log-format: plain
-    ingress-suffix:
-    - "{{ .Values.ingress.domainName }}"
-    {{with .Values.environment}}environment: {{.}}{{end}}
-    {{with .Values.infrastructure}}infrastructure: {{.}}{{end}}
     {{with .Values.TPR}}enable-tpr-support: {{.}}{{end}}
     {{with .Values.CRD}}enable-crd-support: {{.}}{{end}}
     {{with .Values.baseurl}}baseurl: {{.}}{{end}}
-    {{with .Values.ingressSuffix}}ingress-suffix: {{.}}{{end}}

@@ -5,14 +5,10 @@ image:
   pullPolicy: Always
 ingress:
   fqdn: fiaas-skipper.yourcluster.local
-  domainName: yourcluster.local
   enableTLS: true
 deployment:
   # include the resource requests and limits
   includeResourceUsage: true
-environment: dev
-infrastructure: diy
 TPR: false
-CRD: false
+CRD: true
 baseurl: 'http://localhost/release/channel/url'
-ingressSuffix: example.com

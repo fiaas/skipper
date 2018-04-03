@@ -22,11 +22,10 @@ fiaas_enabled_namespaces_gauge = Gauge("fiaas_enabled_namespaces", "Number of na
 
 
 class Deployer(object):
-    def __init__(self, cluster, release_channel_factory, bootstrap, ingress_suffix):
+    def __init__(self, cluster, release_channel_factory, bootstrap):
         self._cluster = cluster
         self._release_channel_factory = release_channel_factory
         self._bootstrap = bootstrap
-        self._ingress_suffix = ingress_suffix
 
     def deploy(self):
         deploy_counter.inc()
@@ -108,13 +107,7 @@ def requires_bootstrap(deployment_config):
     except NotFound:
         return True
     except Exception as e:
-        LOG.warn(e, exc_info=True)
-
-
-def generate_config(template, namespace, ingress_suffix):
-    config = dict(template)
-    config['host'] = "".join([NAME, '-', namespace, '.', ingress_suffix])
-    return config
+        LOG.warning(e, exc_info=True)
 
 
 _resource_stream = pkg_resources.resource_stream(__name__, "fiaas.yml")

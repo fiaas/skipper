@@ -20,8 +20,7 @@ class TestApi(object):
         bootstrap = Mock()
         return Deployer(cluster=cluster,
                         release_channel_factory=release_channel_factory,
-                        bootstrap=bootstrap,
-                        ingress_suffix='example.com')
+                        bootstrap=bootstrap)
 
     @pytest.fixture
     def cluster(self):
