@@ -7,7 +7,7 @@ DOCKER_IMAGE="fiaas/skipper:${VERSION/+/-}"
 
 echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
 
-docker build . -t "${DOCKER_IMAGE}"
+docker tag "fiaas/skipper:latest" "${DOCKER_IMAGE}"
 
 if [[ "${CI}" == "true" ]]; then
     docker push "${DOCKER_IMAGE}"
