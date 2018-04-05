@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -evuo pipefail
+
+docker build . -t "${TRAVIS_REPO_SLUG}:latest"

@@ -1,10 +1,23 @@
 language: python
 python:
-  - '3.6'
+- '3.6'
+sudo: required
+services:
+- docker
 cache: pip
-install:
-  - pip install -e .[ci]
 env:
-  - COVERAGE=""
-  - COVERAGE="-e coverage"
-script: tox ${COVERAGE}
+  global:
+  - DOCKER_USERNAME=captainfiaas
+  - secure: rqpEgRnrN4TY9mr+9feZ74afJ015FEyRQi/sm50wqrBVJezPsNnH2mkkxAUSRABAAOhAH4r9qSCf6V3HAT5lTvyxuxlsskmrLj4jXHRNhT6g+ZV3aIekbX+og4i8V2Ap5kt2BQ2NHeOQLGI+LEYU4reaO1fishTssYPj0bBR0KdOyfj+y1+ilpYUgfRdDsX/fWisfdaYjm/HLUJ1SIz/poTSLhEGpk1JAvpe3YlUaUoDs/GfdOnOAyH5PWlwH8xU31WjoHrDVR6gRlbpk73Y65hbBMFTruy1011C7kWGFbdCG25MZbW3a54ZYGXFaiyvk4r3HlIOsWHSA+1kzqW8rrbjT67PqCp/rJMe6fXoNARvvRhrmC5EsO83L1xGNgwTR3/WvO6l+z/NTXHkQhGRtCXXr6kMXr4XbL7FJhJF6nQllIRNAcnbnW0cjOQQCvTJiLuOIoDZaZQyESmVvbO8dDIavd3rQDxhfXzfA/dHTzOv2dRtplRTYkOtSmdBwtKRTLrkpWIjGMl1nwOWXe8EeUBYY0mLfL9kVWUvTOAS1iLVkLBK+TIyHp3R4o1BIVcTFVbWsUByAjnrHda6FIjdMi2WXIo+eFnlLC/Zy5Dtj6NmVFq2+YjRQlrXqimqacex44QTOOfVBWlDPBIcRBYHTag718knX6J+z4hR0Zv1dO0= # DOCKER_PASSWORD
+install:
+- pip install -e .[ci]
+script:
+  - tox
+  - bin/docker_build
+after_success: tox -e coverage
+deploy:
+  provider: script
+  script: bin/docker_push
+  skip_cleanup: true
+  on:
+    branch: master
