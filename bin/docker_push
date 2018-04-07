@@ -10,6 +10,6 @@ echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdi
 docker tag "${TRAVIS_REPO_SLUG}:latest" "${DOCKER_IMAGE}"
 
 if [[ "${CI}" == "true" ]]; then
-    docker push "${TRAVIS_REPO_SLUG}
+    docker push "${TRAVIS_REPO_SLUG}"
     echo "Pushed image ${DOCKER_IMAGE}"
 fi
