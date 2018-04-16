@@ -12,3 +12,4 @@ deployment:
 TPR: false
 CRD: true
 baseurl: 'http://localhost/release/channel/url'
+annotations: {}
