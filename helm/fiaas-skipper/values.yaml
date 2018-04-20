@@ -6,6 +6,7 @@ image:
 ingress:
   fqdn: fiaas-skipper.yourcluster.local
   enableTLS: true
+  annotations: {}
 deployment:
   # include the resource requests and limits
   includeResourceUsage: true
