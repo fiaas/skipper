@@ -3,11 +3,13 @@
 from __future__ import absolute_import
 
 import logging
+import json
 
 from k8s import config as k8s_config
 
 from .config import Configuration
 from .deploy import Cluster, CrdDeployer, TprDeployer, ReleaseChannelFactory, CrdBootstrapper, TprBootstrapper
+from .deploy.channel import FakeReleaseChannelFactory
 from .logsetup import init_logging
 from .web import create_webapp
 
@@ -42,7 +44,11 @@ def main():
     try:
         log.info("fiaas-skipper starting with configuration {!r}".format(cfg))
         cluster = Cluster()
-        release_channel_factory = ReleaseChannelFactory(cfg.baseurl)
+        if cfg.release_channel_metadata:
+            log.debug("!!Using hardcoded release channel metadata {!r}".format(cfg.release_channel_metadata))
+            release_channel_factory = FakeReleaseChannelFactory(json.loads(cfg.release_channel_metadata))
+        else:
+            release_channel_factory = ReleaseChannelFactory(cfg.baseurl)
         if cfg.enable_crd_support:
             deployer = CrdDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
                                    bootstrap=CrdBootstrapper())

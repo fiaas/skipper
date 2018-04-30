@@ -34,11 +34,11 @@ class Deployer(object):
         fiaas_enabled_namespaces_gauge.set(len(deployment_configs))
         for deployment_config in deployment_configs:
             channel = self._release_channel_factory(deployment_config.name, deployment_config.tag)
-            self._deploy(deployment_config, channel)
+            self._deploy(deployment_config, channel, default_config_template)
             if requires_bootstrap(deployment_config):
                 self._bootstrap(deployment_config, channel)
 
-    def _deploy(self, deployment_config, channel):
+    def _deploy(self, deployment_config, channel, config):
         raise NotImplementedError("Subclass must override _deploy")
 
     @staticmethod
