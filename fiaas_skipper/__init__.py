@@ -5,6 +5,8 @@ from __future__ import absolute_import
 import logging
 import json
 
+import os
+import yaml
 from k8s import config as k8s_config
 
 from .config import Configuration
@@ -36,6 +38,11 @@ def init_k8s_client(config):
     k8s_config.debug = config.debug
 
 
+def _load_spec_config(spec_file):
+    with open(spec_file, 'r') as stream:
+        return yaml.safe_load(stream)
+
+
 def main():
     cfg = Configuration()
     init_logging(cfg)
@@ -49,12 +56,19 @@ def main():
             release_channel_factory = FakeReleaseChannelFactory(json.loads(cfg.release_channel_metadata))
         else:
             release_channel_factory = ReleaseChannelFactory(cfg.baseurl)
+        spec_config = None
+        if os.path.isfile(cfg.spec_file):
+            try:
+                spec_config = _load_spec_config(cfg.spec_file)
+                log.debug("Loaded spec config from file {!r}".format(cfg.spec_file))
+            except yaml.YAMLError:
+                log.exception("Unable to load spec config file {!r} using defaults".format(cfg.spec_file))
         if cfg.enable_crd_support:
             deployer = CrdDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
-                                   bootstrap=CrdBootstrapper())
+                                   bootstrap=CrdBootstrapper(), spec_config=spec_config)
         elif cfg.enable_tpr_support:
             deployer = TprDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
-                                   bootstrap=TprBootstrapper())
+                                   bootstrap=TprBootstrapper(), spec_config=spec_config)
         webapp = create_webapp(deployer, cluster)
         Main(webapp=webapp, config=cfg).run()
     except BaseException:

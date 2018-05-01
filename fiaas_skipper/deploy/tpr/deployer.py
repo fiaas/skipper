@@ -11,13 +11,13 @@ LOG = logging.getLogger(__name__)
 
 
 class TprDeployer(Deployer):
-    def _deploy(self, deployment_config, channel, config):
+    def _deploy(self, deployment_config, channel):
         LOG.info("Deploying %s to %s", deployment_config.name, deployment_config.namespace)
         pba = PaasbetaApplication(metadata=self._create_metadata(deployment_config),
                                   spec=self._create_paasbetaapplicationspec(name=deployment_config.name,
                                                                             image=channel.metadata['image'],
-                                                                            config=config))
+                                                                            spec_config=self._spec_config))
         pba.save()
 
-    def _create_paasbetaapplicationspec(self, name, image, config):
-        return PaasbetaApplicationSpec(application=name, image=image, config=config)
+    def _create_paasbetaapplicationspec(self, name, image, spec_config):
+        return PaasbetaApplicationSpec(application=name, image=image, config=spec_config)
