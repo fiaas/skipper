@@ -9,6 +9,7 @@ import configargparse
 import os
 
 DEFAULT_CONFIG_FILE = "/var/run/config/fiaas/cluster_config.yaml"
+DEFAULT_SPEC_FILE = "/var/run/config/fiaas/fiaas.yaml"
 
 
 class Configuration(Namespace):
@@ -41,6 +42,10 @@ class Configuration(Namespace):
         parser.add_argument("--enable-crd-support", help="Enable Custom Resource Definition support.",
                             action="store_true")
         parser.add_argument("--baseurl", help="Url to server hosting release channel meta data.")
+        parser.add_argument("--release-channel-metadata",
+                            help="Provide hardcoded release channel metadata (Used for debugging purposes).")
+        parser.add_argument("--spec-file", help="Spec file describing how applications should be deployed.",
+                            default=DEFAULT_SPEC_FILE)
         api_parser = parser.add_argument_group("API server")
         api_parser.add_argument("--api-server", help="Address of the api-server to use (IP or name)",
                                 default="https://kubernetes.default.svc.cluster.local")

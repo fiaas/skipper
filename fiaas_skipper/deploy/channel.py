@@ -24,3 +24,13 @@ class ReleaseChannelFactory(object):
         r = requests.get('%s/%s/%s.json' % (self._baseurl, name, tag))
         LOG.debug('Retrieving meta data for %s/%s/%s.json' % (self._baseurl, name, tag))
         return ReleaseChannel(name, tag, metadata=r.json())
+
+
+class FakeReleaseChannelFactory(object):
+    """ Used for hardcoding release channel information """
+
+    def __init__(self, metadata):
+        self._metadata = metadata
+
+    def __call__(self, name, tag):
+        return ReleaseChannel(name, tag, metadata=self._metadata)

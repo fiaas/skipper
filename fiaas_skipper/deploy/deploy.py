@@ -22,10 +22,14 @@ fiaas_enabled_namespaces_gauge = Gauge("fiaas_enabled_namespaces", "Number of na
 
 
 class Deployer(object):
-    def __init__(self, cluster, release_channel_factory, bootstrap):
+    def __init__(self, cluster, release_channel_factory, bootstrap, spec_config=None):
         self._cluster = cluster
         self._release_channel_factory = release_channel_factory
         self._bootstrap = bootstrap
+        if spec_config is None:
+            self._spec_config = default_spec_config
+        else:
+            self._spec_config = spec_config
 
     def deploy(self):
         deploy_counter.inc()
@@ -36,7 +40,7 @@ class Deployer(object):
             channel = self._release_channel_factory(deployment_config.name, deployment_config.tag)
             self._deploy(deployment_config, channel)
             if requires_bootstrap(deployment_config):
-                self._bootstrap(deployment_config, channel)
+                self._bootstrap(deployment_config, channel, self._spec_config)
 
     def _deploy(self, deployment_config, channel):
         raise NotImplementedError("Subclass must override _deploy")
@@ -111,4 +115,4 @@ def requires_bootstrap(deployment_config):
 
 
 _resource_stream = pkg_resources.resource_stream(__name__, "fiaas.yml")
-default_config_template = yaml.safe_load(_resource_stream)
+default_spec_config = yaml.safe_load(_resource_stream)
