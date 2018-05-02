@@ -18,20 +18,29 @@ class Bootstrapper(object):
     def __init__(self, cmd_args=()):
         self._cmd_args = cmd_args
 
-    def __call__(self, deployment_config, channel):
+    def __call__(self, deployment_config, channel, spec_config=None):
         bootstrap_counter.inc()
         LOG.info("Bootstrapping %s in %s", deployment_config.name, deployment_config.namespace)
-        labels = {"test": "true"}  # Perhaps we can use this label to track the bootstrap jobs
         object_meta = ObjectMeta(generateName="bootstrap-fiaas-",
-                                 namespace=deployment_config.namespace,
-                                 labels=labels)
+                                 namespace=deployment_config.namespace)
         container = Container(
             name="fiaas-deploy-daemon-bootstrap",
             image=channel.metadata['image'],
             command=["fiaas-deploy-daemon-bootstrap"] + self._cmd_args
         )
         pod_spec = PodSpec(containers=[container], serviceAccountName="default", restartPolicy="Never")
-        pod_template_spec = PodTemplateSpec(metadata=ObjectMeta(name="fiaas-deploy-daemon-bootstrap"), spec=pod_spec)
+        pod_annotations = _get_pod_annotations(spec_config)
+        pod_metadata = ObjectMeta(name="fiaas-deploy-daemon-bootstrap", annotations=pod_annotations)
+        pod_template_spec = PodTemplateSpec(metadata=pod_metadata, spec=pod_spec)
         job_spec = JobSpec(template=pod_template_spec)
         job = Job(metadata=object_meta, spec=job_spec)
         job.save()
+
+
+def _get_pod_annotations(spec_config):
+    if spec_config:
+        try:
+            return spec_config["annotations"]["pod"]
+        except KeyError:
+            pass
+    return {}
