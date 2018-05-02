@@ -4,7 +4,7 @@ from __future__ import absolute_import
 
 import json
 
-from flask import Blueprint, make_response
+from flask import Blueprint, make_response, request
 
 from ..deploy import DeploymentConfigStatus
 from ..web import request_histogram
@@ -31,5 +31,8 @@ def _encode(obj):
 @api.route('/api/deploy', methods=['POST'])
 @deploy_histogram.time()
 def deploy():
-    api.deployer.deploy()
+    if request.get_json() and 'namespaces' in request.get_json():
+        api.deployer.deploy(namespaces=request.get_json()['namespaces'])
+    else:
+        api.deployer.deploy()
     return make_response('', 200)
