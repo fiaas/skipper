@@ -89,6 +89,9 @@ class Cluster(object):
             except NotFound:
                 status = 'NOT FOUND'
                 description = 'No deployment found for given namespace - needs bootstrapping'
+            except TypeError:
+                status = 'UNAVAILABLE'
+                pass
             except Exception as e:
                 LOG.warn(e, exc_info=True)
                 status = 'ERROR'
