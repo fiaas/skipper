@@ -49,7 +49,7 @@ class Deployer(object):
     def _create_metadata(deployment_config):
         labels = {
             "app": deployment_config.name,
-            "heritage": "Skipper",
+            "heritage": "FIAAS-Skipper",
             "fiaas/bootstrap": "true",
             "fiaas/deployment_id": str(uuid.uuid4())
         }
