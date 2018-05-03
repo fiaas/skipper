@@ -47,9 +47,15 @@ class Deployer(object):
 
     @staticmethod
     def _create_metadata(deployment_config):
+        labels = {
+            "app": deployment_config.name,
+            "heritage": "Skipper",
+            "fiaas/bootstrap": "true",
+            "fiaas/deployment_id": str(uuid.uuid4())
+        }
         return ObjectMeta(name=deployment_config.name,
                           namespace=deployment_config.namespace,
-                          labels={"fiaas/bootstrap": "true", "fiaas/deployment_id": str(uuid.uuid4())})
+                          labels=labels)
 
 
 class DeploymentConfig(object):
