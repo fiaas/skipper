@@ -31,13 +31,13 @@ class Deployer(object):
         else:
             self._spec_config = spec_config
 
-    def deploy(self, namespaces=tuple()):
+    def deploy(self, namespaces=None):
         deploy_counter.inc()
         last_deploy_gauge.set_to_current_time()
         deployment_configs = self._cluster.find_deployment_configs(NAME)
         fiaas_enabled_namespaces_gauge.set(len(deployment_configs))
         for deployment_config in deployment_configs:
-            if deployment_config.namespace not in namespaces:
+            if namespaces and deployment_config.namespace not in namespaces:
                 continue
             channel = self._release_channel_factory(deployment_config.name, deployment_config.tag)
             self._deploy(deployment_config, channel)
