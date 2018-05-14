@@ -50,10 +50,10 @@ spec:
         resources:
           limits:
             cpu: 125m
-            memory: 64Mi
+            memory: 256Mi
           requests:
             cpu: 125m
-            memory: 64Mi
+            memory: 256Mi
 {{- end }}
         volumeMounts:
         - name: {{ .Chart.Name }}
