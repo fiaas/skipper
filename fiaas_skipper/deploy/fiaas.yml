@@ -1,7 +1,8 @@
----
-version: 2
+version: 3
 admin_access: true
-replicas: 1
+replicas:
+  minimum: 1
+  maximum: 1
 resources:
   requests:
     memory: 128m
@@ -13,3 +14,6 @@ healthchecks:
       path: /healthz
 config:
   volume: true
+metrics:
+  prometheus:
+    path: /internal-backstage/prometheus
