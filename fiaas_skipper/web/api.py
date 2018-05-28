@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 
 import json
+import threading
 
 from flask import Blueprint, make_response, request
 
@@ -32,7 +33,7 @@ def _encode(obj):
 @deploy_histogram.time()
 def deploy():
     if request.get_json() and 'namespaces' in request.get_json():
-        api.deployer.deploy(namespaces=request.get_json()['namespaces'])
+        threading.Thread(target=api.deployer.deploy, kwargs={'namespaces': request.get_json()['namespaces']}).start()
     else:
-        api.deployer.deploy()
+        threading.Thread(target=api.deployer.deploy).start()
     return make_response('', 200)
