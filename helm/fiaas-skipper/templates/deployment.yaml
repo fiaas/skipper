@@ -54,10 +54,10 @@ spec:
 {{- if .Values.deployment.includeResourceUsage }}
         resources:
           limits:
-            cpu: 125m
+            cpu: 1
             memory: 256Mi
           requests:
-            cpu: 125m
+            cpu: 500m
             memory: 256Mi
 {{- end }}
         volumeMounts:
