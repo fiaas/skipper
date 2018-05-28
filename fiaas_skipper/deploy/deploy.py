@@ -79,7 +79,7 @@ class Cluster(object):
     @staticmethod
     def find_deployment_configs(name):
         res = []
-        configmaps = [c for c in ConfigMap.list(namespace=None) if c.metadata.name == name]
+        configmaps = ConfigMap.find(name, namespace=None)
         for c in configmaps:
             tag = c.data['tag'] if 'tag' in c.data else 'stable'
             res.append(DeploymentConfig(name=NAME, namespace=c.metadata.namespace, tag=tag))
