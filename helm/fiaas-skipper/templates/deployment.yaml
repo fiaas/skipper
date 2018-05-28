@@ -36,14 +36,14 @@ spec:
           protocol: TCP
         livenessProbe:
           initialDelaySeconds: 10
-          timeoutSeconds: 20
+          timeoutSeconds: 180
           httpGet:
             path: /healthz
             port: http5000
             scheme: HTTP
         readinessProbe:
           initialDelaySeconds: 10
-          timeoutSeconds: 20
+          timeoutSeconds: 180
           httpGet:
             path: /healthz
             port: http5000
