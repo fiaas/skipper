@@ -7,6 +7,7 @@ import random
 import string
 
 from k8s.models.common import ObjectMeta
+from k8s.models.job import JobSpec, Job
 from k8s.models.pod import Container, PodSpec, PodTemplateSpec, Pod
 from prometheus_client import Counter
 
