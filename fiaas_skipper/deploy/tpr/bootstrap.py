@@ -7,12 +7,12 @@ import logging
 from k8s.models.common import ObjectMeta
 from k8s.models.third_party_resource import ThirdPartyResource, APIVersion
 
-from ...deploy.bootstrap import Bootstrapper
+from ...deploy.bootstrap import BarePodBootstrapper
 
 LOG = logging.getLogger(__name__)
 
 
-class TprBootstrapper(Bootstrapper):
+class TprBootstrapper(BarePodBootstrapper):
     def __init__(self):
         def bootstrap():
             metadata = ObjectMeta(name="paasbeta-application.schibsted.io")
