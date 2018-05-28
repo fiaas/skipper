@@ -25,4 +25,4 @@ RUN pip install --no-index --find-links=/wheels/ --only-binary all /wheels/fiaas
 
 
 EXPOSE 5000
-CMD ["/usr/local/bin/uwsgi", "--die-on-term", "--http", "0.0.0.0:5000", "--wsgi", "fiaas_skipper.wsgi:app"]
+CMD ["/usr/local/bin/uwsgi", "--enable-threads", "--die-on-term", "--http", "0.0.0.0:5000", "--wsgi", "fiaas_skipper.wsgi:app"]
