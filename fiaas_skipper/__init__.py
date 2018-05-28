@@ -62,9 +62,11 @@ def create_app():
         raise RuntimeError("Invalid configuration: Either --enable-tpr-support or --enable-crd-support must be set")
     return create_webapp(deployer, cluster), cfg
 
+
 app, cfg = create_app()
 
 if __name__ == "__main__":
+    log = logging.getLogger(__name__)
     try:
         app.run("0.0.0.0", cfg.port)
     except BaseException:
