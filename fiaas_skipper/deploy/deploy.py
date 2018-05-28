@@ -88,7 +88,7 @@ class Cluster(object):
     @staticmethod
     def find_deployment_config_statuses(name):
         res = []
-        configmaps = [c for c in ConfigMap.list(namespace=None) if c.metadata.name == name]
+        configmaps = ConfigMap.find(name, namespace=None)
         for c in configmaps:
             description = None
             try:
