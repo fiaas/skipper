@@ -36,7 +36,7 @@ def init_k8s_client(config):
     if config.client_cert:
         k8s_config.cert = (config.client_cert, config.client_key)
     k8s_config.debug = config.debug
-    k8s_config.timeout = 30
+    k8s_config.timeout = 60
 
 
 def _load_spec_config(spec_file):
