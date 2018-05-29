@@ -8,12 +8,12 @@ from k8s.models.common import ObjectMeta
 from k8s.models.custom_resource_definition import CustomResourceDefinition, CustomResourceDefinitionSpec, \
     CustomResourceDefinitionNames
 
-from ...deploy.bootstrap import BatchJobsBootstrapper
+from ...deploy.bootstrap import BarePodBootstrapper
 
 LOG = logging.getLogger(__name__)
 
 
-class CrdBootstrapper(BatchJobsBootstrapper):
+class CrdBootstrapper(BarePodBootstrapper):
     def __init__(self):
         def _create(kind, plural, short_names, group):
             name = "%s.%s" % (plural, group)
