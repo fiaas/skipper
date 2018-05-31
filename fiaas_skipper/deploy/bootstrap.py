@@ -29,7 +29,7 @@ class BarePodBootstrapper(object):
             pass
         pod_spec = _create_pod_spec(self._cmd_args, channel)
         pod_metadata = _create_pod_metadata(deployment_config, spec_config)
-        pod = Pod.get_or_create(metadata=pod_metadata, spec=pod_spec)
+        pod = Pod(metadata=pod_metadata, spec=pod_spec)
         pod.save()
 
 
@@ -47,6 +47,7 @@ def _create_pod_metadata(deployment_config, spec_config):
     pod_annotations = _get_pod_annotations(spec_config)
     pod_metadata = ObjectMeta(name=BOOTSTRAP_POD_NAME,
                               annotations=pod_annotations,
+                              labels={"app": BOOTSTRAP_POD_NAME},
                               namespace=deployment_config.namespace)
     return pod_metadata
 
