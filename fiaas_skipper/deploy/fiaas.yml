@@ -5,7 +5,7 @@ replicas:
   maximum: 1
 resources:
   requests:
-    memory: 128m
+    memory: 256Mi
 ports:
   - target_port: 5000
 healthchecks:
