@@ -39,8 +39,8 @@ class Deployer(object):
         for deployment_config in deployment_configs:
             if namespaces and deployment_config.namespace not in namespaces:
                 continue
-            channel = self._release_channel_factory(deployment_config.name, deployment_config.tag)
             try:
+                channel = self._release_channel_factory(deployment_config.name, deployment_config.tag)
                 self._deploy(deployment_config, channel)
                 if requires_bootstrap(deployment_config):
                     self._bootstrap(deployment_config, channel, self._spec_config)
