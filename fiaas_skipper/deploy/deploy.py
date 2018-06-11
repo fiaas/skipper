@@ -32,23 +32,20 @@ class Deployer(object):
             self._spec_config = spec_config
 
     def deploy(self, namespaces=None):
-        try:
-            deploy_counter.inc()
-            last_deploy_gauge.set_to_current_time()
-            deployment_configs = self._cluster.find_deployment_configs(NAME)
-            fiaas_enabled_namespaces_gauge.set(len(deployment_configs))
-            for deployment_config in deployment_configs:
-                if namespaces and deployment_config.namespace not in namespaces:
-                    continue
-                channel = self._release_channel_factory(deployment_config.name, deployment_config.tag)
-                try:
-                    self._deploy(deployment_config, channel)
-                    if requires_bootstrap(deployment_config):
-                        self._bootstrap(deployment_config, channel, self._spec_config)
-                except Exception:
-                    LOG.exception("Failed to deploy %s in %s", deployment_config.name, deployment_config.namespace)
-        except Exception:
-            LOG.exception("Unexpected failure when deploying")
+        deploy_counter.inc()
+        last_deploy_gauge.set_to_current_time()
+        deployment_configs = self._cluster.find_deployment_configs(NAME)
+        fiaas_enabled_namespaces_gauge.set(len(deployment_configs))
+        for deployment_config in deployment_configs:
+            if namespaces and deployment_config.namespace not in namespaces:
+                continue
+            channel = self._release_channel_factory(deployment_config.name, deployment_config.tag)
+            try:
+                self._deploy(deployment_config, channel)
+                if requires_bootstrap(deployment_config):
+                    self._bootstrap(deployment_config, channel, self._spec_config)
+            except Exception:
+                LOG.exception("Failed to deploy %s in %s", deployment_config.name, deployment_config.namespace)
 
     def _deploy(self, deployment_config, channel):
         raise NotImplementedError("Subclass must override _deploy")
