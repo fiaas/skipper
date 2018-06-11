@@ -3,12 +3,15 @@
 from __future__ import absolute_import
 
 import json
+import logging
 import threading
 
 from flask import Blueprint, make_response, request
 
 from ..deploy import DeploymentConfigStatus
 from ..web import request_histogram
+
+LOG = logging.getLogger(__name__)
 
 api = Blueprint("api", __name__)
 
@@ -33,7 +36,14 @@ def _encode(obj):
 @deploy_histogram.time()
 def deploy():
     if request.get_json() and 'namespaces' in request.get_json():
-        threading.Thread(target=api.deployer.deploy, kwargs={'namespaces': request.get_json()['namespaces']}).start()
+        threading.Thread(target=_deploy, kwargs={'namespaces': request.get_json()['namespaces']}).start()
     else:
-        threading.Thread(target=api.deployer.deploy).start()
+        threading.Thread(target=_deploy).start()
     return make_response('', 200)
+
+
+def _deploy(namespaces=None):
+    try:
+        api.deployer.deploy(namespaces=namespaces)
+    except Exception:
+        logging.exception("Unexpected failure when deploying")
