@@ -43,13 +43,15 @@ class TestApi(object):
 
     def test_status(self, app, cluster):
         cluster.find_deployment_config_statuses.return_value = [DeploymentConfigStatus(name='fiaas-deploy-daemon',
-                                                    namespace='default',
-                                                    status='OK',
-                                                    description='All good')]
+                                                                                       namespace='default',
+                                                                                       status='OK',
+                                                                                       description='All good')]
         response = app.get('/api/status')
         cluster.find_deployment_config_statuses.assert_called_once_with('fiaas-deploy-daemon')
         assert response.status_code == 200
-        assert json.loads(response.data) == [{"status": "OK", "namespace": "default", "name": "fiaas-deploy-daemon", "description": "All good"}]
+        assert json.loads(response.data) == [
+            {"status": "OK", "namespace": "default", "name": "fiaas-deploy-daemon", "description": "All good"}
+        ]
 
     def test_deploy(self, app):
         with patch('fiaas_skipper.deploy.deploy.Deployer.deploy') as mock:
