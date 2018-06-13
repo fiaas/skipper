@@ -3,7 +3,6 @@
 
 import logging
 
-from k8s.client import NotFound
 from k8s.models.configmap import ConfigMap
 from k8s.models.deployment import Deployment
 
@@ -37,27 +36,28 @@ class Cluster(object):
 
     @staticmethod
     def find_deployment_config_statuses(name):
+        try:
+            configmaps = ConfigMap.find(name, namespace=None)
+            deployments = {d.metadata.namespace: d for d in Deployment.find(name, namespace=None)}
+        except Exception:
+            LOG.exception("Unable to get configmaps or deployments from k8s")
+            return []
         res = []
-        configmaps = ConfigMap.find(name, namespace=None)
         for c in configmaps:
             description = None
             try:
-                dep = Deployment.get(name=name, namespace=c.metadata.namespace)
-                if dep.status.availableReplicas >= dep.spec.replicas:
+                dep = deployments.get(c.metadata.namespace)
+                if dep is None:
+                    status = 'NOT FOUND'
+                    description = 'No deployment found for given namespace - needs bootstrapping'
+                elif dep.status.availableReplicas >= dep.spec.replicas:
                     status = 'SUCCESS'
                 else:
                     status = 'FAILED'
                     description = 'Available replicas does not match the number of replicas in spec'
-            except NotFound:
-                status = 'NOT FOUND'
-                description = 'No deployment found for given namespace - needs bootstrapping'
             except TypeError:
                 status = 'UNAVAILABLE'
-                pass
-            except Exception as e:
-                LOG.warn(e, exc_info=True)
-                status = 'ERROR'
-                description = str(e)
+                description = 'Unable to read number of available replicas from k8s server'
             res.append(DeploymentConfigStatus(name=name,
                                               namespace=c.metadata.namespace,
                                               status=status,
