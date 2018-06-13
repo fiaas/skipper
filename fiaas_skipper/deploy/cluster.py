@@ -57,7 +57,7 @@ class Cluster(object):
             except Exception as e:
                 LOG.warn(e, exc_info=True)
                 status = 'ERROR'
-                description = e.message
+                description = str(e)
             res.append(DeploymentConfigStatus(name=name,
                                               namespace=c.metadata.namespace,
                                               status=status,
