@@ -8,8 +8,8 @@ import pytest
 from flask import Flask
 from mock import patch, Mock
 
-from fiaas_skipper.deploy import Cluster
-from fiaas_skipper.deploy.deploy import DeploymentConfigStatus, Deployer
+from fiaas_skipper.deploy.cluster import DeploymentConfigStatus, Cluster
+from fiaas_skipper.deploy.deploy import Deployer
 from fiaas_skipper.web.api import api
 
 

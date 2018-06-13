@@ -3,7 +3,8 @@
 import mock
 import pytest
 
-from fiaas_skipper.deploy.deploy import Deployer, DeploymentConfig
+from fiaas_skipper.deploy.cluster import DeploymentConfig
+from fiaas_skipper.deploy.deploy import Deployer
 
 
 class TestDeployer(object):

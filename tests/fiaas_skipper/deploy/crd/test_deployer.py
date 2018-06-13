@@ -5,8 +5,8 @@ import pytest
 
 from fiaas_skipper import CrdDeployer
 from fiaas_skipper.deploy.channel import ReleaseChannel
+from fiaas_skipper.deploy.cluster import DeploymentConfig
 from fiaas_skipper.deploy.crd.types import FiaasApplicationSpec
-from fiaas_skipper.deploy.deploy import DeploymentConfig
 
 
 class TestCrdDeployer(object):
