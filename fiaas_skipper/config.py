@@ -41,7 +41,8 @@ class Configuration(Namespace):
                             action="store_true")
         parser.add_argument("--enable-crd-support", help="Enable Custom Resource Definition support.",
                             action="store_true")
-        parser.add_argument("--baseurl", help="Url to server hosting release channel meta data.")
+        parser.add_argument("--baseurl", help="Url to server hosting release channel meta data.",
+                            default="http://fiaas-release.delivery-pro.schibsted.io")
         parser.add_argument("--release-channel-metadata",
                             help="Provide hardcoded release channel metadata (Used for debugging purposes).")
         parser.add_argument("--spec-file", help="Spec file describing how applications should be deployed.",
