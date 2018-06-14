@@ -2,16 +2,17 @@
 # -*- coding: utf-8
 from __future__ import absolute_import
 
-import logging
 import json
-
+import logging
 import os
+
 import yaml
 from k8s import config as k8s_config
 
 from .config import Configuration
-from .deploy import Cluster, CrdDeployer, TprDeployer, ReleaseChannelFactory, CrdBootstrapper, TprBootstrapper
+from .deploy import CrdDeployer, TprDeployer, ReleaseChannelFactory, CrdBootstrapper, TprBootstrapper
 from .deploy.channel import FakeReleaseChannelFactory
+from .deploy.cluster import Cluster
 from .logsetup import init_logging
 from .web import create_webapp
 

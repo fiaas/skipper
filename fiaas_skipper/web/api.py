@@ -8,7 +8,7 @@ import threading
 
 from flask import Blueprint, make_response, request
 
-from ..deploy import DeploymentConfigStatus
+from ..deploy.cluster import DeploymentConfigStatus
 from ..web import request_histogram
 
 LOG = logging.getLogger(__name__)

@@ -5,8 +5,8 @@ import pytest
 
 from fiaas_skipper import TprDeployer
 from fiaas_skipper.deploy.channel import ReleaseChannel
+from fiaas_skipper.deploy.cluster import DeploymentConfig
 from fiaas_skipper.deploy.tpr.types import PaasbetaApplicationSpec
-from fiaas_skipper.deploy.deploy import DeploymentConfig
 
 
 class TestTprDeployer(object):
