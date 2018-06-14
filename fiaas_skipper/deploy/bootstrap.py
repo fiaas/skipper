@@ -65,13 +65,13 @@ def _get_pod_annotations(spec_config):
 
 
 def _create_resource_requirements(namespace, spec_config):
-    if spec_config and _besteffort_qos_is_allowed(namespace):
+    if not spec_config or _only_besteffort_qos_is_allowed(namespace):
+        return ResourceRequirements()
+    else:
         return ResourceRequirements(limits=spec_config.get('resources', {}).get('limits', None),
                                     requests=spec_config.get('resources', {}).get('requests', None))
-    else:
-        return ResourceRequirements()
 
 
-def _besteffort_qos_is_allowed(namespace):
+def _only_besteffort_qos_is_allowed(namespace):
     resourcequotas = ResourceQuota.list(namespace=namespace)
-    return not any(rq.spec.hard.get("pods") == "0" and NotBestEffort in rq.spec.scopes for rq in resourcequotas)
+    return any(rq.spec.hard.get("pods") == "0" and NotBestEffort in rq.spec.scopes for rq in resourcequotas)
