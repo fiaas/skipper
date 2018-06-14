@@ -26,6 +26,18 @@ BEST_EFFORT_NOT_ALLOWED = {
     "scopes": [BestEffort],
 }
 
+OVERRIDE_ALL_RESOURCES = {
+    'requests': {
+        'memory': '128Mi',
+        'cpu': '500m',
+    },
+    'limits': {
+        'memory': '512Mi',
+        'cpu': '1',
+    },
+}
+
+
 def spec_config(resources=None):
     config = copy.deepcopy(default_spec_config)
     if resources:
@@ -51,11 +63,17 @@ class TestBarePodBootstrapper():
     @pytest.mark.parametrize("namespace,resourcequota_spec,resources,spec_config", [
         ("default", None, spec_config()['resources'], spec_config()),
         ("other-namespace", None, spec_config()['resources'], spec_config()),
+        ("default", None, OVERRIDE_ALL_RESOURCES, spec_config(resources=OVERRIDE_ALL_RESOURCES)),
+        ("other-namespace", None, OVERRIDE_ALL_RESOURCES, spec_config(resources=OVERRIDE_ALL_RESOURCES)),
         ("other-namespace", None, spec_config()['resources'], spec_config()),
         ("default", ONLY_BEST_EFFORT_ALLOWED, None, spec_config()),
         ("other-namespace", ONLY_BEST_EFFORT_ALLOWED, None, spec_config()),
         ("default", BEST_EFFORT_NOT_ALLOWED, spec_config()['resources'], spec_config()),
         ("other-namespace", BEST_EFFORT_NOT_ALLOWED, spec_config()['resources'], spec_config()),
+        ("default", ONLY_BEST_EFFORT_ALLOWED, None, spec_config(resources=OVERRIDE_ALL_RESOURCES)),
+        ("other-namespace", ONLY_BEST_EFFORT_ALLOWED, None, spec_config(resources=OVERRIDE_ALL_RESOURCES)),
+        ("default", BEST_EFFORT_NOT_ALLOWED, OVERRIDE_ALL_RESOURCES, spec_config(OVERRIDE_ALL_RESOURCES)),
+        ("other-namespace", BEST_EFFORT_NOT_ALLOWED, OVERRIDE_ALL_RESOURCES, spec_config(OVERRIDE_ALL_RESOURCES)),
     ])
     def test_bootstrap(self, post, delete, resourcequota_list, namespace, resourcequota_spec, resources, spec_config):
         resourcequota_list.return_value = \
