@@ -12,5 +12,5 @@ deployment:
   includeResourceUsage: true
 TPR: false
 CRD: true
-baseurl: 'http://localhost/release/channel/url'
+baseurl: 'http://fiaas-release.delivery-pro.schibsted.io'
 annotations: {}
