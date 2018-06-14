@@ -7,7 +7,8 @@ from k8s.models.resourcequota import ResourceQuota, ResourceQuotaSpec,  NotBestE
 from k8s.models.common import ObjectMeta
 import pytest
 
-from fiaas_skipper.deploy.deploy import DeploymentConfig, default_spec_config
+from fiaas_skipper.deploy.deploy import default_spec_config
+from fiaas_skipper.deploy.cluster import DeploymentConfig
 from fiaas_skipper.deploy.channel import ReleaseChannel
 from fiaas_skipper.deploy.bootstrap import BarePodBootstrapper
 
