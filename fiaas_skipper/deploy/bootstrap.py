@@ -18,7 +18,7 @@ bootstrap_counter = Counter("bootstraps_triggered", "A deployment caused a boots
 
 
 class BarePodBootstrapper(object):
-    def __init__(self, cmd_args=()):
+    def __init__(self, cmd_args=[]):
         self._cmd_args = cmd_args
 
     def __call__(self, deployment_config, channel, spec_config=None):
