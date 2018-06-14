@@ -26,15 +26,17 @@ BEST_EFFORT_NOT_ALLOWED = {
     "scopes": [BestEffort],
 }
 
+def spec_config(resources=None):
+    config = copy.deepcopy(default_spec_config)
+    if resources:
+        config['resources'] = resources
+    return config
+
 
 class TestBarePodBootstrapper():
 
     def pod_uri(self, namespace="default", name=""):
         return f'/api/v1/namespaces/{namespace}/pods/{name}'
-
-    @pytest.fixture
-    def spec_config(self):
-        return copy.deepcopy(default_spec_config)
 
     @pytest.fixture
     def resourcequota_list(self):
@@ -46,31 +48,14 @@ class TestBarePodBootstrapper():
         spec = ResourceQuotaSpec.from_dict(resourcequota_spec)
         return ResourceQuota(metadata=metadata, spec=spec)
 
-
-
-    @pytest.mark.parametrize("namespace,resourcequota_spec,resources", [
-        ("default", None, {
-            'requests': {
-                'memory': '256Mi',
-            },
-        }),
-        ("other-namespace", None, {
-            'requests': {
-                'memory': '256Mi',
-            },
-        }),
-        ("default", ONLY_BEST_EFFORT_ALLOWED, {}),
-        ("other-namespace", ONLY_BEST_EFFORT_ALLOWED, None),
-        ("default", BEST_EFFORT_NOT_ALLOWED, {
-            'requests': {
-                'memory': '256Mi',
-            },
-        }),
-        ("other-namespace", BEST_EFFORT_NOT_ALLOWED, {
-            'requests': {
-                'memory': '256Mi',
-            },
-        }),
+    @pytest.mark.parametrize("namespace,resourcequota_spec,resources,spec_config", [
+        ("default", None, spec_config()['resources'], spec_config()),
+        ("other-namespace", None, spec_config()['resources'], spec_config()),
+        ("other-namespace", None, spec_config()['resources'], spec_config()),
+        ("default", ONLY_BEST_EFFORT_ALLOWED, None, spec_config()),
+        ("other-namespace", ONLY_BEST_EFFORT_ALLOWED, None, spec_config()),
+        ("default", BEST_EFFORT_NOT_ALLOWED, spec_config()['resources'], spec_config()),
+        ("other-namespace", BEST_EFFORT_NOT_ALLOWED, spec_config()['resources'], spec_config()),
     ])
     def test_bootstrap(self, post, delete, resourcequota_list, namespace, resourcequota_spec, resources, spec_config):
         resourcequota_list.return_value = \
