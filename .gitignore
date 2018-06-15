@@ -106,3 +106,5 @@ ENV/
 ### JetBrains template
 .idea
 
+# Emacs directory specific variables
+.dir-locals.el
