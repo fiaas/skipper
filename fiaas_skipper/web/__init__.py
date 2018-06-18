@@ -23,12 +23,15 @@ def _connect_signals():
 
 def create_webapp(deployer, cluster):
     from flask_bootstrap import Bootstrap
+    from flask_talisman import Talisman, DENY
     from ..web.api import api
     from ..web.frontend import frontend
     from ..web.healthcheck import healthcheck
     from ..web.metrics import metrics
     from .nav import nav
     app = Flask(__name__)
+    # TODO: These options are like this because we haven't set up TLS
+    Talisman(app, frame_options=DENY, force_https=False, strict_transport_security=False)
     Bootstrap(app)
     app.config['BOOTSTRAP_SERVE_LOCAL'] = True
     api.cluster = cluster
