@@ -27,6 +27,7 @@ GENERIC_REQ = [
 
 WEB_REQ = [
     "Flask == 0.12",
+    "flask-talisman==0.5.1",
     "blinker == 1.4",
     "flask-bootstrap",
     "flask-nav",
