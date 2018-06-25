@@ -33,7 +33,8 @@ def create_webapp(deployer, cluster):
     app = Flask(__name__)
     # TODO: These options are like this because we haven't set up TLS
     csp = {'default-src': SELF, 'script-src': [SELF], 'style-src': [SELF]}
-    Talisman(app, frame_options=DENY, force_https=False, strict_transport_security=False, content_security_policy=csp, content_security_policy_nonce_in=['script-src'])
+    Talisman(app, frame_options=DENY, force_https=False, strict_transport_security=False,
+             content_security_policy=csp, content_security_policy_nonce_in=['script-src'])
     Bootstrap(app)
     app.config['BOOTSTRAP_SERVE_LOCAL'] = True
     api.cluster = cluster
