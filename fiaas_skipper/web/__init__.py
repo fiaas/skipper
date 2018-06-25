@@ -13,6 +13,7 @@ request_histogram = Histogram("web_request_latency", "Request latency in seconds
 
 SELF = "'self'"
 
+
 def _connect_signals():
     rs_counter = Counter("web_request_started", "HTTP requests received")
     request_started.connect(lambda s, *a, **e: rs_counter.inc(), weak=False)
