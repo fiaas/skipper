@@ -1,13 +1,11 @@
 from __future__ import absolute_import
 
-import copy
 import mock
 
 from k8s.models.resourcequota import ResourceQuota, ResourceQuotaSpec,  NotBestEffort, BestEffort
 from k8s.models.common import ObjectMeta
 import pytest
 
-from fiaas_skipper.deploy.deploy import default_spec_config
 from fiaas_skipper.deploy.cluster import DeploymentConfig
 from fiaas_skipper.deploy.channel import ReleaseChannel
 from fiaas_skipper.deploy.bootstrap import BarePodBootstrapper
@@ -40,7 +38,7 @@ OVERRIDE_ALL_RESOURCES = {
 
 
 def spec_config(resources=None):
-    config = copy.deepcopy(default_spec_config)
+    config = {"version": 3, "resources": {"requests": {"memory": "128m"}}}
     if resources:
         config['resources'] = resources
     return config

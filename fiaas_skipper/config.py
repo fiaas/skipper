@@ -9,7 +9,7 @@ import configargparse
 import os
 
 DEFAULT_CONFIG_FILE = "/var/run/config/fiaas/cluster_config.yaml"
-DEFAULT_SPEC_FILE = "/var/run/config/fiaas/fiaas.yaml"
+DEFAULT_EXT_SPEC_FILE = "/var/run/config/fiaas/fiaas_ext.yaml"
 
 
 class Configuration(Namespace):
@@ -45,8 +45,9 @@ class Configuration(Namespace):
                             default="http://fiaas-release.delivery-pro.schibsted.io")
         parser.add_argument("--release-channel-metadata",
                             help="Provide hardcoded release channel metadata (Used for debugging purposes).")
-        parser.add_argument("--spec-file", help="Spec file describing how applications should be deployed.",
-                            default=DEFAULT_SPEC_FILE)
+        parser.add_argument("--spec-file-extension",
+                            help="Spec file extension allows overwriting values in release channel spec file.",
+                            default=DEFAULT_EXT_SPEC_FILE)
         api_parser = parser.add_argument_group("API server")
         api_parser.add_argument("--api-server", help="Address of the api-server to use (IP or name)",
                                 default="https://kubernetes.default.svc.cluster.local")
