@@ -29,7 +29,7 @@ function getStatus() {
                    url: "/api/deploy",
                    data: "{\"namespaces\": [\"" + $(this).data('namespace') + "\"]}",
                    success: function(data) {
-                       alert("Deployment to " + $this.data('namespace') + " scheduled successfully");
+                       alert("Deployment to " + $this.data("namespace") + " scheduled successfully");
                    }
                });
            });
@@ -56,9 +56,9 @@ function onDeployPageLoad() {
 }
 
 $().ready(function() {
-  if ($('body').attr('class') == "deploy") {
+  if ($("body").attr("class") === "deploy") {
     onDeployPageLoad();
-  } else if ($('body').attr('class') == "status") {
+  } else if ($("body").attr("class") === "status") {
     onStatusPageLoad();
   }
 });
