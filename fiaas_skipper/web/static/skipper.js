@@ -54,3 +54,11 @@ function onDeployPageLoad() {
     });
   });
 }
+
+$().ready(function() {
+  if ($('body').attr('class') == "deploy") {
+    onDeployPageLoad();
+  } else if ($('body').attr('class') == "status") {
+    onStatusPageLoad();
+  }
+});
