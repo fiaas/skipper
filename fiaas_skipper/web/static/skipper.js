@@ -4,7 +4,6 @@ function getStatus() {
     url: "/api/status",
     success: function(data) {
       var json = $.parseJSON(data);
-      console.log(json);
       var statusmap = {
        "SUCCESS": "success",
        "UNKNOWN": "warning",
@@ -41,7 +40,6 @@ function getStatus() {
 }
 
 function onStatusPageLoad() {
-  console.log( "starting periodically fetching status of namespaces" );
   getStatus();
 }
 
