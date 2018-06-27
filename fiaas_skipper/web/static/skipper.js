@@ -29,7 +29,7 @@ function getStatus() {
                    url: "/api/deploy",
                    data: "{\"namespaces\": [\"" + $(this).data('namespace') + "\"]}",
                    success: function(data) {
-                       alert("Deployment to " + $this.data('namespace') + " performed successfully");
+                       alert("Deployment to " + $this.data('namespace') + " scheduled successfully");
                    }
                });
            });
@@ -49,7 +49,7 @@ function onDeployPageLoad() {
       type: "POST",
       url: "/api/deploy",
       success: function(data) {
-        alert("Deployment performed successfully");
+        alert("Deployment scheduled successfully");
       }
     });
   });
