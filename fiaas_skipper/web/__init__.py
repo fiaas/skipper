@@ -12,7 +12,7 @@ PLATFORM_COLLECTOR.collect()
 request_histogram = Histogram("web_request_latency", "Request latency in seconds", ["page"])
 
 SELF = "'self'"
-UNSAFE_INLINE = "'unsafe-inline'"
+NONE = "'none'"
 
 
 def _connect_signals():
@@ -34,7 +34,7 @@ def create_webapp(deployer, cluster):
     from .nav import nav
     app = Flask(__name__)
     # TODO: These options are like this because we haven't set up TLS
-    csp = {'default-src': SELF, 'script-src': [SELF, UNSAFE_INLINE], 'style-src': [SELF, UNSAFE_INLINE]}
+    csp = {'default-src': SELF, 'script-src': [SELF], 'style-src': [SELF], 'object-src': [NONE]}
     Talisman(app, frame_options=DENY, force_https=False, strict_transport_security=False,
              content_security_policy=csp)
     Bootstrap(app)
