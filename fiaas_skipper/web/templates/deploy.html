@@ -1,5 +1,5 @@
 {%- extends "base.html" %}
-
+{% block body_attribs %} class="deploy"{% endblock %}
 
 {% block content %}
   <div class="container">
@@ -7,7 +7,7 @@
     <div class="jumbotron">
       <p>Note: This will deploy FIAAS deploy daemon to all FIAAS-enabled namespaces in the cluster.</p>
     </div>
-    <div class="center-block" style="max-width: 400px">
+    <div class="center-block">
       <button id="btnSubmit" class="btn btn-lg btn-primary btn-block" type="submit">Deploy</button>
     </div>
   </div>
@@ -15,17 +15,5 @@
 
 {% block scripts %}
   {{super()}}
-  <script type="text/javascript">
-    $().ready(function() {
-      $("#btnSubmit").click(function(){
-        $.ajax({
-          type: "POST",
-          url: "/api/deploy",
-          success: function(data) {
-            alert("Deployment performed successfully");
-          }
-        });
-      });
-    });
-  </script>
+  <script src="{{url_for('static', filename='skipper.js')}}"></script>
 {% endblock %}
