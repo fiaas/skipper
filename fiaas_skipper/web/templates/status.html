@@ -1,5 +1,6 @@
 {%- extends "base.html" %}
 {% import "bootstrap/utils.html" as utils %}
+{% block body_attribs %} class="status" onLoad="onStatusPageLoad()"{% endblock %}
 
 {% block content %}
   <div class="container">
@@ -32,5 +33,5 @@
 
 {% block scripts %}
   {{super()}}
-  <script type="text/javascript" src="{{url_for('static', filename='skipper.js')}}" nonce="{{ csp_nonce() }}"/>
+  <script src="{{url_for('static', filename='skipper.js')}}"></script>
 {% endblock %}

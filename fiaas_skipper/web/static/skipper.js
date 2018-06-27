@@ -40,6 +40,19 @@
     window.setTimeout(function() { getStatus() }, 180000);
   }
 
-  $().ready(function() {
+  function onStatusPageLoad() {
+    console.log( "starting periodically fetching status of namespaces" );
     getStatus();
-  });
+  }
+
+    function onDeployPageLoad() {
+      $("#btnSubmit").click(function(){
+        $.ajax({
+          type: "POST",
+          url: "/api/deploy",
+          success: function(data) {
+            alert("Deployment performed successfully");
+          }
+        });
+      });
+    }
