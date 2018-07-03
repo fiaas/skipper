@@ -1,15 +1,13 @@
 from __future__ import absolute_import
 
 import mock
-
-from k8s.models.resourcequota import ResourceQuota, ResourceQuotaSpec,  NotBestEffort, BestEffort
-from k8s.models.common import ObjectMeta
 import pytest
+from k8s.models.common import ObjectMeta
+from k8s.models.resourcequota import ResourceQuota, ResourceQuotaSpec, NotBestEffort, BestEffort
 
-from fiaas_skipper.deploy.cluster import DeploymentConfig
-from fiaas_skipper.deploy.channel import ReleaseChannel
 from fiaas_skipper.deploy.bootstrap import BarePodBootstrapper
-
+from fiaas_skipper.deploy.channel import ReleaseChannel
+from fiaas_skipper.deploy.cluster import DeploymentConfig
 
 ONLY_BEST_EFFORT_ALLOWED = {
     "hard": {
@@ -78,7 +76,7 @@ class TestBarePodBootstrapper():
         resourcequota_list.return_value = \
             [self.create_resourcequota(namespace, resourcequota_spec)] if resourcequota_spec else []
         bootstrapper = BarePodBootstrapper()
-        channel = ReleaseChannel(None, None, {'image': 'example.com/image:tag'})
+        channel = ReleaseChannel(None, None, {'image': 'example.com/image:tag'}, None)
         deployment_config = DeploymentConfig('foo', namespace, 'latest')
         expected_pod = {
             'metadata': {

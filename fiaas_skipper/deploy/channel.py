@@ -3,18 +3,14 @@
 from __future__ import absolute_import
 
 import logging
+from collections import namedtuple
 
 import requests
 
 LOG = logging.getLogger(__name__)
 
 
-class ReleaseChannel(object):
-    def __init__(self, name, tag, metadata, spec=None):
-        self.name = name
-        self.tag = tag
-        self.metadata = metadata
-        self.spec = spec
+ReleaseChannel = namedtuple("ReleaseChannel", ["name", "tag", "metadata", "spec"])
 
 
 class ReleaseChannelFactory(object):
@@ -32,8 +28,8 @@ class ReleaseChannelFactory(object):
     def _get_spec(url):
         """Load spec file yaml from url"""
         if not url:
-            LOG.debug("No spec url specified")
-            return None
+            LOG.error("No spec url specified")
+            raise ValueError("Channel metadata contained no config URL")
         LOG.debug("Loading spec from channel metadata: " + url)
         return requests.get(url).text
 

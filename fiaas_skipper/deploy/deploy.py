@@ -52,10 +52,7 @@ class Deployer(object):
         raise NotImplementedError("Subclass must override _deploy")
 
     def _load_spec(self, channel):
-        if channel.spec:
-            spec_config = yaml.safe_load(channel.spec)
-        else:
-            spec_config = {}
+        spec_config = yaml.safe_load(channel.spec)
         return self._merge_extensions(spec_config)
 
     def _merge_extensions(self, spec_config):

@@ -1,8 +1,8 @@
 from datetime import datetime
 from subprocess import check_output, CalledProcessError
+from warnings import warn
 
 from setuptools import setup, find_packages
-from warnings import warn
 
 
 def version():
@@ -45,6 +45,7 @@ TESTS_REQ = [
     'pytest-cov',
     'pytest-helpers-namespace',
     'pytest >= 3.0',
+    'requests-mock'
 ]
 
 CI_REQ = [

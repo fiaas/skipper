@@ -3,9 +3,9 @@
 import mock
 import pytest
 
+from fiaas_skipper.deploy.channel import ReleaseChannel
 from fiaas_skipper.deploy.cluster import DeploymentConfig
 from fiaas_skipper.deploy.deploy import Deployer
-from fiaas_skipper.deploy.channel import ReleaseChannel
 
 
 class TestDeployer(object):
@@ -25,7 +25,9 @@ class TestDeployer(object):
             name="xx",
             tag="stable",
             metadata={"image": "image1",
-                      "spec": "http://example.com/fiaas.yml"})
+                      "spec": "http://example.com/fiaas.yml"},
+            spec="version: 3",
+        )
         return channel_factory
 
     def test_deploys_only_to_configured_namespaces(self, cluster, release_channel_factory):
