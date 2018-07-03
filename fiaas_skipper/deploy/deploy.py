@@ -56,22 +56,28 @@ class Deployer(object):
             spec_config = yaml.safe_load(channel.spec)
         else:
             spec_config = {}
-        # Merge spec file and extension file
+        return self._merge_extensions(spec_config)
+
+    def _merge_extensions(self, spec_config):
+        """This naively overwrites the value of the given key if present
+        We may choose to do some smart merging supporting nested dictionaries at a later
+        point but for now this simple behavior is sufficient
+        """
         if not self._spec_extension:
             return spec_config
+        self._log_changes(spec_config)
+        spec_config.update(self._spec_extension)
+        return spec_config
+
+    def _log_changes(self, spec_config):
         for key in self._spec_extension:
-            # This naively overwrites the value of the given key if present
-            # We may choose to do some smart merging supporting nested dictionaries at a later
-            # point but for now this simple behavior is sufficient
-            if (key in spec_config):
+            if key in spec_config:
                 LOG.debug("Overwriting spec: " + key +
                           "=" + str(self._spec_extension[key]) +
                           " originally: " + key + "=" + str(spec_config[key]))
             else:
                 LOG.debug("Extending spec with key: " + key +
                           "=" + str(self._spec_extension[key]))
-            spec_config[key] = self._spec_extension[key]
-        return spec_config
 
     @staticmethod
     def _create_metadata(deployment_config):
