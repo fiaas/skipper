@@ -14,5 +14,5 @@ data:
     {{with .Values.CRD}}enable-crd-support: {{.}}{{end}}
     {{with .Values.baseurl}}baseurl: {{.}}{{end}}
     {{with .Values.debug}}debug: true{{end}}
-  fiaas_ext.yaml: |
-{{ .Files.Get "fiaas_ext.yaml" | indent 4 }}
+  fiaas_override.yaml: |
+{{ .Files.Get "fiaas_override.yaml" | indent 4 }}

@@ -59,13 +59,13 @@ def main():
         else:
             release_channel_factory = ReleaseChannelFactory(cfg.baseurl)
         spec_config_extension = None
-        if os.path.isfile(cfg.spec_file_extension):
+        if os.path.isfile(cfg.spec_file_override):
             try:
-                spec_config_extension = _load_spec_config(cfg.spec_file_extension)
-                log.debug("Loaded spec config extension from file {!r}".format(cfg.spec_file_extension))
+                spec_config_extension = _load_spec_config(cfg.spec_file_override)
+                log.debug("Loaded spec config extension from file {!r}".format(cfg.spec_file_override))
             except yaml.YAMLError:
                 log.exception("Unable to load spec config extension file {!r} using defaults"
-                              .format(cfg.spec_file_extension))
+                              .format(cfg.spec_file_override))
         if cfg.enable_crd_support:
             deployer = CrdDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
                                    bootstrap=CrdBootstrapper(), spec_config_extension=spec_config_extension)
