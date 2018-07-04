@@ -31,7 +31,9 @@ class ReleaseChannelFactory(object):
             LOG.error("No spec url specified")
             raise ValueError("Channel metadata contained no config URL")
         LOG.debug("Loading spec from channel metadata: " + url)
-        return requests.get(url).text
+        resp = requests.get(url)
+        resp.raise_for_status()
+        return resp.text
 
 
 class FakeReleaseChannelFactory(object):
