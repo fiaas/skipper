@@ -16,6 +16,7 @@ function getStatus() {
                        + "<th scope=\"row\">" + item.namespace + "</td>"
                        + "<td>" + item.status + "</td>"
                        + "<td>" + [item.description].join('') + "</td>"
+                       + "<td>" + item.version + "</td>"
                        + "<td><button class=\"btn btn-primary btn-block btnDeploy\" type=\"submit\" data-namespace=\"" + item.namespace + "\">Deploy</button></td>"
                        + "</tr>";
            $('#tbody').append(eachrow);
@@ -36,7 +37,7 @@ function getStatus() {
        });
     }
   });
-  window.setTimeout(function() { getStatus() }, 180000);
+  window.setTimeout(function() { getStatus(); }, 60000);
 }
 
 function onStatusPageLoad() {

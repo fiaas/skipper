@@ -24,7 +24,7 @@ def _connect_signals():
     got_request_exception.connect(lambda s, *a, **e: re_counter.inc(), weak=False)
 
 
-def create_webapp(deployer, cluster):
+def create_webapp(deployer, cluster, release_channel_factory):
     from flask_bootstrap import Bootstrap
     from flask_talisman import Talisman, DENY
     from ..web.api import api
@@ -41,6 +41,7 @@ def create_webapp(deployer, cluster):
     app.config['BOOTSTRAP_SERVE_LOCAL'] = True
     api.cluster = cluster
     api.deployer = deployer
+    frontend.release_channel_factory = release_channel_factory
     app.register_blueprint(api)
     app.register_blueprint(frontend)
     app.register_blueprint(metrics)

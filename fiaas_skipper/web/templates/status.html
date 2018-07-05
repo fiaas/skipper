@@ -19,10 +19,24 @@
     </div>
     <table class="table">
       <thead>
+          <tr>
+              <th scope="col">Tag</th>
+              <th scope="col">Version</th>
+          </tr>
+      </thead>
+        <tbody>
+        {%- for tag, version in versions.items() %}
+            <tr><td>{{tag}}</td><td>{{version}}</td></tr>
+        {%- endfor %}
+        </tbody>
+    </table>
+    <table class="table">
+      <thead>
         <tr>
           <th scope="col">Namespace</th>
           <th scope="col">Status</th>
           <th scope="col">Description</th>
+          <th scope="col">Version</th>
         </tr>
       </thead>
       <tbody id="tbody" />

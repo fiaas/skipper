@@ -17,11 +17,12 @@ class DeploymentConfig(object):
 
 
 class DeploymentConfigStatus(object):
-    def __init__(self, name, namespace, status, description):
+    def __init__(self, name, namespace, status, description, version):
         self.name = name
         self.namespace = namespace
         self.status = status
         self.description = description
+        self.version = version
 
 
 class Cluster(object):
@@ -45,21 +46,29 @@ class Cluster(object):
         res = []
         for c in configmaps:
             description = None
+            version = None
             try:
                 dep = deployments.get(c.metadata.namespace)
                 if dep is None:
                     status = 'NOT FOUND'
                     description = 'No deployment found for given namespace - needs bootstrapping'
-                elif dep.status.availableReplicas >= dep.spec.replicas:
-                    status = 'SUCCESS'
                 else:
-                    status = 'FAILED'
-                    description = 'Available replicas does not match the number of replicas in spec'
+                    version = _get_version(dep)
+                    if dep.status.availableReplicas >= dep.spec.replicas:
+                        status = 'SUCCESS'
+                    else:
+                        status = 'FAILED'
+                        description = 'Available replicas does not match the number of replicas in spec'
             except TypeError:
                 status = 'UNAVAILABLE'
                 description = 'Unable to read number of available replicas from k8s server'
             res.append(DeploymentConfigStatus(name=name,
                                               namespace=c.metadata.namespace,
                                               status=status,
-                                              description=description))
+                                              description=description,
+                                              version=version))
         return res
+
+
+def _get_version(dep):
+    return dep.spec.template.spec.containers[0].image.split(":")[-1]
