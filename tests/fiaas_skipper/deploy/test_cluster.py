@@ -5,6 +5,7 @@ import pytest
 from k8s.models.common import ObjectMeta
 from k8s.models.configmap import ConfigMap
 from k8s.models.deployment import Deployment, DeploymentStatus, DeploymentSpec
+from k8s.models.pod import PodTemplateSpec, PodSpec, Container
 from mock import mock
 
 from fiaas_skipper.deploy.cluster import Cluster
@@ -20,8 +21,11 @@ def _create_configmap(namespace, tag=None):
     return ConfigMap(metadata=metadata, data=data)
 
 
-def _create_deployment(available_replicas, namespace):
-    spec = DeploymentSpec(replicas=1)
+def _create_deployment(available_replicas, namespace, image):
+    container = Container(image=image)
+    pod_spec = PodSpec(containers=[container])
+    pod_template_spec = PodTemplateSpec(spec=pod_spec)
+    spec = DeploymentSpec(replicas=1, template=pod_template_spec)
     status = DeploymentStatus(availableReplicas=available_replicas)
     metadata = ObjectMeta(name=NAME, namespace=namespace)
     return Deployment(metadata=metadata, spec=spec, status=status)
@@ -68,9 +72,9 @@ class TestCluster(object):
     @pytest.mark.usefixtures("config_map_find")
     def test_finds_deployment_config_status(self, deployment_find):
         deployment_find.return_value = (
-            _create_deployment(1, "ns1"),
-            _create_deployment(0, "ns2"),
-            _create_deployment(None, "ns4"),
+            _create_deployment(1, "ns1", "image:stable"),
+            _create_deployment(0, "ns2", "image:latest"),
+            _create_deployment(None, "ns4", "image:stable"),
         )
 
         cluster = Cluster()

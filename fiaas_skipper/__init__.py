@@ -71,7 +71,7 @@ def main():
         elif cfg.enable_tpr_support:
             deployer = TprDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
                                    bootstrap=TprBootstrapper(), spec_config=spec_config)
-        webapp = create_webapp(deployer, cluster)
+        webapp = create_webapp(deployer, cluster, release_channel_factory)
         Main(webapp=webapp, config=cfg).run()
     except BaseException:
         log.exception("General failure! Inspect traceback and make the code better!")
