@@ -32,7 +32,7 @@ class TestCrdDeployer(object):
         get_or_create.return_value = app
         bootstrap = mock.MagicMock()
         spec_config = {"x": "x"}
-        deployer = CrdDeployer(cluster, release_channel_factory, bootstrap, spec_config=spec_config)
+        deployer = CrdDeployer(cluster, release_channel_factory, bootstrap, spec_config=spec_config, deploy_interval=0)
         deployer.deploy()
         spec.assert_called_once_with(FiaasApplicationSpec(application="testapp", image="image1", config=spec_config))
         app.save.assert_called_once()

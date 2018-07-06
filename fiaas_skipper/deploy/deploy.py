@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 
 import logging
+import time
 import uuid
 
 import pkg_resources
@@ -14,6 +15,7 @@ from prometheus_client import Counter, Gauge
 
 LOG = logging.getLogger(__name__)
 NAME = 'fiaas-deploy-daemon'
+DEPLOY_INTERVAL = 30
 
 last_deploy_gauge = Gauge("last_triggered_deployment", "Timestamp for when last deployment was performed")
 deploy_counter = Counter("deployments_triggered", "Number of deployments triggered and performed")
@@ -21,7 +23,7 @@ fiaas_enabled_namespaces_gauge = Gauge("fiaas_enabled_namespaces", "Number of na
 
 
 class Deployer(object):
-    def __init__(self, cluster, release_channel_factory, bootstrap, spec_config=None):
+    def __init__(self, cluster, release_channel_factory, bootstrap, spec_config=None, deploy_interval=DEPLOY_INTERVAL):
         self._cluster = cluster
         self._release_channel_factory = release_channel_factory
         self._bootstrap = bootstrap
@@ -29,6 +31,7 @@ class Deployer(object):
             self._spec_config = default_spec_config
         else:
             self._spec_config = spec_config
+        self._deploy_interval = deploy_interval
 
     def deploy(self, namespaces=None):
         deploy_counter.inc()
@@ -45,6 +48,7 @@ class Deployer(object):
                     self._bootstrap(deployment_config, channel, self._spec_config)
             except Exception:
                 LOG.exception("Failed to deploy %s in %s", deployment_config.name, deployment_config.namespace)
+            time.sleep(self._deploy_interval)
 
     def _deploy(self, deployment_config, channel):
         raise NotImplementedError("Subclass must override _deploy")
