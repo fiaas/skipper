@@ -38,7 +38,8 @@ class TestTprDeployer(object):
         get_or_create.return_value = app
         bootstrap = mock.MagicMock()
         spec_config_ext = {"x": "x"}
-        deployer = TprDeployer(cluster, release_channel_factory, bootstrap, spec_config_extension=spec_config_ext, deploy_interval=0)
+        deployer = TprDeployer(cluster, release_channel_factory, bootstrap, spec_config_extension=spec_config_ext,
+                               deploy_interval=0)
         deployer.deploy()
         spec.assert_called_once_with(PaasbetaApplicationSpec(
             application="testapp",

@@ -22,7 +22,8 @@ fiaas_enabled_namespaces_gauge = Gauge("fiaas_enabled_namespaces", "Number of na
 
 
 class Deployer(object):
-    def __init__(self, cluster, release_channel_factory, bootstrap, spec_config_extension=None, deploy_interval=DEPLOY_INTERVAL):
+    def __init__(self, cluster, release_channel_factory, bootstrap, spec_config_extension=None,
+                 deploy_interval=DEPLOY_INTERVAL):
         self._cluster = cluster
         self._release_channel_factory = release_channel_factory
         self._bootstrap = bootstrap
