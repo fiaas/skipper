@@ -2,6 +2,7 @@
 # -*- coding: utf-8
 from __future__ import absolute_import
 
+import collections
 import logging
 import time
 import uuid
@@ -9,6 +10,7 @@ import uuid
 import yaml
 from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
+from k8s.models.configmap import ConfigMap
 from k8s.models.deployment import Deployment
 from prometheus_client import Counter, Gauge
 
@@ -19,6 +21,17 @@ DEPLOY_INTERVAL = 30
 last_deploy_gauge = Gauge("last_triggered_deployment", "Timestamp for when last deployment was performed")
 deploy_counter = Counter("deployments_triggered", "Number of deployments triggered and performed")
 fiaas_enabled_namespaces_gauge = Gauge("fiaas_enabled_namespaces", "Number of namespaces that are FIAAS enabled")
+
+Status = collections.namedtuple('Status', ['summary', 'description'])
+
+
+class DeploymentStatus(object):
+    def __init__(self, name, namespace, status, description, version):
+        self.name = name
+        self.namespace = namespace
+        self.status = status
+        self.description = description
+        self.version = version
 
 
 class Deployer(object):
@@ -89,6 +102,29 @@ class Deployer(object):
                           namespace=deployment_config.namespace,
                           labels=labels)
 
+    def _applications(self, name):
+        raise NotImplementedError("Subclass must override _applications")
+
+    def status(self):
+        try:
+            configmaps = ConfigMap.find(NAME, namespace=None)
+            deployments = {d.metadata.namespace: d for d in Deployment.find(NAME, namespace=None)}
+        except Exception:
+            LOG.exception("Unable to get configmaps or deployments from k8s")
+            return []
+        applications = {d.metadata.namespace: d for d in self._applications(NAME)}
+        res = []
+        for c in configmaps:
+            dep = deployments.get(c.metadata.namespace)
+            version = _get_version(dep)
+            status = _get_status(dep, applications.get(c.metadata.namespace))
+            res.append(DeploymentStatus(name=NAME,
+                                        namespace=c.metadata.namespace,
+                                        status=status.summary,
+                                        description=status.description,
+                                        version=version))
+        return res
+
 
 def requires_bootstrap(deployment_config):
     try:
@@ -98,3 +134,21 @@ def requires_bootstrap(deployment_config):
         return True
     except Exception as e:
         LOG.warning(e, exc_info=True)
+
+
+def _get_version(dep):
+    return None if dep is None else dep.spec.template.spec.containers[0].image.split(":")[-1]
+
+
+def _get_status(dep, app):
+    if dep is None:
+        return Status('NOT FOUND', 'No deployment found')
+    if dep.spec.template.spec.containers[0].image != app.spec.image:
+        return Status('FAILED', 'Deployment does not match application version')
+    try:
+        if dep.status.availableReplicas < dep.spec.replicas:
+            return Status('FAILED', 'Available replicas does not match the number of replicas in spec')
+        # TODO the k8s deployment model can be extended to include ready replicas and status
+    except TypeError:
+        return Status('UNAVAILABLE', 'Unable to determine available/ready replicas from k8s server')
+    return Status('SUCCESS', '')

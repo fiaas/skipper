@@ -21,3 +21,6 @@ class TprDeployer(Deployer):
 
     def _create_paasbetaapplicationspec(self, name, image, spec_config):
         return PaasbetaApplicationSpec(application=name, image=image, config=spec_config)
+
+    def _applications(self, name):
+        return PaasbetaApplication.find(name, namespace=None)

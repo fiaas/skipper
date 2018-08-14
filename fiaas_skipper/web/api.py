@@ -8,7 +8,7 @@ import threading
 
 from flask import Blueprint, make_response, request
 
-from ..deploy.cluster import DeploymentConfigStatus
+from ..deploy.deploy import DeploymentStatus
 from ..web import request_histogram
 
 LOG = logging.getLogger(__name__)
@@ -22,12 +22,12 @@ deploy_histogram = request_histogram.labels("deploy")
 @api.route('/api/status')
 @status_histogram.time()
 def status():
-    deployment_config_statuses = api.cluster.find_deployment_config_statuses('fiaas-deploy-daemon')
-    return make_response(json.dumps(deployment_config_statuses, default=_encode), 200)
+    deployment_statuses = api.deployer.status()
+    return make_response(json.dumps(deployment_statuses, default=_encode), 200)
 
 
 def _encode(obj):
-    if isinstance(obj, DeploymentConfigStatus):
+    if isinstance(obj, DeploymentStatus):
         return obj.__dict__
     return obj
 
