@@ -18,6 +18,7 @@ class FiaasApplication(Model):
     class Meta:
         url_template = "/apis/fiaas.schibsted.io/v1/namespaces/{namespace}/applications/{name}"
         watch_list_url = "/apis/fiaas.schibsted.io/v1/watch/applications"
+        list_url = "/apis/fiaas.schibsted.io/v1/applications"
 
     # Workaround for https://github.com/kubernetes/kubernetes/issues/44182
     apiVersion = Field(six.text_type, "fiaas.schibsted.io/v1")
