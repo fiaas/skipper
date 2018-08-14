@@ -9,6 +9,7 @@ import os
 import yaml
 from k8s import config as k8s_config
 
+from fiaas_skipper.update import AutoUpdater
 from .config import Configuration
 from .deploy import CrdDeployer, TprDeployer, ReleaseChannelFactory, CrdBootstrapper, TprBootstrapper
 from .deploy.channel import FakeReleaseChannelFactory
@@ -72,6 +73,12 @@ def main():
         elif cfg.enable_tpr_support:
             deployer = TprDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
                                    bootstrap=TprBootstrapper(), spec_config_extension=spec_config_extension)
+        if not cfg.disable_autoupdate:
+            updater = AutoUpdater(release_channel_factory=release_channel_factory, deployer=deployer)
+            updater.daemon = True
+            updater.start()
+        else:
+            log.debug("Auto updates disabled")
         webapp = create_webapp(deployer, cluster, release_channel_factory)
         Main(webapp=webapp, config=cfg).run()
     except BaseException:
