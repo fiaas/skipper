@@ -142,13 +142,13 @@ def _get_version(dep):
 
 def _get_status(dep, app):
     if dep is None:
-        return Status('NOT FOUND', 'No deployment found')
+        return Status('NOT_FOUND', 'No deployment found')
     if dep.spec.template.spec.containers[0].image != app.spec.image:
-        return Status('FAILED', 'Deployment does not match application version')
+        return Status('VERSION_MISMATCH', 'Deployment does not match application version')
     try:
         if dep.status.availableReplicas < dep.spec.replicas:
             return Status('FAILED', 'Available replicas does not match the number of replicas in spec')
         # TODO the k8s deployment model can be extended to include ready replicas and status
     except TypeError:
         return Status('UNAVAILABLE', 'Unable to determine available/ready replicas from k8s server')
-    return Status('SUCCESS', '')
+    return Status('OK', '')

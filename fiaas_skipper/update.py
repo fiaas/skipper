@@ -44,7 +44,7 @@ class AutoUpdater(Thread):
         If that is the case the deployer is triggered.
         """
         LOG.debug("Checking for namespaces that need bootstrapping")
-        need_bootstrap = [s.namespace for s in self._deployer.status() if s.status == 'NOT FOUND']
+        need_bootstrap = [s.namespace for s in self._deployer.status() if s.status == 'NOT_FOUND']
         if need_bootstrap:
             LOG.debug("Detected namespaces {} need bootstrapping".format(', '.join(need_bootstrap)))
             self._deployer.deploy(namespaces=need_bootstrap)
