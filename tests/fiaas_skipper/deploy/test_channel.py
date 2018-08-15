@@ -2,34 +2,22 @@
 # -*- coding: utf-8
 from __future__ import absolute_import
 
-from unittest import TestCase
-
-import mock
-
 from fiaas_skipper.deploy import ReleaseChannelFactory
 
-metadata = {"key1": "value1"}
+METADATA = {"key1": "value1", "spec": "http://example.com/config.yaml"}
+CONFIG = """
+version: 3
+"""
 
 
-def mocked_requests_get(*args, **kwargs):
-    class MockResponse:
-        def __init__(self, json_data, status_code):
-            self.json_data = json_data
-            self.status_code = status_code
+class TestReleaseChannelFactory(object):
+    def test_fetch_metadata(self, requests_mock):
+        requests_mock.get("http://example.com/name/tag.json", json=METADATA)
+        requests_mock.get("http://example.com/config.yaml", text=CONFIG)
 
-        def json(self):
-            return self.json_data
-
-    if args[0] == 'http://localhost/name/tag.json':
-        return MockResponse(metadata, 200)
-    return MockResponse(None, 404)
-
-
-class TestReleaseChannelFactory(TestCase):
-    @mock.patch('requests.get', side_effect=mocked_requests_get)
-    def test_fetch_metadata(self, mock_get):
-        factory = ReleaseChannelFactory(baseurl="http://localhost")
+        factory = ReleaseChannelFactory(baseurl="http://example.com")
         rc = factory('name', 'tag')
         assert rc.name == 'name'
         assert rc.tag == 'tag'
-        assert rc.metadata == metadata
+        assert rc.metadata == METADATA
+        assert rc.spec == CONFIG

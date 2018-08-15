@@ -58,19 +58,20 @@ def main():
             release_channel_factory = FakeReleaseChannelFactory(json.loads(cfg.release_channel_metadata))
         else:
             release_channel_factory = ReleaseChannelFactory(cfg.baseurl)
-        spec_config = None
-        if os.path.isfile(cfg.spec_file):
+        spec_config_extension = None
+        if os.path.isfile(cfg.spec_file_override):
             try:
-                spec_config = _load_spec_config(cfg.spec_file)
-                log.debug("Loaded spec config from file {!r}".format(cfg.spec_file))
+                spec_config_extension = _load_spec_config(cfg.spec_file_override)
+                log.debug("Loaded spec config extension from file {!r}".format(cfg.spec_file_override))
             except yaml.YAMLError:
-                log.exception("Unable to load spec config file {!r} using defaults".format(cfg.spec_file))
+                log.exception("Unable to load spec config extension file {!r} using defaults"
+                              .format(cfg.spec_file_override))
         if cfg.enable_crd_support:
             deployer = CrdDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
-                                   bootstrap=CrdBootstrapper(), spec_config=spec_config)
+                                   bootstrap=CrdBootstrapper(), spec_config_extension=spec_config_extension)
         elif cfg.enable_tpr_support:
             deployer = TprDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
-                                   bootstrap=TprBootstrapper(), spec_config=spec_config)
+                                   bootstrap=TprBootstrapper(), spec_config_extension=spec_config_extension)
         webapp = create_webapp(deployer, cluster, release_channel_factory)
         Main(webapp=webapp, config=cfg).run()
     except BaseException:
