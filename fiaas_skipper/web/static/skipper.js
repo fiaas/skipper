@@ -36,11 +36,12 @@ function getStatus() {
                        alert("Deployment to " + $this.data("namespace") + " scheduled successfully");
                    }
                });
+               getStatus(); // refresh
            });
        });
     }
   });
-  window.setTimeout(function() { getStatus(); }, 60000);
+  window.setTimeout(function() { getStatus(); }, 5000);
 }
 
 function onStatusPageLoad() {
