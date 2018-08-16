@@ -26,12 +26,13 @@ Status = collections.namedtuple('Status', ['summary', 'description'])
 
 
 class DeploymentStatus(object):
-    def __init__(self, name, namespace, status, description, version):
+    def __init__(self, name, namespace, status, description, version, channel=None):
         self.name = name
         self.namespace = namespace
         self.status = status
         self.description = description
         self.version = version
+        self.channel = channel
 
 
 class Deployer(object):

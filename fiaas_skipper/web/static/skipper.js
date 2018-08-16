@@ -18,6 +18,7 @@ function getStatus() {
                        + "<th scope=\"row\">" + item.namespace + "</td>"
                        + "<td>" + item.status.replace(/_/g, " ") + "</td>"
                        + "<td>" + [item.description].join('') + "</td>"
+                       + "<td>" + item.channel + "</td>"
                        + "<td>" + item.version + "</td>"
                        + "<td><button class=\"btn btn-primary btn-block btnDeploy\" type=\"submit\" data-namespace=\"" + item.namespace + "\">Deploy</button></td>"
                        + "</tr>";

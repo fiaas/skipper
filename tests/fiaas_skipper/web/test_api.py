@@ -47,7 +47,8 @@ class TestApi(object):
                              namespace='default',
                              status='OK',
                              description='All good',
-                             version="fiaas/fiaas-deploy-daemon:123")]
+                             version="fiaas/fiaas-deploy-daemon:123",
+                             channel="stable")]
         response = app.get('/api/status')
         assert response.status_code == 200
         assert json.loads(response.data) == [{
@@ -55,7 +56,8 @@ class TestApi(object):
             "namespace": "default",
             "name": "fiaas-deploy-daemon",
             "description": "All good",
-            "version": "fiaas/fiaas-deploy-daemon:123"
+            "version": "fiaas/fiaas-deploy-daemon:123",
+            "channel": "stable"
         }]
 
     def test_deploy(self, app):
