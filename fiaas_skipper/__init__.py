@@ -9,9 +9,11 @@ import os
 import yaml
 from k8s import config as k8s_config
 
+from fiaas_skipper.deploy import StatusTracker
 from fiaas_skipper.update import AutoUpdater
 from .config import Configuration
-from .deploy import CrdDeployer, TprDeployer, ReleaseChannelFactory, CrdBootstrapper, TprBootstrapper
+from .deploy import CrdDeployer, TprDeployer, ReleaseChannelFactory, CrdBootstrapper, TprBootstrapper, \
+    FiaasApplication, PaasbetaApplication
 from .deploy.channel import FakeReleaseChannelFactory
 from .deploy.cluster import Cluster
 from .logsetup import init_logging
@@ -74,11 +76,17 @@ def main():
                 log.exception("Unable to load spec config extension file {!r} using defaults"
                               .format(cfg.spec_file_override))
         if cfg.enable_crd_support:
+            status_tracker = StatusTracker(cluster=cluster, application=FiaasApplication)
             deployer = CrdDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
-                                   bootstrap=CrdBootstrapper(), spec_config_extension=spec_config_extension)
+                                   bootstrap=CrdBootstrapper(), spec_config_extension=spec_config_extension,
+                                   status=status_tracker)
         elif cfg.enable_tpr_support:
+            status_tracker = StatusTracker(cluster=cluster, application=PaasbetaApplication)
             deployer = TprDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
-                                   bootstrap=TprBootstrapper(), spec_config_extension=spec_config_extension)
+                                   bootstrap=TprBootstrapper(), spec_config_extension=spec_config_extension,
+                                   status=status_tracker)
+        # Do period checking of deployment status across all namespaces
+        status_tracker.start()
         if not cfg.disable_autoupdate:
             updater = AutoUpdater(release_channel_factory=release_channel_factory, deployer=deployer)
             updater.daemon = True

@@ -7,6 +7,7 @@ import yaml
 from fiaas_skipper import TprDeployer
 from fiaas_skipper.deploy.channel import ReleaseChannel
 from fiaas_skipper.deploy.cluster import DeploymentConfig
+from fiaas_skipper.deploy.deploy import StatusTracker
 from fiaas_skipper.deploy.tpr.types import PaasbetaApplicationSpec
 
 
@@ -30,8 +31,12 @@ class TestTprDeployer(object):
             spec=yaml.dump({"z": "z"}))
         return release_channel_factory
 
+    @pytest.fixture
+    def status(self):
+        return mock.create_autospec(StatusTracker)
+
     @mock.patch('fiaas_skipper.deploy.tpr.types.PaasbetaApplication.get_or_create', autospec=True)
-    def test_deploy_creates_paasbeta_application(self, get_or_create, cluster, release_channel_factory):
+    def test_deploy_creates_paasbeta_application(self, get_or_create, cluster, release_channel_factory, status):
         app = mock.MagicMock()
         spec = mock.PropertyMock()
         type(app).spec = spec
@@ -39,7 +44,7 @@ class TestTprDeployer(object):
         bootstrap = mock.MagicMock()
         spec_config_ext = {"x": "x"}
         deployer = TprDeployer(cluster, release_channel_factory, bootstrap, spec_config_extension=spec_config_ext,
-                               deploy_interval=0)
+                               deploy_interval=0, status=status)
         deployer.deploy()
         spec.assert_called_once_with(PaasbetaApplicationSpec(
             application="testapp",
