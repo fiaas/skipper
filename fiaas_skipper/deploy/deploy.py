@@ -144,7 +144,9 @@ def _get_version(dep):
 def _get_status(dep, app):
     if dep is None:
         return Status('NOT_FOUND', 'No deployment found')
-    if dep.spec.template.spec.containers[0].image != app.spec.image:
+    if app is None:
+        return Status('VERSION_MISMATCH', 'Application is not defined')
+    if not app or dep.spec.template.spec.containers[0].image != app.spec.image:
         return Status('VERSION_MISMATCH', 'Deployment does not match application version')
     try:
         if dep.status.availableReplicas < dep.spec.replicas:

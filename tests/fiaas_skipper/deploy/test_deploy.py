@@ -75,6 +75,7 @@ class TestDeployer(object):
                 _create_configmap("ns3"),
                 _create_configmap("ns4", "latest"),
                 _create_configmap("ns5", "stable"),
+                _create_configmap("ns6", "stable"),
             )
             yield finder
 
@@ -107,6 +108,7 @@ class TestDeployer(object):
             _create_deployment(0, "ns2", "image:latest"),
             _create_deployment(None, "ns4", "image:stable"),
             _create_deployment(1, "ns5", "image:experimental"),
+            _create_deployment(1, "ns6", "image:stable"),
         )
 
         application_find.return_value = (
@@ -120,9 +122,10 @@ class TestDeployer(object):
         deployer = Deployer(cluster, release_channel_factory, None, deploy_interval=0)
         results = deployer.status()
 
-        assert len(results) == 5
+        assert len(results) == 6
         _assert_deployment_config_status(results[0], "ns1", "OK")
         _assert_deployment_config_status(results[1], "ns2", "FAILED")
         _assert_deployment_config_status(results[2], "ns3", "NOT_FOUND")
         _assert_deployment_config_status(results[3], "ns4", "UNAVAILABLE")
         _assert_deployment_config_status(results[4], "ns5", "VERSION_MISMATCH")
+        _assert_deployment_config_status(results[5], "ns6", "VERSION_MISMATCH")
