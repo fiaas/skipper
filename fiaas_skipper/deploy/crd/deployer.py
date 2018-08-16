@@ -5,7 +5,7 @@ from __future__ import absolute_import
 import logging
 
 from .types import FiaasApplicationSpec, FiaasApplication
-from ..deploy import Deployer
+from ..deploy import Deployer, StatusTracker
 
 LOG = logging.getLogger(__name__)
 
@@ -22,5 +22,10 @@ class CrdDeployer(Deployer):
     def _create_application_spec(self, name, image, spec_config):
         return FiaasApplicationSpec(application=name, image=image, config=spec_config)
 
-    def _applications(self, name):
-        return FiaasApplication.find(name, namespace=None)
+    def _application(self):
+        return FiaasApplication
+
+
+class CrdStatusTracker(StatusTracker):
+    def _application(self):
+        return FiaasApplication
