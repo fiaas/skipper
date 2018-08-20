@@ -44,7 +44,7 @@ class Deployer(object):
         self._spec_extension = spec_config_extension
         self._deploy_interval = deploy_interval
 
-    def deploy(self, namespaces=None):
+    def deploy(self, namespaces=None, force_bootstrap=False):
         deploy_counter.inc()
         last_deploy_gauge.set_to_current_time()
         deployment_configs = self._cluster.find_deployment_configs(NAME)
@@ -57,7 +57,7 @@ class Deployer(object):
                 spec_config = self._load_spec(channel)
                 LOG.debug(spec_config)
                 self._deploy(deployment_config, channel, spec_config)
-                if requires_bootstrap(deployment_config):
+                if force_bootstrap or requires_bootstrap(deployment_config):
                     self._bootstrap(deployment_config, channel, spec_config)
             except Exception:
                 LOG.exception("Failed to deploy %s in %s", deployment_config.name, deployment_config.namespace)

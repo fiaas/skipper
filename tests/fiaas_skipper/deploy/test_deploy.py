@@ -101,6 +101,13 @@ class TestDeployer(object):
         deployer.deploy()
         assert 2 == deployer._deploy.call_count
 
+    def test_deploys_with_bootstrap_when_force_flag_set(self, cluster, release_channel_factory):
+        bootstrap = mock.MagicMock(name="bootstrap")
+        deployer = Deployer(cluster, release_channel_factory, bootstrap, deploy_interval=0)
+        deployer._deploy = mock.MagicMock(name="_deploy")
+        deployer.deploy(namespaces=["test1"], force_bootstrap=True)
+        assert 1 == bootstrap.call_count
+
     @pytest.mark.usefixtures("config_map_find")
     def test_deployment_statuses(self, cluster, release_channel_factory, deployment_find, application_find):
         deployment_find.return_value = (

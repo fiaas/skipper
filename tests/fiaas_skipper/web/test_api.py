@@ -65,3 +65,9 @@ class TestApi(object):
             response = app.post('/api/deploy')
             assert response.status_code == 200
             assert mock.called
+
+    def test_deploy_force_bootstrap(self, app):
+        with patch('fiaas_skipper.deploy.deploy.Deployer.deploy') as mock:
+            response = app.post('/api/deploy', json={'force_bootstrap': True, 'namespaces': ['test1']})
+            assert response.status_code == 200
+            mock.assert_called_with(force_bootstrap=True, namespaces=['test1'])
