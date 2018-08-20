@@ -2,6 +2,7 @@
 # -*- coding: utf-8
 from __future__ import absolute_import
 
+from copy import copy
 import collections
 import logging
 import time
@@ -18,6 +19,8 @@ LOG = logging.getLogger(__name__)
 NAME = 'fiaas-deploy-daemon'
 DEPLOY_INTERVAL = 30
 STATUS_UPDATE_INTERVAL = 300
+DEPLOYMENT_TRACKING_TIMEOUT = 300
+DEPLOYMENT_TRACKING_INTERVAL = 10
 
 last_deploy_gauge = Gauge("last_triggered_deployment", "Timestamp for when last deployment was performed")
 deploy_counter = Counter("deployments_triggered", "Number of deployments triggered and performed")
@@ -58,6 +61,7 @@ class Deployer(object):
                 channel = self._release_channel_factory(deployment_config.name, deployment_config.tag)
                 spec_config = self._load_spec(channel)
                 LOG.debug(spec_config)
+                self._status.track_deployment(deployment_config.namespace, channel.metadata["image"])
                 self._deploy(deployment_config, channel, spec_config)
                 if requires_bootstrap(deployment_config):
                     self._bootstrap(deployment_config, channel, spec_config)
@@ -150,9 +154,16 @@ class StatusTracker(Thread):
         Thread.__init__(self)
         self._cluster = cluster
         self._status = {}
+        self._deployments = {}
 
     def __call__(self):
-        return tuple(self._status.values())
+        def _deploying(status):
+            if status.namespace in self._deployments.keys():
+                status.status = 'DEPLOYING'
+                status.description = 'Deploying version %s' % self._deployments[status.namespace]
+            return status
+        with statuslock:
+            return tuple([_deploying(copy(status)) for status in self._status.values()])
 
     def _application(self):
         raise NotImplementedError("Subclass must override _application")
@@ -174,6 +185,34 @@ class StatusTracker(Thread):
                                         version=version or '',
                                         channel=c.tag or ''))
         return res
+
+    def track_deployment(self, namespace, version):
+        t = Thread(target=self._track_deployment, args=(namespace, version),
+                   name="track_deployment_{}_{}".format(namespace, version.split(':')[1]), daemon=True)
+        t.start()
+
+    def _set_deployment_flag(self, namespace, version):
+        with statuslock:
+            self._deployments[namespace] = version
+
+    def _unset_deployment_flag(self, namespace):
+        with statuslock:
+            del self._deployments[namespace]
+
+    def _track_deployment(self, namespace, version):
+        self._set_deployment_flag(namespace, version)
+        timeout = time.time() + DEPLOYMENT_TRACKING_TIMEOUT
+        time.sleep(10)  # Delay to allow termination to start
+        while True:
+            status = self._get_status(namespace=namespace)[0]
+            if status and status.status == 'OK':
+                with statuslock:
+                    self._status[namespace] = status
+                break
+            if time.time() > timeout:
+                break
+            time.sleep(DEPLOYMENT_TRACKING_INTERVAL)
+        self._unset_deployment_flag(namespace)
 
     def _update_status(self):
         with statuslock:
