@@ -45,6 +45,8 @@ class Configuration(Namespace):
                             default="http://fiaas-release.delivery-pro.schibsted.io")
         parser.add_argument("--release-channel-metadata",
                             help="Provide hardcoded release channel metadata (Used for debugging purposes).")
+        parser.add_argument("--release-channel-metadata-spec",
+                            help="Provide hardcoded spec file (Used for debugging purposes).")
         parser.add_argument("--spec-file-override",
                             help="File containing overrides of values in release channel spec file.",
                             default=DEFAULT_OVERRIDE_SPEC_FILE)

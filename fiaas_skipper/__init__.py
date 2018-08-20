@@ -46,6 +46,11 @@ def _load_spec_config(spec_file):
         return yaml.safe_load(stream)
 
 
+def _read_file(spec_file):
+    with open(spec_file) as f:
+        return f.read()
+
+
 def main():
     cfg = Configuration()
     init_logging(cfg)
@@ -56,7 +61,8 @@ def main():
         cluster = Cluster()
         if cfg.release_channel_metadata:
             log.debug("!!Using hardcoded release channel metadata {!r}".format(cfg.release_channel_metadata))
-            release_channel_factory = FakeReleaseChannelFactory(json.loads(cfg.release_channel_metadata))
+            spec = _read_file(cfg.release_channel_metadata_spec)
+            release_channel_factory = FakeReleaseChannelFactory(json.loads(cfg.release_channel_metadata), spec)
         else:
             release_channel_factory = ReleaseChannelFactory(cfg.baseurl)
         spec_config_extension = None
