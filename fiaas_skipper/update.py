@@ -7,8 +7,7 @@ from threading import Thread
 import time
 
 LOG = logging.getLogger(__name__)
-CHECK_UPDATE_INTERVAL = 600
-TAGS = ('latest', 'stable')
+CHECK_UPDATE_INTERVAL = 60
 
 
 class AutoUpdater(Thread):
@@ -16,7 +15,6 @@ class AutoUpdater(Thread):
         Thread.__init__(self)
         self._release_channel_factory = release_channel_factory
         self._deployer = deployer
-        self._images = {}
 
     def check_updates(self):
         """
@@ -24,19 +22,13 @@ class AutoUpdater(Thread):
         If there are the deployer is triggered.
         """
         LOG.debug("Checking for new updates")
-        found_update = False
-        for t in TAGS:
-            channel = self._release_channel_factory('fiaas-deploy-daemon', t)
-            if self._new_version_available(channel):
-                LOG.debug("Detected new update for {} ({})".format(t, channel.metadata['image']))
-                found_update = True
-            self._images[t] = channel.metadata['image']
-        if found_update:
-            # TODO perhaps this could be made smarter by inspecting namespaces
-            self._deployer.deploy()
-
-    def _new_version_available(self, channel):
-        return self._images.get(channel.tag, channel.metadata['image']) != channel.metadata['image']
+        for channel_name in self._channels():
+            channel = self._release_channel_factory('fiaas-deploy-daemon', channel_name)
+            update_namespaces = self._update_namespaces(channel)
+            if update_namespaces:
+                LOG.debug("Detected new update for {} ({})".format((',').join(update_namespaces),
+                                                                   channel.metadata['image']))
+                self._deployer.deploy(namespaces=update_namespaces)
 
     def check_bootstrap(self):
         """
@@ -50,7 +42,15 @@ class AutoUpdater(Thread):
             self._deployer.deploy(namespaces=need_bootstrap)
 
     def run(self):
+        time.sleep(60)  # Delay at start to allow status to have been populated
         while True:
             self.check_bootstrap()
             self.check_updates()
             time.sleep(CHECK_UPDATE_INTERVAL)
+
+    def _channels(self):
+        return set([s.channel for s in self._deployer.status()])
+
+    def _update_namespaces(self, channel):
+        matched = [t for t in self._deployer.status() if t.channel == channel.tag]
+        return set([s.namespace for s in matched if s.version != channel.metadata['image'].split(':')[1]])
