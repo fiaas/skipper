@@ -18,6 +18,7 @@ class PaasbetaApplication(Model):
     class Meta:
         url_template = "/apis/schibsted.io/v1beta/namespaces/{namespace}/paasbetaapplications/{name}"
         watch_list_url = "/apis/schibsted.io/v1beta/watch/paasbetaapplications"
+        list_url = "/apis/schibsted.io/v1beta/paasbetaapplications"
 
     # Workaround for https://github.com/kubernetes/kubernetes/issues/44182
     apiVersion = Field(six.text_type, "schibsted.io/v1beta")

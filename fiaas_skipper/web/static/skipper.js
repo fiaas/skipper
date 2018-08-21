@@ -5,17 +5,20 @@ function getStatus() {
     success: function(data) {
       var json = $.parseJSON(data);
       var statusmap = {
-       "SUCCESS": "success",
+       "OK": "success",
        "UNKNOWN": "warning",
        "UNAVAILABLE": "warning",
-       "ERROR": "danger"
+       "ERROR": "danger",
+       "FAILED": "danger",
+       "VERSION_MISMATCH": "warning"
       };
       $("#tbody").empty();
       $.each(json, function (index, item) {
            var eachrow = "<tr class=\"" + statusmap[item.status] + "\">"
                        + "<th scope=\"row\">" + item.namespace + "</td>"
-                       + "<td>" + item.status + "</td>"
+                       + "<td>" + item.status.replace(/_/g, " ") + "</td>"
                        + "<td>" + [item.description].join('') + "</td>"
+                       + "<td>" + item.channel + "</td>"
                        + "<td>" + item.version + "</td>"
                        + "<td><button class=\"btn btn-primary btn-block btnDeploy\" type=\"submit\" data-namespace=\"" + item.namespace + "\">Deploy</button></td>"
                        + "</tr>";

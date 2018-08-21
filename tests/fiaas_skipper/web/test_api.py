@@ -6,17 +6,17 @@ import json
 
 import pytest
 from flask import Flask
-from mock import patch, Mock, create_autospec
+from mock import patch, Mock, mock
 
-from fiaas_skipper.deploy.cluster import DeploymentConfigStatus, Cluster
-from fiaas_skipper.deploy.deploy import Deployer
+from fiaas_skipper.deploy.deploy import Deployer, DeploymentStatus
 from fiaas_skipper.web.api import api
 
 
 class TestApi(object):
     @pytest.fixture
-    def deployer(self, cluster):
+    def deployer(self):
         release_channel_factory = Mock()
+        cluster = Mock()
         bootstrap = Mock()
         return Deployer(cluster=cluster,
                         release_channel_factory=release_channel_factory,
@@ -24,40 +24,40 @@ class TestApi(object):
                         deploy_interval=0)
 
     @pytest.fixture
-    def cluster(self):
-        return create_autospec(Cluster(), spec_set=True, instance=True)
-
-    @pytest.fixture
-    def app(self, cluster, deployer):
+    def app(self, deployer):
         app = Flask(__name__)
-        api.cluster = cluster
         api.deployer = deployer
         app.register_blueprint(api)
         return app.test_client()
 
-    def test_empty_status(self, app, cluster):
-        cluster.find_deployment_config_statuses.return_value = []
+    @pytest.fixture
+    def deployment_status(self):
+        with mock.patch("fiaas_skipper.deploy.deploy.Deployer.status") as status:
+            yield status
+
+    def test_empty_status(self, app, deployment_status):
+        deployment_status.return_value = []
         response = app.get('/api/status')
-        cluster.find_deployment_config_statuses.assert_called_once_with('fiaas-deploy-daemon')
         assert response.status_code == 200
         assert json.loads(response.data) == []
 
-    def test_status(self, app, cluster):
-        cluster.find_deployment_config_statuses.return_value = [
-            DeploymentConfigStatus(name='fiaas-deploy-daemon',
-                                   namespace='default',
-                                   status='OK',
-                                   description='All good',
-                                   version="fiaas/fiaas-deploy-daemon:123")]
+    def test_status(self, app, deployment_status):
+        deployment_status.return_value = [
+            DeploymentStatus(name='fiaas-deploy-daemon',
+                             namespace='default',
+                             status='OK',
+                             description='All good',
+                             version="fiaas/fiaas-deploy-daemon:123",
+                             channel="stable")]
         response = app.get('/api/status')
-        cluster.find_deployment_config_statuses.assert_called_once_with('fiaas-deploy-daemon')
         assert response.status_code == 200
         assert json.loads(response.data) == [{
             "status": "OK",
             "namespace": "default",
             "name": "fiaas-deploy-daemon",
             "description": "All good",
-            "version": "fiaas/fiaas-deploy-daemon:123"
+            "version": "fiaas/fiaas-deploy-daemon:123",
+            "channel": "stable"
         }]
 
     def test_deploy(self, app):
