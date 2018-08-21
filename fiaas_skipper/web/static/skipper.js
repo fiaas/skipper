@@ -20,13 +20,14 @@ function getStatus() {
                        + "<td>" + [item.description].join('') + "</td>"
                        + "<td>" + item.channel + "</td>"
                        + "<td>" + item.version + "</td>"
-                       + "<td><button class=\"btn btn-primary btn-block btnDeploy\" type=\"submit\" data-namespace=\"" + item.namespace + "\">Deploy</button></td>"
+                       + "<td><button class=\"btn btn-primary btn-block btnDeploy\" type=\"submit\" data-namespace=\"" + item.namespace + "\"" + ((item.status === "DEPLOYING") ? " disabled=\"disabled\"" : "") + ">Deploy</button></td>"
                        + "</tr>";
            $('#tbody').append(eachrow);
        });
        $(".btnDeploy").each(function(){
            var $this = $(this);
            $this.click(function(){
+               $this.prop("disabled", true);
                $.ajax({
                    type: "POST",
                    contentType: "application/json",
@@ -36,11 +37,12 @@ function getStatus() {
                        alert("Deployment to " + $this.data("namespace") + " scheduled successfully");
                    }
                });
+               getStatus(); // refresh
            });
        });
     }
   });
-  window.setTimeout(function() { getStatus(); }, 60000);
+  window.setTimeout(function() { getStatus(); }, 5000);
 }
 
 function onStatusPageLoad() {

@@ -7,7 +7,7 @@ from threading import Thread
 import time
 
 LOG = logging.getLogger(__name__)
-CHECK_UPDATE_INTERVAL = 600
+CHECK_UPDATE_INTERVAL = 60
 
 
 class AutoUpdater(Thread):
@@ -53,4 +53,5 @@ class AutoUpdater(Thread):
 
     def _update_namespaces(self, channel):
         matched = [t for t in self._deployer.status() if t.channel == channel.tag]
-        return set([s.namespace for s in matched if s.version != channel.metadata['image'].split(':')[1]])
+        return set([s.namespace for s in matched
+                    if s.version != channel.metadata['image'].split(':')[1] and s.status != 'DEPLOYING'])

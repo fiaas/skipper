@@ -5,7 +5,7 @@ from __future__ import absolute_import
 import logging
 
 from .types import PaasbetaApplication, PaasbetaApplicationSpec
-from ..deploy import Deployer
+from ..deploy import Deployer, StatusTracker
 
 LOG = logging.getLogger(__name__)
 
@@ -22,5 +22,10 @@ class TprDeployer(Deployer):
     def _create_paasbetaapplicationspec(self, name, image, spec_config):
         return PaasbetaApplicationSpec(application=name, image=image, config=spec_config)
 
-    def _applications(self, name):
-        return PaasbetaApplication.find(name, namespace=None)
+    def _application(self):
+        return PaasbetaApplication
+
+
+class TprStatusTracker(StatusTracker):
+    def _application(self):
+        return PaasbetaApplication
