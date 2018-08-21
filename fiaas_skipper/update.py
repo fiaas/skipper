@@ -7,7 +7,7 @@ from threading import Thread
 import time
 
 LOG = logging.getLogger(__name__)
-CHECK_UPDATE_INTERVAL = 60
+CHECK_UPDATE_INTERVAL = 600
 
 
 class AutoUpdater(Thread):
