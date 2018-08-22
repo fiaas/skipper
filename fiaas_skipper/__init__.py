@@ -89,7 +89,6 @@ def main():
         if not cfg.disable_autoupdate:
             updater = AutoUpdater(release_channel_factory=release_channel_factory, deployer=deployer,
                                   status=status_tracker)
-            updater.daemon = True
             updater.start()
         else:
             log.debug("Auto updates disabled")

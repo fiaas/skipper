@@ -13,6 +13,7 @@ CHECK_UPDATE_INTERVAL = 600
 class AutoUpdater(Thread):
     def __init__(self, release_channel_factory, deployer, status):
         Thread.__init__(self)
+        self.daemon = True
         self._release_channel_factory = release_channel_factory
         self._deployer = deployer
         self._status = status
