@@ -34,7 +34,7 @@ def _encode(obj):
 
 def _force_bootstrap(request):
     if request.get_json() and 'force_bootstrap' in request.get_json():
-        return request.get_json(force=True, silent=True)['force_bootstrap']
+        return request.get_json()['force_bootstrap']
     return False
 
 
