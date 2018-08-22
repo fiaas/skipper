@@ -24,33 +24,33 @@ function getStatus() {
                        + "</tr>";
            $('#tbody').append(eachrow);
        });
-       $("#deployModal").on("show.bs.modal", function (event) {
-            var button = $(event.relatedTarget);
-            var namespace = button.data("namespace");
-            var modal = $(this);
-            modal.find(".modal-title").text("Deploy fiaas-deploy-daemon to namespace: " + namespace + "?");
-            modal.find(".modal-body input").val(namespace);
-       });
-       $("#deployModal").find(".btn-primary").click(function(){
-           var forceBootstrap = $("#deployModal").find("#force-bootstrap").is(":checked");
-           var namespace = $("#deployModal").find("#namespace").val();
-           $.ajax({
-               type: "POST",
-               contentType: "application/json",
-               url: "/api/deploy",
-               data: "{\"namespaces\": [\"" + namespace + "\"], \"force_bootstrap\": " + (forceBootstrap ? "true" : "false") + "}",
-               success: function(data) {
-                   $("#deployModal").modal("hide");
-               }
-           });
-       });
     }
   });
   window.setTimeout(function() { getStatus(); }, 60000);
 }
 
 function onStatusPageLoad() {
-  getStatus();
+    $("#deployModal").find(".btn-primary").click(function() {
+        var forceBootstrap = $("#deployModal").find("#force-bootstrap").is(":checked");
+        var namespace = $("#deployModal").find("#namespace").val();
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "/api/deploy",
+            data: "{\"namespaces\": [\"" + namespace + "\"], \"force_bootstrap\": " + (forceBootstrap ? "true" : "false") + "}",
+            success: function(data) {
+                $("#deployModal").modal("hide");
+            }
+        });
+    });
+    $("#deployModal").on("show.bs.modal", function (event) {
+        var button = $(event.relatedTarget);
+        var namespace = button.data("namespace");
+        var modal = $(this);
+        modal.find(".modal-title").text("Deploy fiaas-deploy-daemon to namespace: " + namespace + "?");
+        modal.find(".modal-body input").val(namespace);
+    });
+    getStatus();
 }
 
 function onDeployPageLoad() {
