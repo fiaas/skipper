@@ -20,22 +20,28 @@ function getStatus() {
                        + "<td>" + [item.description].join('') + "</td>"
                        + "<td>" + item.channel + "</td>"
                        + "<td>" + item.version + "</td>"
-                       + "<td><button class=\"btn btn-primary btn-block btnDeploy\" type=\"submit\" data-namespace=\"" + item.namespace + "\">Deploy</button></td>"
+                       + "<td><button class=\"btn btn-primary btn-block btnDeploy\" type=\"submit\" data-namespace=\"" + item.namespace + "\" data-toggle=\"modal\" data-target=\"#deployModal\">Deploy</button></td>"
                        + "</tr>";
            $('#tbody').append(eachrow);
        });
-       $(".btnDeploy").each(function(){
-           var $this = $(this);
-           $this.click(function(){
-               $.ajax({
-                   type: "POST",
-                   contentType: "application/json",
-                   url: "/api/deploy",
-                   data: "{\"namespaces\": [\"" + $(this).data('namespace') + "\"]}",
-                   success: function(data) {
-                       alert("Deployment to " + $this.data("namespace") + " scheduled successfully");
-                   }
-               });
+       $("#deployModal").on("show.bs.modal", function (event) {
+            var button = $(event.relatedTarget);
+            var namespace = button.data("namespace");
+            var modal = $(this);
+            modal.find(".modal-title").text("Deploy fiaas-deploy-daemon to namespace: " + namespace + "?");
+            modal.find(".modal-body input").val(namespace);
+       });
+       $("#deployModal").find(".btn-primary").click(function(){
+           var forceBootstrap = $("#deployModal").find("#force-bootstrap").is(":checked");
+           var namespace = $("#deployModal").find("#namespace").val();
+           $.ajax({
+               type: "POST",
+               contentType: "application/json",
+               url: "/api/deploy",
+               data: "{\"namespaces\": [\"" + namespace + "\"], \"force_bootstrap\": " + (forceBootstrap ? "true" : "false") + "}",
+               success: function(data) {
+                   $("#deployModal").modal("hide");
+               }
            });
        });
     }

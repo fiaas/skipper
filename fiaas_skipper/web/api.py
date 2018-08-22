@@ -32,18 +32,29 @@ def _encode(obj):
     return obj
 
 
+def _force_bootstrap(request):
+    if request.get_json() and 'force_bootstrap' in request.get_json():
+        return request.get_json(force=True, silent=True)['force_bootstrap']
+    return False
+
+
+def _namespaces(request):
+    if request.get_json() and 'namespaces' in request.get_json():
+        return request.get_json()['namespaces']
+
+
 @api.route('/api/deploy', methods=['POST'])
 @deploy_histogram.time()
 def deploy():
-    if request.get_json() and 'namespaces' in request.get_json():
-        threading.Thread(target=_deploy, kwargs={'namespaces': request.get_json()['namespaces']}).start()
-    else:
-        threading.Thread(target=_deploy).start()
+    namespaces = _namespaces(request)
+    force_bootstrap = _force_bootstrap(request)
+    threading.Thread(target=_deploy, kwargs={'namespaces': namespaces,
+                                             'force_bootstrap': force_bootstrap}).start()
     return make_response('', 200)
 
 
-def _deploy(namespaces=None):
+def _deploy(namespaces=None, force_bootstrap=False):
     try:
-        api.deployer.deploy(namespaces=namespaces)
+        api.deployer.deploy(namespaces=namespaces, force_bootstrap=force_bootstrap)
     except Exception:
         logging.exception("Unexpected failure when deploying")
