@@ -8,7 +8,6 @@ from fiaas_skipper import CrdDeployer
 from fiaas_skipper.deploy.channel import ReleaseChannel
 from fiaas_skipper.deploy.cluster import DeploymentConfig
 from fiaas_skipper.deploy.crd.types import FiaasApplicationSpec
-from fiaas_skipper.deploy.deploy import StatusTracker
 
 
 class TestCrdDeployer(object):
@@ -30,12 +29,8 @@ class TestCrdDeployer(object):
                                                               spec=yaml.dump({"z": "z", "y": "1"}))
         return release_channel_factory
 
-    @pytest.fixture
-    def status(self):
-        return mock.create_autospec(StatusTracker)
-
     @mock.patch('fiaas_skipper.deploy.crd.types.FiaasApplication.get_or_create', autospec=True)
-    def test_deploy_creates_fiaas_application(self, get_or_create, cluster, release_channel_factory, status):
+    def test_deploy_creates_fiaas_application(self, get_or_create, cluster, release_channel_factory):
         app = mock.MagicMock()
         spec = mock.PropertyMock()
         type(app).spec = spec
@@ -43,7 +38,7 @@ class TestCrdDeployer(object):
         bootstrap = mock.MagicMock()
         spec_config_ext = {"x": "x", "y": "66"}
         deployer = CrdDeployer(cluster, release_channel_factory, bootstrap, spec_config_extension=spec_config_ext,
-                               deploy_interval=0, status=status)
+                               deploy_interval=0)
         deployer.deploy()
         spec.assert_called_once_with(
             FiaasApplicationSpec(application="testapp", image="image1",

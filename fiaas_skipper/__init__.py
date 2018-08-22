@@ -76,24 +76,24 @@ def main():
                 log.exception("Unable to load spec config extension file {!r} using defaults"
                               .format(cfg.spec_file_override))
         if cfg.enable_crd_support:
-            status_tracker = StatusTracker(cluster=cluster, application=FiaasApplication)
+            application = FiaasApplication
             deployer = CrdDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
-                                   bootstrap=CrdBootstrapper(), spec_config_extension=spec_config_extension,
-                                   status=status_tracker)
+                                   bootstrap=CrdBootstrapper(), spec_config_extension=spec_config_extension)
         elif cfg.enable_tpr_support:
-            status_tracker = StatusTracker(cluster=cluster, application=PaasbetaApplication)
+            application = PaasbetaApplication
             deployer = TprDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
-                                   bootstrap=TprBootstrapper(), spec_config_extension=spec_config_extension,
-                                   status=status_tracker)
+                                   bootstrap=TprBootstrapper(), spec_config_extension=spec_config_extension)
         # Do period checking of deployment status across all namespaces
+        status_tracker = StatusTracker(cluster=cluster, application=application)
         status_tracker.start()
         if not cfg.disable_autoupdate:
-            updater = AutoUpdater(release_channel_factory=release_channel_factory, deployer=deployer)
+            updater = AutoUpdater(release_channel_factory=release_channel_factory, deployer=deployer,
+                                  status=status_tracker)
             updater.daemon = True
             updater.start()
         else:
             log.debug("Auto updates disabled")
-        webapp = create_webapp(deployer, cluster, release_channel_factory)
+        webapp = create_webapp(deployer, cluster, release_channel_factory, status_tracker)
         Main(webapp=webapp, config=cfg).run()
     except BaseException:
         log.exception("General failure! Inspect traceback and make the code better!")

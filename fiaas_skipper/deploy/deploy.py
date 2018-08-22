@@ -37,14 +37,13 @@ class DeploymentStatus(object):
 
 
 class Deployer(object):
-    def __init__(self, cluster, release_channel_factory, bootstrap, status, spec_config_extension=None,
+    def __init__(self, cluster, release_channel_factory, bootstrap, spec_config_extension=None,
                  deploy_interval=DEPLOY_INTERVAL):
         self._cluster = cluster
         self._release_channel_factory = release_channel_factory
         self._bootstrap = bootstrap
         self._spec_extension = spec_config_extension
         self._deploy_interval = deploy_interval
-        self._status = status
 
     def deploy(self, namespaces=None, force_bootstrap=False):
         deploy_counter.inc()
@@ -64,9 +63,6 @@ class Deployer(object):
             except Exception:
                 LOG.exception("Failed to deploy %s in %s", deployment_config.name, deployment_config.namespace)
             time.sleep(self._deploy_interval)
-
-    def status(self):
-        return self._status()
 
     def _deploy(self, deployment_config, channel, spec_config):
         raise NotImplementedError("Subclass must override _deploy")

@@ -22,7 +22,7 @@ deploy_histogram = request_histogram.labels("deploy")
 @api.route('/api/status')
 @status_histogram.time()
 def status():
-    deployment_statuses = api.deployer.status()
+    deployment_statuses = api.status()
     return make_response(json.dumps(deployment_statuses, default=_encode), 200)
 
 

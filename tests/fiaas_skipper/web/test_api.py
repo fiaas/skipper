@@ -6,9 +6,9 @@ import json
 
 import pytest
 from flask import Flask
-from mock import patch, mock
+from mock import mock
 
-from fiaas_skipper.deploy.deploy import Deployer, DeploymentStatus
+from fiaas_skipper.deploy.deploy import Deployer, DeploymentStatus, StatusTracker
 from fiaas_skipper.web.api import api
 
 
@@ -18,25 +18,25 @@ class TestApi(object):
         return mock.create_autospec(Deployer)
 
     @pytest.fixture
-    def app(self, deployer):
+    def status(self):
+        return mock.create_autospec(StatusTracker, instance=True)
+
+    @pytest.fixture
+    def app(self, deployer, status):
         app = Flask(__name__)
         api.deployer = deployer
+        api.status = status
         app.register_blueprint(api)
         return app.test_client()
 
-    @pytest.fixture
-    def deployment_status(self):
-        with patch("fiaas_skipper.deploy.deploy.Deployer.status") as status:
-            yield status
-
-    def test_empty_status(self, app, deployer):
-        deployer.status.return_value = []
+    def test_empty_status(self, app, status):
+        status.return_value = []
         response = app.get('/api/status')
         assert response.status_code == 200
         assert json.loads(response.data) == []
 
-    def test_status(self, app, deployer):
-        deployer.status.return_value = [
+    def test_status(self, app, status):
+        status.return_value = [
             DeploymentStatus(name='fiaas-deploy-daemon',
                              namespace='default',
                              status='OK',

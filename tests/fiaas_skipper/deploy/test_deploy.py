@@ -77,7 +77,7 @@ class TestDeployer(object):
 
     def test_deploys_only_to_configured_namespaces(self, cluster, release_channel_factory, status):
         status.return_value = {'test1': _create_deployment_status(namespace='test1', status='OK')}
-        deployer = Deployer(cluster, release_channel_factory, None, deploy_interval=0, status=status)
+        deployer = Deployer(cluster, release_channel_factory, None, deploy_interval=0)
         deployer._deploy = mock.MagicMock(name="_deploy")
         deployer.deploy(namespaces=("test1",))
         deployer._deploy.assert_called_once()
@@ -85,14 +85,14 @@ class TestDeployer(object):
     def test_deploys_to_all_namespaces(self, cluster, release_channel_factory, status):
         status.return_value = {'test1': _create_deployment_status(namespace='test1', status='OK'),
                                'test2': _create_deployment_status(namespace='test2', status='OK')}
-        deployer = Deployer(cluster, release_channel_factory, None, deploy_interval=0, status=status)
+        deployer = Deployer(cluster, release_channel_factory, None, deploy_interval=0)
         deployer._deploy = mock.MagicMock(name="_deploy")
         deployer.deploy()
         assert 2 == deployer._deploy.call_count
 
     def test_deploys_with_bootstrap_when_force_flag_set(self, cluster, release_channel_factory, status):
         bootstrap = mock.MagicMock(name="bootstrap")
-        deployer = Deployer(cluster, release_channel_factory, bootstrap, status, deploy_interval=0)
+        deployer = Deployer(cluster, release_channel_factory, bootstrap, deploy_interval=0)
         deployer._deploy = mock.MagicMock(name="_deploy")
         deployer.deploy(namespaces=["test1"], force_bootstrap=True)
         assert 1 == bootstrap.call_count
