@@ -23,13 +23,15 @@ If no Deployment of fiaas-deploy-daemon exists in the namespace, a special "bare
 
 If there are many configured namespaces in the cluster, it might be useful to deploy only to a selected set of namespaces. This is possible by using the API, or the web UI of Skipper.
 
+Skipper will detect when new versions of fiaas-deploy-daemon is available, and automatically update all configured namespaces with the new version. This enables a fully automatic continuous deploy solution for fiaas-deploy-daemon.
+
+Skipper allows operators to force an update of fiaas-deploy-daemon in a given namespace.
+
 ### How skipper will work differently once currently planned features are completed
 
 We are not done. We have planned some further features, which will improve the experience of using Skipper significantly. Here are some of the planned changes:
 
-* Skipper will detect when new versions of fiaas-deploy-daemon is available, and automatically update all configured namespaces with the new version. This enables a fully automatic continuous deploy solution for fiaas-deploy-daemon.
 * Try to detect when an instance of fiaas-deploy-daemon is not operating properly, and re-deploy it
-* Allow operators to force an update, even if Skipper thinks everything is ok
 
 ## Deploying fiaas-deploy-daemon to a new namespace
 
@@ -66,6 +68,18 @@ If you follow the above steps, but fiaas-deploy-daemon for some reason does not 
     ```commandline
     kubectl logs -n some-namespace -lapp=fiaas-deploy-daemon
     ``` 
+5. To force deployment it is possible to include a flag in the POST payload:
+    1. `POST` JSON similar to this to the `/api/deploy` endpoint (including force bootstrap flag):
+        ```json
+        {
+            "namespaces": [
+                "some-namespace",
+                "other-namespace"
+            ],
+            "force-bootstrap": true
+        }
+        ```
+    2. Use the Web UI at `/status` and check `force bootstrap` in the deployment dialog when prompted
     
 
 [FIAAS operators guide]: https://github.com/fiaas/fiaas-deploy-daemon/blob/master/docs/operator_guide.md
