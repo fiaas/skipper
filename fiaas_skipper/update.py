@@ -11,10 +11,12 @@ CHECK_UPDATE_INTERVAL = 600
 
 
 class AutoUpdater(Thread):
-    def __init__(self, release_channel_factory, deployer):
+    def __init__(self, release_channel_factory, deployer, status):
         Thread.__init__(self)
+        self.daemon = True
         self._release_channel_factory = release_channel_factory
         self._deployer = deployer
+        self._status = status
 
     def check_updates(self):
         """
@@ -36,7 +38,7 @@ class AutoUpdater(Thread):
         If that is the case the deployer is triggered.
         """
         LOG.debug("Checking for namespaces that need bootstrapping")
-        need_bootstrap = [s.namespace for s in self._deployer.status() if s.status == 'NOT_FOUND']
+        need_bootstrap = [s.namespace for s in self._status() if s.status == 'NOT_FOUND']
         if need_bootstrap:
             LOG.debug("Detected namespaces {} need bootstrapping".format(', '.join(need_bootstrap)))
             self._deployer.deploy(namespaces=need_bootstrap)
@@ -49,8 +51,8 @@ class AutoUpdater(Thread):
             time.sleep(CHECK_UPDATE_INTERVAL)
 
     def _channels(self):
-        return set([s.channel for s in self._deployer.status()])
+        return set([s.channel for s in self._status()])
 
     def _update_namespaces(self, channel):
-        matched = [t for t in self._deployer.status() if t.channel == channel.tag]
+        matched = [t for t in self._status() if t.channel == channel.tag]
         return set([s.namespace for s in matched if s.version != channel.metadata['image'].split(':')[1]])

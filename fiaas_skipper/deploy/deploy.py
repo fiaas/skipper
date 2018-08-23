@@ -6,17 +6,18 @@ import collections
 import logging
 import time
 import uuid
+from threading import Thread, Lock
 
 import yaml
 from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
-from k8s.models.configmap import ConfigMap
 from k8s.models.deployment import Deployment
 from prometheus_client import Counter, Gauge
 
 LOG = logging.getLogger(__name__)
 NAME = 'fiaas-deploy-daemon'
 DEPLOY_INTERVAL = 30
+STATUS_UPDATE_INTERVAL = 300
 
 last_deploy_gauge = Gauge("last_triggered_deployment", "Timestamp for when last deployment was performed")
 deploy_counter = Counter("deployments_triggered", "Number of deployments triggered and performed")
@@ -103,29 +104,6 @@ class Deployer(object):
                           namespace=deployment_config.namespace,
                           labels=labels)
 
-    def _applications(self, name):
-        raise NotImplementedError("Subclass must override _applications")
-
-    def status(self):
-        try:
-            configmaps = ConfigMap.find(NAME, namespace=None)
-            deployments = {d.metadata.namespace: d for d in Deployment.find(NAME, namespace=None)}
-        except Exception:
-            LOG.exception("Unable to get configmaps or deployments from k8s")
-            return []
-        applications = {d.metadata.namespace: d for d in self._applications(NAME)}
-        res = []
-        for c in configmaps:
-            dep = deployments.get(c.metadata.namespace)
-            version = _get_version(dep)
-            status = _get_status(dep, applications.get(c.metadata.namespace))
-            res.append(DeploymentStatus(name=NAME,
-                                        namespace=c.metadata.namespace,
-                                        status=status.summary,
-                                        description=status.description,
-                                        version=version))
-        return res
-
 
 def requires_bootstrap(deployment_config):
     try:
@@ -155,3 +133,45 @@ def _get_status(dep, app):
     except TypeError:
         return Status('UNAVAILABLE', 'Unable to determine available/ready replicas from k8s server')
     return Status('OK', '')
+
+
+class StatusTracker(Thread):
+    def __init__(self, cluster, application):
+        Thread.__init__(self)
+        self.daemon = True
+        self._cluster = cluster
+        self._status = {}
+        self._application = application
+        self._statuslock = Lock()
+
+    def __call__(self):
+        with self._statuslock:
+            return tuple(self._status.values())
+
+    def _get_status(self, namespace=None):
+        deployment_configs = self._cluster.find_deployment_configs(NAME, namespace=namespace)
+        deployments = {d.metadata.namespace: d for d in Deployment.find(NAME, namespace=namespace)}
+        applications = {d.metadata.namespace: d for d in self._application.find(NAME, namespace=namespace)}
+        res = []
+        for c in deployment_configs:
+            dep = deployments.get(c.namespace)
+            app = applications.get(c.namespace)
+            version = _get_version(dep)
+            status = _get_status(dep, app)
+            res.append(DeploymentStatus(name=NAME,
+                                        namespace=c.namespace,
+                                        status=status.summary,
+                                        description=status.description,
+                                        version=version or '',
+                                        channel=c.tag or ''))
+        return res
+
+    def _update_status(self):
+        new_status = self._get_status()
+        with self._statuslock:
+            self._status = {status.namespace: status for status in new_status}
+
+    def run(self):
+        while True:
+            self._update_status()
+            time.sleep(STATUS_UPDATE_INTERVAL)

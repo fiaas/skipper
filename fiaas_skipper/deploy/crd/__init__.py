@@ -4,5 +4,6 @@ from __future__ import absolute_import
 
 from .bootstrap import CrdBootstrapper
 from .deployer import CrdDeployer
+from .types import FiaasApplication
 
-__all__ = ["CrdBootstrapper", "CrdDeployer"]
+__all__ = ["CrdBootstrapper", "CrdDeployer", "FiaasApplication"]

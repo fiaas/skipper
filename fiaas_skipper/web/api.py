@@ -22,7 +22,7 @@ deploy_histogram = request_histogram.labels("deploy")
 @api.route('/api/status')
 @status_histogram.time()
 def status():
-    deployment_statuses = api.deployer.status()
+    deployment_statuses = api.status()
     return make_response(json.dumps(deployment_statuses, default=_encode), 200)
 
 
@@ -34,7 +34,7 @@ def _encode(obj):
 
 def _force_bootstrap(request):
     if request.get_json() and 'force_bootstrap' in request.get_json():
-        return request.get_json(force=True, silent=True)['force_bootstrap']
+        return request.get_json()['force_bootstrap']
     return False
 
 

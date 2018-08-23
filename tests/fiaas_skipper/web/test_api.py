@@ -6,43 +6,37 @@ import json
 
 import pytest
 from flask import Flask
-from mock import patch, Mock, mock
+from mock import mock
 
-from fiaas_skipper.deploy.deploy import Deployer, DeploymentStatus
+from fiaas_skipper.deploy.deploy import Deployer, DeploymentStatus, StatusTracker
 from fiaas_skipper.web.api import api
 
 
 class TestApi(object):
     @pytest.fixture
     def deployer(self):
-        release_channel_factory = Mock()
-        cluster = Mock()
-        bootstrap = Mock()
-        return Deployer(cluster=cluster,
-                        release_channel_factory=release_channel_factory,
-                        bootstrap=bootstrap,
-                        deploy_interval=0)
+        return mock.create_autospec(Deployer)
 
     @pytest.fixture
-    def app(self, deployer):
+    def status(self):
+        return mock.create_autospec(StatusTracker, instance=True)
+
+    @pytest.fixture
+    def app(self, deployer, status):
         app = Flask(__name__)
         api.deployer = deployer
+        api.status = status
         app.register_blueprint(api)
         return app.test_client()
 
-    @pytest.fixture
-    def deployment_status(self):
-        with mock.patch("fiaas_skipper.deploy.deploy.Deployer.status") as status:
-            yield status
-
-    def test_empty_status(self, app, deployment_status):
-        deployment_status.return_value = []
+    def test_empty_status(self, app, status):
+        status.return_value = []
         response = app.get('/api/status')
         assert response.status_code == 200
         assert json.loads(response.data) == []
 
-    def test_status(self, app, deployment_status):
-        deployment_status.return_value = [
+    def test_status(self, app, status):
+        status.return_value = [
             DeploymentStatus(name='fiaas-deploy-daemon',
                              namespace='default',
                              status='OK',
@@ -60,14 +54,12 @@ class TestApi(object):
             "channel": "stable"
         }]
 
-    def test_deploy(self, app):
-        with patch('fiaas_skipper.deploy.deploy.Deployer.deploy') as mock:
-            response = app.post('/api/deploy')
-            assert response.status_code == 200
-            assert mock.called
+    def test_deploy(self, app, deployer):
+        response = app.post('/api/deploy')
+        assert response.status_code == 200
+        deployer.deploy.assert_called_with(force_bootstrap=False, namespaces=None)
 
-    def test_deploy_force_bootstrap(self, app):
-        with patch('fiaas_skipper.deploy.deploy.Deployer.deploy') as mock:
-            response = app.post('/api/deploy', json={'force_bootstrap': True, 'namespaces': ['test1']})
-            assert response.status_code == 200
-            mock.assert_called_with(force_bootstrap=True, namespaces=['test1'])
+    def test_deploy_force_bootstrap(self, app, deployer):
+        response = app.post('/api/deploy', json={'force_bootstrap': True, 'namespaces': ['test1']})
+        assert response.status_code == 200
+        deployer.deploy.assert_called_with(force_bootstrap=True, namespaces=['test1'])

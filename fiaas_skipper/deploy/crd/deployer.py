@@ -22,5 +22,3 @@ class CrdDeployer(Deployer):
     def _create_application_spec(self, name, image, spec_config):
         return FiaasApplicationSpec(application=name, image=image, config=spec_config)
 
-    def _applications(self, name):
-        return FiaasApplication.find(name, namespace=None)

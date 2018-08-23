@@ -9,9 +9,11 @@ import os
 import yaml
 from k8s import config as k8s_config
 
+from fiaas_skipper.deploy import StatusTracker
 from fiaas_skipper.update import AutoUpdater
 from .config import Configuration
-from .deploy import CrdDeployer, TprDeployer, ReleaseChannelFactory, CrdBootstrapper, TprBootstrapper
+from .deploy import CrdDeployer, TprDeployer, ReleaseChannelFactory, CrdBootstrapper, TprBootstrapper, \
+    FiaasApplication, PaasbetaApplication
 from .deploy.channel import FakeReleaseChannelFactory
 from .deploy.cluster import Cluster
 from .logsetup import init_logging
@@ -74,18 +76,23 @@ def main():
                 log.exception("Unable to load spec config extension file {!r} using defaults"
                               .format(cfg.spec_file_override))
         if cfg.enable_crd_support:
+            application = FiaasApplication
             deployer = CrdDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
                                    bootstrap=CrdBootstrapper(), spec_config_extension=spec_config_extension)
         elif cfg.enable_tpr_support:
+            application = PaasbetaApplication
             deployer = TprDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
                                    bootstrap=TprBootstrapper(), spec_config_extension=spec_config_extension)
+        # Do period checking of deployment status across all namespaces
+        status_tracker = StatusTracker(cluster=cluster, application=application)
+        status_tracker.start()
         if not cfg.disable_autoupdate:
-            updater = AutoUpdater(release_channel_factory=release_channel_factory, deployer=deployer)
-            updater.daemon = True
+            updater = AutoUpdater(release_channel_factory=release_channel_factory, deployer=deployer,
+                                  status=status_tracker)
             updater.start()
         else:
             log.debug("Auto updates disabled")
-        webapp = create_webapp(deployer, cluster, release_channel_factory)
+        webapp = create_webapp(deployer, cluster, release_channel_factory, status_tracker)
         Main(webapp=webapp, config=cfg).run()
     except BaseException:
         log.exception("General failure! Inspect traceback and make the code better!")
