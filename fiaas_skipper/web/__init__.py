@@ -5,10 +5,6 @@ from __future__ import absolute_import
 from flask import Flask, request_started, request_finished, got_request_exception
 from prometheus_client import Counter, Histogram
 
-from .platform_collector import PLATFORM_COLLECTOR
-
-PLATFORM_COLLECTOR.collect()
-
 request_histogram = Histogram("web_request_latency", "Request latency in seconds", ["page"])
 
 SELF = "'self'"

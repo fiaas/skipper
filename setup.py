@@ -21,7 +21,7 @@ GENERIC_REQ = [
     "six == 1.10.0",
     "PyYAML == 3.12",
     "pyaml == 16.12.2",
-    "prometheus_client == 0.0.19",
+    "prometheus_client == 0.3.1",
     'requests==2.13.0',
 ]
 
