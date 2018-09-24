@@ -9,4 +9,7 @@ healthcheck = Blueprint("healthcheck", __name__)
 
 @healthcheck.route('/healthz')
 def healthz():
-    return make_response('', 200)
+    if healthcheck.status.is_alive():
+        return make_response('', 200)
+    else:
+        return make_response('', 500)
