@@ -39,6 +39,7 @@ def create_webapp(deployer, cluster, release_channel_factory, status):
     api.deployer = deployer
     api.status = status
     frontend.release_channel_factory = release_channel_factory
+    healthcheck.status = status
     app.register_blueprint(api)
     app.register_blueprint(frontend)
     app.register_blueprint(metrics)
