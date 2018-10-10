@@ -16,22 +16,22 @@ def version():
 
 
 GENERIC_REQ = [
-    "k8s == 0.10.0",
-    "ConfigArgParse == 0.12.0",
-    "six == 1.10.0",
-    "PyYAML == 3.12",
-    "pyaml == 16.12.2",
-    "prometheus_client == 0.3.1",
-    'requests==2.13.0',
+    "k8s==0.10.0",
+    "ConfigArgParse==0.13.0",
+    "six==1.11.0",
+    "PyYAML==3.13",
+    "pyaml==17.12.1",
+    "prometheus_client==0.4.0",
+    'requests==2.19.1',
 ]
 
 WEB_REQ = [
-    "Flask == 1.0.2",
+    "Flask==1.0.2",
     "flask-talisman==0.5.1",
-    "blinker == 1.4",
-    "flask-bootstrap == 3.3.7.1",
-    "flask-nav",
-    "dominate"
+    "blinker==1.4",
+    "flask-bootstrap==3.3.7.1",
+    "flask-nav==0.6",
+    "dominate==2.3.4"
 ]
 
 CODE_QUALITY_REQ = [
@@ -39,17 +39,16 @@ CODE_QUALITY_REQ = [
 ]
 
 TESTS_REQ = [
-    'mock',
-    'tox==2.9.1',
-    'pytest-html',
-    'pytest-cov',
-    'pytest-helpers-namespace',
-    'pytest >= 3.0',
-    'requests-mock'
+    'mock==2.0.0',
+    'pytest-html==1.19.0',
+    'pytest-cov==2.6.0',
+    'pytest-helpers-namespace==2017.11.11',
+    'pytest==3.8.2',
+    'requests-mock==1.5.2'
 ]
 
 CI_REQ = [
-    'tox==2.9.1',
+    'tox',
     'tox-travis',
 ]
 
