@@ -22,7 +22,7 @@ GENERIC_REQ = [
     "PyYAML==3.13",
     "pyaml==17.12.1",
     "prometheus_client==0.4.0",
-    'requests==2.19.1',
+    'requests==2.13.0',
 ]
 
 WEB_REQ = [
