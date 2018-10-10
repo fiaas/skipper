@@ -18,7 +18,7 @@ def version():
 GENERIC_REQ = [
     "k8s==0.10.0",
     "ConfigArgParse==0.13.0",
-    "six==1.11.0",
+    "six==1.10.0",
     "PyYAML==3.13",
     "pyaml==17.12.1",
     "prometheus_client==0.4.0",
