@@ -2,4 +2,4 @@
 
 set -evuo pipefail
 
-docker build . -t "${TRAVIS_REPO_SLUG}:latest"
+docker build --pull . -t "${TRAVIS_REPO_SLUG}:latest"
