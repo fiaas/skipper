@@ -33,6 +33,22 @@ We are not done. We have planned some further features, which will improve the e
 
 * Try to detect when an instance of fiaas-deploy-daemon is not operating properly, and re-deploy it
 
+## Installation
+
+With Helm:
+
+```commandline
+helm install ./helm/fiaas-skipper --name "fiaas-skipper"
+```
+
+With Helm (including rbac):
+
+```commandline
+helm install ./helm/fiaas-skipper --name "fiaas-skipper" --set rbac.enabled="true"
+```
+
+For more information on permissions required for fiaas-controller see [FIAAS operators guide].
+
 ## Deploying fiaas-deploy-daemon to a new namespace
 
 Deploying fiaas-deploy-daemon to a new namespace can be done in a few simple steps, assuming you already have Skipper running in your cluster:
