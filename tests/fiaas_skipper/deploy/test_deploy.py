@@ -138,7 +138,7 @@ class TestStatusTracker(object):
 
     @pytest.mark.usefixtures("deployment_find")
     def test_deployment_statuses(self, cluster, application):
-        status_tracker = StatusTracker(cluster, application)
+        status_tracker = StatusTracker(cluster, application, interval=30)
         results = status_tracker._get_status()
 
         assert len(results) == 6

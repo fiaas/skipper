@@ -52,6 +52,8 @@ class Configuration(Namespace):
                             default=DEFAULT_OVERRIDE_SPEC_FILE)
         parser.add_argument("--disable-autoupdate", help="Disable auto updating of fiaas-deploy-daemon.",
                             action="store_true")
+        parser.add_argument("--status-update-interval", help="How frequently to check status of namespaces.",
+                            default=30)
         api_parser = parser.add_argument_group("API server")
         api_parser.add_argument("--api-server", help="Address of the api-server to use (IP or name)",
                                 default="https://kubernetes.default.svc.cluster.local")
