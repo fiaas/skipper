@@ -2,13 +2,17 @@
 # -*- coding: utf-8
 from __future__ import absolute_import
 
+import logging
+
 import pkg_resources
+import requests
 from dominate.tags import img
 from flask import Blueprint, render_template
 from flask_nav.elements import Navbar, View, Subgroup, Link, Text
 
 from .nav import nav
 
+LOG = logging.getLogger(__name__)
 FIAAS_VERSION = pkg_resources.require("fiaas_skipper")[0].version
 
 frontend = Blueprint('frontend', __name__)
@@ -39,9 +43,14 @@ def index():
 def status():
     versions = {}
     for tag in ("stable", "latest"):
-        channel = frontend.release_channel_factory("fiaas-deploy-daemon", tag)
-        image = channel.metadata["image"]
-        versions[tag] = image.split(":")[-1]
+        try:
+            channel = frontend.release_channel_factory("fiaas-deploy-daemon", tag)
+            image = channel.metadata["image"]
+            version = image.split(":")[-1]
+        except requests.exceptions.ConnectionError:
+            LOG.exception("Unable to determine version for tag: %s" % tag)
+            version = "unavailable"
+        versions[tag] = version
     return render_template('status.html', versions=versions)
 
 
