@@ -6,6 +6,9 @@ import json
 import logging
 import os
 
+from gevent import monkey
+monkey.patch_all()  # NOQA
+
 import yaml
 from k8s import config as k8s_config
 
@@ -19,15 +22,10 @@ from .deploy.cluster import Cluster
 from .logsetup import init_logging
 from .web import create_webapp
 
+from gevent.pywsgi import WSGIServer, LoggingLogAdapter
 
-class Main(object):
-    def __init__(self, webapp, config):
-        self._webapp = webapp
-        self._config = config
 
-    def run(self):
-        # Run web-app in main thread
-        self._webapp.run("0.0.0.0", self._config.port)
+LOG = logging.getLogger(__name__)
 
 
 def init_k8s_client(config):
@@ -93,7 +91,11 @@ def main():
         else:
             log.debug("Auto updates disabled")
         webapp = create_webapp(deployer, cluster, release_channel_factory, status_tracker)
-        Main(webapp=webapp, config=cfg).run()
+        log = LoggingLogAdapter(LOG, logging.DEBUG)
+        error_log = LoggingLogAdapter(LOG, logging.ERROR)
+        # Run web-app in main thread
+        http_server = WSGIServer(("", cfg.port), webapp, log=log, error_log=error_log)
+        http_server.serve_forever()
     except BaseException:
         log.exception("General failure! Inspect traceback and make the code better!")
 
