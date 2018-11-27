@@ -2,12 +2,12 @@
 # -*- coding: utf-8
 from __future__ import absolute_import
 
+from gevent import monkey
+monkey.patch_all()  # NOQA
+
 import json
 import logging
 import os
-
-from gevent import monkey
-monkey.patch_all()  # NOQA
 
 import yaml
 from k8s import config as k8s_config
