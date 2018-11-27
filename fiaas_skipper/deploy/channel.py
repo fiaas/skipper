@@ -18,18 +18,21 @@ class ReleaseChannelFactory(object):
         self._baseurl = baseurl
 
     def __call__(self, name, tag):
-        r = requests.get('%s/%s/%s.json' % (self._baseurl, name, tag))
         LOG.debug('Retrieving meta data for %s/%s/%s.json' % (self._baseurl, name, tag))
-        metadata = r.json()
-        spec = self._get_spec(metadata.get('spec', None))
-        return ReleaseChannel(name, tag, metadata=metadata, spec=spec)
+        try:
+            r = requests.get('%s/%s/%s.json' % (self._baseurl, name, tag))
+            r.raise_for_status()
+            metadata = r.json()
+            spec = self._get_spec(metadata.get('spec', None))
+            return ReleaseChannel(name, tag, metadata=metadata, spec=spec)
+        except requests.exceptions.RequestException as e:
+            raise ReleaseChannelError("Unable to retrieve metadata") from e
 
     @staticmethod
     def _get_spec(url):
         """Load spec file yaml from url"""
         if not url:
-            LOG.error("No spec url specified")
-            raise ValueError("Channel metadata contained no config URL")
+            raise ReleaseChannelError("Channel metadata contained no config URL")
         LOG.debug("Loading spec from channel metadata: " + url)
         resp = requests.get(url)
         resp.raise_for_status()
@@ -45,3 +48,7 @@ class FakeReleaseChannelFactory(object):
 
     def __call__(self, name, tag):
         return ReleaseChannel(name, tag, metadata=self._metadata, spec=self._spec)
+
+
+class ReleaseChannelError(Exception):
+    pass

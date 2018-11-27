@@ -5,11 +5,10 @@ from __future__ import absolute_import
 import logging
 
 import pkg_resources
-import requests
 from dominate.tags import img
 from flask import Blueprint, render_template
 from flask_nav.elements import Navbar, View, Subgroup, Link, Text
-
+from fiaas_skipper.deploy.channel import ReleaseChannelError
 from .nav import nav
 
 LOG = logging.getLogger(__name__)
@@ -47,7 +46,7 @@ def status():
             channel = frontend.release_channel_factory("fiaas-deploy-daemon", tag)
             image = channel.metadata["image"]
             version = image.split(":")[-1]
-        except requests.exceptions.ConnectionError:
+        except ReleaseChannelError:
             LOG.exception("Unable to determine version for tag: %s" % tag)
             version = "unavailable"
         versions[tag] = version
