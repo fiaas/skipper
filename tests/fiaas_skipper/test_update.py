@@ -3,9 +3,9 @@
 import pytest
 from mock import mock
 
-from fiaas_skipper.update import AutoUpdater
 from fiaas_skipper.deploy.channel import ReleaseChannel
 from fiaas_skipper.deploy.deploy import DeploymentStatus, Deployer, StatusTracker
+from fiaas_skipper.update import AutoUpdater
 
 
 def _create_deployment_status(namespace, status='OK', version='123'):
@@ -55,10 +55,11 @@ class TestAutoUpdater(object):
         updater.check_updates()
         deployer.deploy.assert_not_called()
 
-    def test_check_bootstrap_deploys_new_version(self, release_channel_factory, deployer, status):
+    @pytest.mark.parametrize("dep_status", ("NOT_FOUND", "VERSION_MISMATCH"))
+    def test_check_bootstrap_deploys_new_version(self, release_channel_factory, deployer, status, dep_status):
         status.return_value = [
-            _create_deployment_status(namespace='test1', status='NOT_FOUND')
+            _create_deployment_status(namespace='test1', status=dep_status)
         ]
         updater = AutoUpdater(release_channel_factory=release_channel_factory, deployer=deployer, status=status)
         updater.check_bootstrap()
-        deployer.deploy.assert_called_once_with(namespaces=['test1'])
+        deployer.deploy.assert_called_once_with(namespaces=['test1'], force_bootstrap=True)
