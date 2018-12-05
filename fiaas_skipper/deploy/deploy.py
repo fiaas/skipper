@@ -17,7 +17,6 @@ from prometheus_client import Counter, Gauge
 LOG = logging.getLogger(__name__)
 NAME = 'fiaas-deploy-daemon'
 DEPLOY_INTERVAL = 30
-STATUS_UPDATE_INTERVAL = 300
 
 last_deploy_gauge = Gauge("last_triggered_deployment", "Timestamp for when last deployment was performed")
 deploy_counter = Counter("deployments_triggered", "Number of deployments triggered and performed")
@@ -136,13 +135,14 @@ def _get_status(dep, app):
 
 
 class StatusTracker(Thread):
-    def __init__(self, cluster, application):
+    def __init__(self, cluster, application, interval):
         Thread.__init__(self)
         self.daemon = True
         self._cluster = cluster
         self._status = {}
         self._application = application
         self._statuslock = Lock()
+        self._interval = interval
 
     def __call__(self):
         with self._statuslock:
@@ -174,4 +174,4 @@ class StatusTracker(Thread):
     def run(self):
         while True:
             self._update_status()
-            time.sleep(STATUS_UPDATE_INTERVAL)
+            time.sleep(self._interval)
