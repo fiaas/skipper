@@ -16,3 +16,4 @@ baseurl: 'http://fiaas-release.delivery-pro.schibsted.io'
 annotations: {}
 rbac:
   enabled: false
+statusUpdateInterval: 30
