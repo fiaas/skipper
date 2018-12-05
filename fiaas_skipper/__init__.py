@@ -82,7 +82,7 @@ def main():
             deployer = TprDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
                                    bootstrap=TprBootstrapper(), spec_config_extension=spec_config_extension)
         # Do period checking of deployment status across all namespaces
-        status_tracker = StatusTracker(cluster=cluster, application=application)
+        status_tracker = StatusTracker(cluster=cluster, application=application, interval=cfg.status_update_interval)
         status_tracker.start()
         if not cfg.disable_autoupdate:
             updater = AutoUpdater(release_channel_factory=release_channel_factory, deployer=deployer,
