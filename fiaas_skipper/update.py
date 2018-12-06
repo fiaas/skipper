@@ -2,9 +2,8 @@
 # -*- coding: utf-8
 
 import logging
-from threading import Thread
-
 import time
+from threading import Thread
 
 LOG = logging.getLogger(__name__)
 CHECK_UPDATE_INTERVAL = 600
@@ -38,10 +37,10 @@ class AutoUpdater(Thread):
         If that is the case the deployer is triggered.
         """
         LOG.debug("Checking for namespaces that need bootstrapping")
-        need_bootstrap = [s.namespace for s in self._status() if s.status == 'NOT_FOUND']
+        need_bootstrap = [s.namespace for s in self._status() if s.status in ('NOT_FOUND', 'VERSION_MISMATCH')]
         if need_bootstrap:
             LOG.debug("Detected namespaces {} need bootstrapping".format(', '.join(need_bootstrap)))
-            self._deployer.deploy(namespaces=need_bootstrap)
+            self._deployer.deploy(namespaces=need_bootstrap, force_bootstrap=True)
 
     def run(self):
         time.sleep(60)  # Delay at start to allow status to have been populated
