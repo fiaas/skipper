@@ -1,0 +1,4 @@
+---
+engines:
+  prospector:
+    python_version: 3
