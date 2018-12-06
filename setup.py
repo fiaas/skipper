@@ -31,7 +31,8 @@ WEB_REQ = [
     "blinker==1.4",
     "flask-bootstrap==3.3.7.1",
     "flask-nav==0.6",
-    "dominate==2.3.4"
+    "dominate==2.3.4",
+    "gevent == 1.3.7",
 ]
 
 CODE_QUALITY_REQ = [
