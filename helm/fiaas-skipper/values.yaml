@@ -7,6 +7,7 @@ ingress:
   fqdn: fiaas-skipper.yourcluster.local
   enableTLS: true
   annotations: {}
+  suffix: yourcluster.local
 deployment:
   # include the resource requests and limits
   includeResourceUsage: true
@@ -17,3 +18,5 @@ annotations: {}
 rbac:
   enabled: false
 statusUpdateInterval: 30
+# Add a fiaas-deploy-daemon configmap to the namespace where fiaas-skipper is installed
+addFiaasDeployDaemonConfigmap: false

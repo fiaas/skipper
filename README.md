@@ -49,6 +49,8 @@ helm install ./helm/fiaas-skipper --name "fiaas-skipper" --set rbac.enabled="tru
 
 For more information on permissions required for fiaas-controller see [FIAAS operators guide].
 
+Skipper will look for a fiaas-deploy-daemon configmap across namespaces in the cluster and will bootstrap and deploy a fiaas-deploy-daemon instance for any that are found. By default this configmap is not added when skipper is installed but the install command can be extended with `--set addFiaasDeployDaemonConfigmap="true"` to include the configmap which will make fiaas-skipper start an instance of the fiaas-deploy-daemon once installed. This is useful when bootstrapping fiaas for the first time in a new cluster.
+
 ## Deploying fiaas-deploy-daemon to a new namespace
 
 Deploying fiaas-deploy-daemon to a new namespace can be done in a few simple steps, assuming you already have Skipper running in your cluster:
