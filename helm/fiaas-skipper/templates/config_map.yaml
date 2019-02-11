@@ -15,5 +15,6 @@ data:
     {{with .Values.baseurl}}baseurl: {{.}}{{end}}
     {{with .Values.debug}}debug: true{{end}}
     {{with .Values.statusUpdateInterval}}status-update-interval: {{.}}{{end}}
+    {{with not .Values.autoUpdate}}disable-autoupdate: true{{end}}
   fiaas_override.yaml: |
 {{ .Files.Get "fiaas_override.yaml" | indent 4 }}
