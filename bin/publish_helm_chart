@@ -12,6 +12,7 @@ helm init --client-only
 echo "Publishing helm chart"
 
 sed -i 's/tag:.*/tag: '"${VERSION/+/-}"'/g' helm/fiaas-skipper/values.yaml
+sed -i 's/version:.*/version: '"${TRAVIS_TAG/v/}"'/g' helm/fiaas-skipper/Chart.yaml
 
 output="$(cd helm; helm package fiaas-skipper)"
 package=`expr "$output" : 'Successfully packaged chart and saved it to: \(.*\)'`
@@ -21,7 +22,7 @@ mv $package helm-repo/
 cd helm-repo/
 helm repo index . --url https://fiaas.github.io/helm/
 git add .
-git commit -a -m "Release fiaas-skipper"
-git push https://${GIT_USERNAME}:${GIT_APITOKEN}@github.com/fiaas/helm
+git commit -a -m "Release fiaas-skipper ${TRAVIS_TAG}"
+git push https://${GITHUBKEY}@github.com/fiaas/helm
 
 echo "Successfully pushed helm chart"
