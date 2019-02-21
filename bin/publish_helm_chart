@@ -11,10 +11,10 @@ helm init --client-only
 
 echo "Publishing helm chart"
 
+sed -i 's/tag:.*/tag: '"${VERSION/+/-}"'/g' helm/fiaas-skipper/values.yaml
+
 output="$(cd helm; helm package fiaas-skipper)"
-echo $output
 package=`expr "$output" : 'Successfully packaged chart and saved it to: \(.*\)'`
-echo $package
 
 git clone https://github.com/fiaas/helm helm-repo
 mv $package helm-repo/

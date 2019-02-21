@@ -18,7 +18,7 @@ script:
 after_success: tox -e coverage
 deploy:
   provider: script
-  script: bin/docker_push && bin/publish_helm_chart
+  script: VERSION=$(python setup.py --version) bash -c 'bin/docker_push && bin/publish_helm_chart'
   skip_cleanup: true
   on:
     branch: master
