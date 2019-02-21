@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 set -evuo pipefail
 # Only do tagging on merge to master
-if ([ "$TRAVIS_BRANCH" == "master" ] && [[ -z "$TRAVIS_TAG" ]]) &&
-    [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-  go get -u -v github.com/screwdriver-cd/gitversion
-  GIT_TAG=$(gitversion --prefix=v bump auto 2>&1|tail -1)
-  git push https://$GITHUBKEY@github.com/fiaas/skipper $GIT_TAG
-  echo "successfully tagged release"
-fi
+go get -u -v github.com/screwdriver-cd/gitversion
+GIT_TAG=$(gitversion --prefix=v bump auto 2>&1|tail -1)
+git push https://$GITHUBKEY@github.com/fiaas/skipper $GIT_TAG
+echo "successfully tagged release"
+echo "$GIT_TAG"
