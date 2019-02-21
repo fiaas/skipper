@@ -15,10 +15,11 @@ install:
 script:
   - tox
   - bin/docker_build
-after_success: tox -e coverage
+after_success:
+- tox -e coverage
 deploy:
   provider: script
-  script: VERSION=$(python setup.py --version) bash -c 'bin/docker_push && bin/publish_helm_chart'
+  script: VERSION=$(python setup.py --version) TAG=$(bin/tag_release|tail -1) bash -c 'bin/docker_push && bin/publish_helm_chart'
   skip_cleanup: true
   on:
     branch: master
