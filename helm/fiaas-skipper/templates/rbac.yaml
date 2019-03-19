@@ -16,6 +16,7 @@ rules:
       - application-statuses
       - paasbetaapplications
       - paasbetastatuses
+      - statuses
     verbs:
       - create
       - delete
