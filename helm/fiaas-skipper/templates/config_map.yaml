@@ -16,5 +16,9 @@ data:
     {{with .Values.debug}}debug: true{{end}}
     {{with .Values.statusUpdateInterval}}status-update-interval: {{.}}{{end}}
     {{with not .Values.autoUpdate}}disable-autoupdate: true{{end}}
-  fiaas_override.yaml: |
+  fiaas_override.yaml: |-
+{{ if .Values.fiaas_override_yaml -}}
+{{ .Values.fiaas_override_yaml | indent 4 }}
+{{- else -}}
 {{ .Files.Get "fiaas_override.yaml" | indent 4 }}
+{{- end -}}
