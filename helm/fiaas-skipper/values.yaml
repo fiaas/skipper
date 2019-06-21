@@ -13,7 +13,7 @@ deployment:
   includeResourceUsage: true
 TPR: false
 CRD: true
-baseurl: 'http://fiaas-release.delivery-pro.schibsted.io'
+baseurl: 'https://fiaas.github.io/releases'
 annotations: {}
 rbac:
   enabled: false
