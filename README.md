@@ -38,13 +38,13 @@ We are not done. We have planned some further features, which will improve the e
 With Helm:
 
 ```commandline
-helm install ./helm/fiaas-skipper --name "fiaas-skipper"
+helm install --repo https://fiaas.github.io/helm fiaas-skipper --name fiaas-skipper
 ```
 
 With Helm (including rbac):
 
 ```commandline
-helm install ./helm/fiaas-skipper --name "fiaas-skipper" --set rbac.enabled="true"
+helm install --repo https://fiaas.github.io/helm fiaas-skipper --name fiaas-skipper --set rbac.enabled="true"
 ```
 
 For more information on permissions required for fiaas-controller see [FIAAS operators guide].
@@ -101,3 +101,8 @@ If you follow the above steps, but fiaas-deploy-daemon for some reason does not 
     
 
 [FIAAS operators guide]: https://github.com/fiaas/fiaas-deploy-daemon/blob/master/docs/operator_guide.md
+
+## Release Process
+
+When changes are merged to master the master branch is built using (travis)[https://travis-ci.org/fiaas/skipper]. The build generates a docker image that is published to the (fiaas/skipper)[https://cloud.docker.com/u/fiaas/repository/docker/fiaas/skipper] respository on docker hub and is publicly available.
+Additionally a helm chart is created and published to the (fiaas helm repository)[https://github.com/fiaas/helm].
