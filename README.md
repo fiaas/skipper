@@ -12,7 +12,7 @@ Skipper controls deployment and updates of FIAAS components
 ## How skipper works
 
 Skipper runs in your cluster, looking for namespaces configured for FIAAS. This is defined as having a ConfigMap named `fiaas-deploy-daemon` in the namespace. The ConfigMap supports two keys, one of which is required.
- 
+
 The required key is `cluster_config.yaml`, which configures fiaas-deploy-daemon. You should see the [FIAAS operators guide] for details about this file.
 
 The second key is `tag`, which defaults to the value `stable` if left out. Currently the only other valid value is `latest`. This controls which version of fiaas-deploy-daemon to deploy to this namespace.
@@ -38,13 +38,13 @@ We are not done. We have planned some further features, which will improve the e
 With Helm:
 
 ```commandline
-helm install ./helm/fiaas-skipper --name "fiaas-skipper"
+helm install --repo https://fiaas.github.io/helm fiaas-skipper --name fiaas-skipper
 ```
 
 With Helm (including rbac):
 
 ```commandline
-helm install ./helm/fiaas-skipper --name "fiaas-skipper" --set rbac.enabled="true"
+helm install --repo https://fiaas.github.io/helm fiaas-skipper --name fiaas-skipper --set rbac.enabled="true"
 ```
 
 For more information on permissions required for fiaas-controller see [FIAAS operators guide].
@@ -77,15 +77,15 @@ If you follow the above steps, but fiaas-deploy-daemon for some reason does not 
 2. If bootstrapping a new namespace, check the bootstrap pod logs:
     ```commandline
     kubectl logs -n some-namespace fiaas-deploy-daemon-bootstrap
-    ``` 
+    ```
 3. If a Deployment exists, but no pods, check the Deployment for problems:
     ```commandline
     kubectl describe deploy -n some-namespace fiaas-deploy-daemon
-    ``` 
+    ```
 4. If fiaas-deploy-daemon is deployed, but is not deploying any applications, check logs for fiaas-deploy-daemon:
     ```commandline
     kubectl logs -n some-namespace -lapp=fiaas-deploy-daemon
-    ``` 
+    ```
 5. To force deployment it is possible to include a flag in the POST payload:
     1. `POST` JSON similar to this to the `/api/deploy` endpoint (including force bootstrap flag):
         ```json
@@ -98,6 +98,11 @@ If you follow the above steps, but fiaas-deploy-daemon for some reason does not 
         }
         ```
     2. Use the Web UI at `/status` and check `force bootstrap` in the deployment dialog when prompted
-    
+
 
 [FIAAS operators guide]: https://github.com/fiaas/fiaas-deploy-daemon/blob/master/docs/operator_guide.md
+
+## Release Process
+
+When changes are merged to master the master branch is built using [travis](https://travis-ci.org/fiaas/skipper). The build generates a docker image that is published to the [fiaas/skipper](https://cloud.docker.com/u/fiaas/repository/docker/fiaas/skipper) respository on docker hub and is publicly available.
+Additionally a helm chart is created and published to the [fiaas helm repository](https://github.com/fiaas/helm).
