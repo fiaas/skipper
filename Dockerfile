@@ -1,3 +1,4 @@
+# dockerma archs:amd64,arm,arm64:
 FROM python:3.6-alpine3.7 as common
 MAINTAINER fiaas@googlegroups.com
 # Install any binary package dependencies here
