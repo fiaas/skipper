@@ -5,6 +5,7 @@ echo "Installing gitversion"
 url="https://github.com/screwdriver-cd/gitversion/releases/download/v1.1.3/gitversion_linux_amd64"
 install_dir="$(pwd)/gitversion/bin"
 
+go version
 mkdir -p "$install_dir"
 curl -Lo "$install_dir/gitversion" "$url"
 
