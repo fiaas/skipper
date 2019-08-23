@@ -11,12 +11,12 @@ curl -Lo "$install_dir/gitversion" "$url"
 chmod +x "$install_dir/gitversion"
 
 mkdir -p ~/bin
-ls
-ls $install_dir
-ls ~/bin
+ls -al
+ls -al $install_dir
+ls -al ~/bin
 echo $PATH
 install "$install_dir/giversion" ~/bin/gitversion
-ls
-ls $install_dir
+ls -al
+ls -al $install_dir
 ls ~/bin
 echo $PATH
