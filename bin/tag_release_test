@@ -15,7 +15,7 @@ ls -al
 ls -al $install_dir
 ls -al ~/bin
 cd $install_dir
-gitversion version
+./gitversion version
 echo $PATH
 install "$install_dir/giversion" ~/bin/gitversion
 ls -al
