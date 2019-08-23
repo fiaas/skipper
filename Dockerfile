@@ -11,12 +11,13 @@ RUN apk --no-cache add \
     git \
     yaml-dev
 COPY . /skipper
+COPY .wheel_cache/*.whl /links/
 WORKDIR /skipper
-RUN pip wheel . --wheel-dir=/wheels/
+RUN pip wheel . --no-cache-dir --wheel-dir=/wheels/ --find-links=/links/
 
 FROM common as production
 # Get rid of all build dependencies, install application using only pre-built binary wheels
 COPY --from=build /wheels/ /wheels/
-RUN pip install --no-index --find-links=/wheels/ --only-binary all /wheels/fiaas_skipper*.whl
+RUN pip install --no-index --no-cache-dir --find-links=/wheels/ --only-binary all /wheels/fiaas_skipper*.whl
 EXPOSE 5000
 CMD ["skipper"]
