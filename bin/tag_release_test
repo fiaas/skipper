@@ -14,7 +14,8 @@ mkdir -p ~/bin
 ls -al
 ls -al $install_dir
 ls -al ~/bin
-$install_dir/gitversion version
+cd $install_dir
+gitversion version
 echo $PATH
 install "$install_dir/giversion" ~/bin/gitversion
 ls -al
