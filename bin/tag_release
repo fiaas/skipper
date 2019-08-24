@@ -3,17 +3,13 @@ set -evuo pipefail
 # Only do tagging on merge to master
 echo "Installing gitversion"
 url="https://github.com/screwdriver-cd/gitversion/releases/download/v1.1.3/gitversion_linux_amd64"
-install_dir="$(pwd)/gitversion/bin"
-
-mkdir -p "$install_dir"
-curl -Lo "$install_dir/gitversion" "$url"
-
-chmod +x "$install_dir/gitversion"
-
-mkdir -p ~/bin
-install "$install_dir/giversion" ~/bin/gitversion
-
-GIT_TAG=$(gitversion --prefix=v bump auto 2>&1|tail -1)
-git push https://$GITHUBKEY@github.com/fiaas/skipper $GIT_TAG
+install_dir="$(mktemp -d)"
+gitversion="${install_dir}/gitversion"
+curl -Lo "${gitversion}" "$url"
+chmod +x "${gitversion}"
+echo "gitversion ready at ${gitversion}"
+"${gitversion}" --version
+GIT_TAG=$("${gitversion}" --prefix=v bump auto 2>&1|tail -1)
+git push "https://${GITHUBKEY}@github.com/fiaas/skipper" "${GIT_TAG}"
 echo "successfully tagged release"
-echo "$GIT_TAG"
+echo "${GIT_TAG}"
