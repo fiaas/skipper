@@ -15,3 +15,6 @@ docker image save "${TRAVIS_REPO_SLUG}" | tar -C "${undocker}" -x
 for t in "${undocker}"/*/layer.tar; do
   tar -v -C ~/.cache/pip/ --wildcards -x "wheels/*.whl" -f "${t}" 2>/dev/null || true
 done
+
+# Clean up some wheels we don't want to cache
+find ~/.cache/pip/wheels -name "fiaas*.whl" -delete
