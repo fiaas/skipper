@@ -18,6 +18,7 @@
 from __future__ import absolute_import
 
 from gevent import monkey
+
 monkey.patch_all()  # NOQA
 
 import json
@@ -30,8 +31,8 @@ from k8s import config as k8s_config
 from fiaas_skipper.deploy import StatusTracker
 from fiaas_skipper.update import AutoUpdater
 from .config import Configuration
-from .deploy import CrdDeployer, TprDeployer, ReleaseChannelFactory, CrdBootstrapper, TprBootstrapper, \
-    FiaasApplication, PaasbetaApplication
+from .deploy import CrdDeployer, ReleaseChannelFactory, CrdBootstrapper, \
+    FiaasApplication
 from .deploy.channel import FakeReleaseChannelFactory
 from .deploy.cluster import Cluster
 from .logsetup import init_logging
@@ -88,16 +89,11 @@ def main():
             except yaml.YAMLError:
                 log.exception("Unable to load spec config extension file {!r} using defaults"
                               .format(cfg.spec_file_override))
-        if cfg.enable_crd_support:
-            application = FiaasApplication
-            deployer = CrdDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
-                                   bootstrap=CrdBootstrapper(), spec_config_extension=spec_config_extension)
-        elif cfg.enable_tpr_support:
-            application = PaasbetaApplication
-            deployer = TprDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
-                                   bootstrap=TprBootstrapper(), spec_config_extension=spec_config_extension)
+        deployer = CrdDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
+                               bootstrap=CrdBootstrapper(), spec_config_extension=spec_config_extension)
         # Do period checking of deployment status across all namespaces
-        status_tracker = StatusTracker(cluster=cluster, application=application, interval=cfg.status_update_interval)
+        status_tracker = StatusTracker(cluster=cluster, application=FiaasApplication,
+                                       interval=cfg.status_update_interval)
         status_tracker.start()
         if not cfg.disable_autoupdate:
             updater = AutoUpdater(release_channel_factory=release_channel_factory, deployer=deployer,

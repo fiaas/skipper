@@ -23,6 +23,7 @@ import pkg_resources
 from dominate.tags import img
 from flask import Blueprint, render_template
 from flask_nav.elements import Navbar, View, Subgroup, Link, Text
+
 from fiaas_skipper.deploy.channel import ReleaseChannelError
 from .nav import nav
 
@@ -40,10 +41,7 @@ nav.register_element('frontend_top', Navbar(
     View('Deploy', '.deploy'),
     Subgroup(
         'Docs',
-        Link('Deploy using PaaS', 'https://confluence.schibsted.io/display/SPTINF/Deploy+using+PaaS'),
-        #Separator(),
-        #Text('Bootstrap'),
-        #Link('Getting started', 'http://fiaas/getting-started/'),
+        Link('Getting started', 'https://fiaas.github.io/'),
     ),
     Text('Using FIAAS {}'.format(FIAAS_VERSION)), ))
 
