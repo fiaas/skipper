@@ -25,8 +25,6 @@ metadata:
 data:
   cluster_config.yaml: |-
     log-format: plain
-    {{with .Values.TPR}}enable-tpr-support: {{.}}{{end}}
-    {{with .Values.CRD}}enable-crd-support: {{.}}{{end}}
     {{with .Values.baseurl}}baseurl: {{.}}{{end}}
     {{with .Values.debug}}debug: true{{end}}
     {{with .Values.statusUpdateInterval}}status-update-interval: {{.}}{{end}}

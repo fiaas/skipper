@@ -25,7 +25,5 @@ data:
   cluster_config.yaml: |-
     ingress-suffix:
     - {{ .Values.ingress.suffix }}
-    {{with .Values.TPR}}enable-tpr-support: {{.}}{{end}}
-    {{with .Values.CRD}}enable-crd-support: {{.}}{{end}}
   tag: {{.Values.fiaasDeployDaemonTag}}
 {{- end}}

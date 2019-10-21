@@ -52,10 +52,6 @@ class Configuration(Namespace):
                             action="store_true")
         parser.add_argument("--port", help="Port to use for the web-interface (default: %(default)s)", type=int,
                             default=5000)
-        parser.add_argument("--enable-tpr-support", help="Enable Third Party Resource support.",
-                            action="store_true")
-        parser.add_argument("--enable-crd-support", help="Enable Custom Resource Definition support.",
-                            action="store_true")
         parser.add_argument("--baseurl", help="Url to server hosting release channel meta data.",
                             default="http://fiaas-release.delivery-pro.schibsted.io")
         parser.add_argument("--release-channel-metadata",
