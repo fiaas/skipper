@@ -1,5 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8
+
+# Copyright 2017-2019 The FIAAS Authors
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#      http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from __future__ import absolute_import
 
 import logging
@@ -8,6 +23,7 @@ import pkg_resources
 from dominate.tags import img
 from flask import Blueprint, render_template
 from flask_nav.elements import Navbar, View, Subgroup, Link, Text
+
 from fiaas_skipper.deploy.channel import ReleaseChannelError
 from .nav import nav
 
@@ -25,10 +41,7 @@ nav.register_element('frontend_top', Navbar(
     View('Deploy', '.deploy'),
     Subgroup(
         'Docs',
-        Link('Deploy using PaaS', 'https://confluence.schibsted.io/display/SPTINF/Deploy+using+PaaS'),
-        #Separator(),
-        #Text('Bootstrap'),
-        #Link('Getting started', 'http://fiaas/getting-started/'),
+        Link('Getting started', 'https://fiaas.github.io/'),
     ),
     Text('Using FIAAS {}'.format(FIAAS_VERSION)), ))
 
