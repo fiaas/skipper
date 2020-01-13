@@ -26,4 +26,18 @@ data:
     ingress-suffix:
     - {{ .Values.ingress.suffix }}
   tag: {{.Values.fiaasDeployDaemonTag}}
+{{- else }}
+{{- range $namespace, $config := .Values.fiaasDeployDaemonConfigMaps }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: fiaas-deploy-daemon
+    name: fiaas-deploy-daemon
+  name: fiaas-deploy-daemon
+  namespace: {{ $namespace }}
+data:
+  cluster_config.yaml: {{ $config.clusterConfig | quote }}
+  tag: {{$config.tag | quote }}
+{{- end}}
 {{- end}}
