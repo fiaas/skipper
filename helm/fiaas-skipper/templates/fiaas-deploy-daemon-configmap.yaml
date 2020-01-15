@@ -14,6 +14,7 @@
 # limitations under the License.
 
 {{- if .Values.addFiaasDeployDaemonConfigmap }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -28,6 +29,7 @@ data:
   tag: {{.Values.fiaasDeployDaemonTag}}
 {{- else }}
 {{- range $namespace, $config := .Values.fiaasDeployDaemonConfigMaps }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
