@@ -46,11 +46,11 @@ fiaasDeployDaemonConfigMaps: {}
 #    clusterConfig: |-
 #      enable-crd-support: true
 #      ingress-suffix:
-#      - dev.yourcluster.local
+#      - dev.yourcluster.example.com
 #    tag: latest
 #  prod:
 #    clusterConfig: |-
 #      enable-crd-support: true
 #      ingress-suffix:
-#      - yourcluster.local
+#      - yourcluster.example.com
 #    tag: stable
