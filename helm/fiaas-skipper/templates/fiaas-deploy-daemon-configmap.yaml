@@ -28,7 +28,7 @@ data:
     - {{ .Values.ingress.suffix }}
   tag: {{.Values.fiaasDeployDaemonTag}}
 {{- else }}
-{{- range $namespace, $config := .Values.fiaasDeployDaemonConfigMaps }}
+{{- range $namespace, $config := .Values.fiaasDeployDaemonConfigMaps.namespaces }}
 ---
 apiVersion: v1
 kind: ConfigMap
