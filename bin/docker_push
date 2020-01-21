@@ -6,9 +6,13 @@ DOCKER_IMAGE="${TRAVIS_REPO_SLUG}:${VERSION/+/-}"
 
 echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
 
-docker tag "${TRAVIS_REPO_SLUG}:latest" "${DOCKER_IMAGE}"
+# When https://bitbucket.org/mortenlj/dockerma/issues/5 is resolved, we don't need all these
+docker tag "${TRAVIS_REPO_SLUG}:latest-arm" "${DOCKER_IMAGE}-arm"
+docker tag "${TRAVIS_REPO_SLUG}:latest-arm64" "${DOCKER_IMAGE}-arm64"
+docker tag "${TRAVIS_REPO_SLUG}:latest-amd64" "${DOCKER_IMAGE}-amd64"
 
 if [[ "${CI}" == "true" ]]; then
-    docker push "${TRAVIS_REPO_SLUG}"
+    dockerma push "${DOCKER_IMAGE}"
+    dockerma push "${TRAVIS_REPO_SLUG}:latest"
     echo "Pushed image ${DOCKER_IMAGE}"
 fi

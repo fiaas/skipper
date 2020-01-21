@@ -6,7 +6,7 @@ set -evuo pipefail
 mkdir -p .wheel_cache
 find ~/.cache/pip/wheels -name "*.whl" -execdir cp "{}" "${PWD}/.wheel_cache" \;
 
-docker build --pull . -t "${TRAVIS_REPO_SLUG}:latest"
+dockerma build --pull . -t "${TRAVIS_REPO_SLUG}:latest"
 
 # Grab the wheels out of the final docker image and stuff them in the pip cache directory
 undocker=$(mktemp -d)

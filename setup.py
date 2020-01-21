@@ -66,6 +66,7 @@ TESTS_REQ = [
 CI_REQ = [
     'tox',
     'tox-travis',
+    'dockerma',
 ]
 
 setup(
