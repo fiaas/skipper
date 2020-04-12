@@ -2,17 +2,15 @@
 
 set -evuo pipefail
 
-DOCKER_IMAGE="${TRAVIS_REPO_SLUG}:${VERSION/+/-}"
+IMAGE_NAME=${TRAVIS_REPO_SLUG:-${USER}/skipper}
+DOCKER_IMAGE="${IMAGE_NAME}:${VERSION/+/-}"
 
-echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-
-# When https://bitbucket.org/mortenlj/dockerma/issues/5 is resolved, we don't need all these
-docker tag "${TRAVIS_REPO_SLUG}:latest-arm" "${DOCKER_IMAGE}-arm"
-docker tag "${TRAVIS_REPO_SLUG}:latest-arm64" "${DOCKER_IMAGE}-arm64"
-docker tag "${TRAVIS_REPO_SLUG}:latest-amd64" "${DOCKER_IMAGE}-amd64"
-
-if [[ "${CI}" == "true" ]]; then
-    dockerma push "${DOCKER_IMAGE}"
-    dockerma push "${TRAVIS_REPO_SLUG}:latest"
+if [[ "${CI:-}" == "true" ]]; then
+  # Run multi-arch build and push it
+  docker buildx build --pull \
+    --tag "${IMAGE_NAME}:latest" \
+    --tag "${DOCKER_IMAGE}" \
+    --platform=linux/arm,linux/arm64,linux/amd64 \
+    --push .
     echo "Pushed image ${DOCKER_IMAGE}"
 fi

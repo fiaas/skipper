@@ -85,7 +85,6 @@ pyvenv.cfg
 .venv
 pip-selfcheck.json
 ### Linux template
-*~
 
 # temporary files which can be created if a process still has a handle open of a deleted file
 .fuse_hidden*
@@ -108,7 +107,6 @@ __pycache__/
 *.so
 
 # Distribution / packaging
-.Python
 build/
 dist/
 develop-eggs/
@@ -184,7 +182,6 @@ celerybeat-schedule
 
 # Environments
 .env
-.venv
 env/
 venv/
 ENV/
@@ -237,9 +234,6 @@ $RECYCLE.BIN/
 cmake-build-debug/
 cmake-build-release/
 
-# Mongo Explorer plugin:
-.idea/**/mongoSettings.xml
-
 ## File-based project format:
 *.iws
 *.iml
@@ -264,4 +258,13 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+## Misc files
 Dockerfile
+.github
+helm
+tests
+.codacy.yml
+.prospector.yaml
+LICENSE
+README.md
+
