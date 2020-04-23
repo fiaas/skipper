@@ -55,3 +55,5 @@ fiaasDeployDaemonConfigMaps: {}
 #        ingress-suffix:
 #        - yourcluster.example.com
 #      tag: stable
+labels:
+  global: {}
