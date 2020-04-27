@@ -13,6 +13,7 @@ if [[ "${CI:-}" == "true" ]]; then
 else
   PLATFORMS=linux/amd64
 fi
+echo "Building for ${PLATFORMS}"
 
 # Put cached wheels into the docker context so we can use it in our Dockerfile
 mkdir -p .wheel_cache
@@ -21,10 +22,15 @@ find "${CACHE_DIR}/wheels" -name "*.whl" -execdir cp "{}" "${PWD}/.wheel_cache" 
 
 # Create a multi-arch buildx builder if needed
 if docker buildx ls | grep docker-container | grep multi-arch &> /dev/null; then
+  echo "Using existing multi-arch builder"
   docker buildx use multi-arch
 else
-  docker buildx create --name multi-arch --use --platform "${PLATFORMS}"
+  echo "Creating new multi-arch builder"
+  docker buildx create --name multi-arch --driver docker-container --use --platform "${PLATFORMS}"
 fi
+
+echo "Buildx nodes:"
+docker buildx ls
 
 # Run multi-arch build
 docker buildx build --pull \
