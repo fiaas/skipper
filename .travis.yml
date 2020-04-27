@@ -26,7 +26,9 @@ after_success:
   - tox -e coverage
 deploy:
   provider: script
-  script: VERSION=$(python setup.py --version) TAG=$(bin/tag_release|tail -1) bash -c 'bin/docker_push && bin/publish_helm_chart'
+  script:
+    - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+    - VERSION=$(python setup.py --version) TAG=$(bin/tag_release|tail -1) bash -c 'bin/docker_push && bin/publish_helm_chart'
   skip_cleanup: true
   on:
     branch: master

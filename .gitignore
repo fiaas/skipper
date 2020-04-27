@@ -109,3 +109,7 @@ ENV/
 
 # Emacs directory specific variables
 .dir-locals.el
+
+
+## Misc files
+skipper.tar
