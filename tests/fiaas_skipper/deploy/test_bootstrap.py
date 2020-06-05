@@ -98,7 +98,8 @@ class TestBarePodBootstrapper():
                 'name': 'fiaas-deploy-daemon-bootstrap',
                 'namespace': namespace,
                 'labels': {'app': 'fiaas-deploy-daemon-bootstrap'},
-                'ownerReferences': []
+                'ownerReferences': [],
+                'finalizers': []
             },
             'spec': {
                 'volumes': [],
@@ -122,7 +123,8 @@ class TestBarePodBootstrapper():
         if resources:
             expected_pod['spec']['containers'][0]['resources'] = resources
 
-        bootstrapper(deployment_config, channel, spec_config=spec_config)
+        with mock.patch('pyrfc3339.parse'):
+            bootstrapper(deployment_config, channel, spec_config=spec_config)
 
         pytest.helpers.assert_any_call(delete, self.pod_uri(namespace=namespace, name='fiaas-deploy-daemon-bootstrap'))
         pytest.helpers.assert_any_call(post, self.pod_uri(namespace=namespace), expected_pod)

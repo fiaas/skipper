@@ -31,13 +31,13 @@ def version():
 
 
 GENERIC_REQ = [
-    "k8s==0.10.0",
+    "k8s==0.15.0",
     "ConfigArgParse==0.13.0",
-    "six==1.10.0",
+    "six==1.12.0",
     "PyYAML==3.13",
     "pyaml==17.12.1",
     "prometheus_client==0.4.0",
-    'requests==2.13.0',
+    'requests==2.22.0',
 ]
 
 WEB_REQ = [
