@@ -39,7 +39,7 @@ metadata:
   labels:
     app: fiaas-deploy-daemon
     name: fiaas-deploy-daemon
-    {{- range $key, $value := .Values.labels.global }}
+    {{- range $key, $value := $.Values.labels.global }}
     {{ $key }}: {{ $value }}
     {{- end }}
   name: fiaas-deploy-daemon
