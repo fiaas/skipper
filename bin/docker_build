@@ -2,19 +2,49 @@
 
 set -evuo pipefail
 
+IMAGE_NAME=${TRAVIS_REPO_SLUG:-${USER}/skipper}
+TARBALL=build/skipper.tar
+CACHE_DIR=${PIP_CACHE_DIR:-~/.cache/pip}
+
+mkdir -p build
+
+if [[ "${CI:-}" == "true" ]]; then
+  PLATFORMS=linux/arm,linux/arm64,linux/amd64
+else
+  PLATFORMS=linux/amd64
+fi
+echo "Building for ${PLATFORMS}"
+
 # Put cached wheels into the docker context so we can use it in our Dockerfile
 mkdir -p .wheel_cache
-find ~/.cache/pip/wheels -name "*.whl" -execdir cp "{}" "${PWD}/.wheel_cache" \;
+mkdir -p "${CACHE_DIR}/wheels"
+find "${CACHE_DIR}/wheels" -name "*.whl" -execdir cp "{}" "${PWD}/.wheel_cache" \;
 
-dockerma build --pull . -t "${TRAVIS_REPO_SLUG}:latest"
+# Create a multi-arch buildx builder if needed
+if docker buildx ls | grep docker-container | grep multi-arch &> /dev/null; then
+  echo "Using existing multi-arch builder"
+  docker buildx use multi-arch
+else
+  echo "Creating new multi-arch builder"
+  docker buildx create --name multi-arch --driver docker-container --use --platform "${PLATFORMS}"
+fi
 
-# Grab the wheels out of the final docker image and stuff them in the pip cache directory
-undocker=$(mktemp -d)
-docker image save "${TRAVIS_REPO_SLUG}" | tar -C "${undocker}" -x
+echo "Buildx nodes:"
+docker buildx ls
 
-for t in "${undocker}"/*/layer.tar; do
-  tar -v -C ~/.cache/pip/ --wildcards -x "wheels/*.whl" -f "${t}" 2>/dev/null || true
-done
+# Run multi-arch build
+docker buildx build --pull \
+  --tag "${IMAGE_NAME}:latest" \
+  --platform="${PLATFORMS}" \
+  --output=type=tar,dest="${TARBALL}" .
+
+# Rebuild to load the docker image for local testing
+docker buildx build --pull \
+  --tag "${IMAGE_NAME}:latest" \
+  --load .
+
+# Grab the wheels out of the tarball and stuff them in the pip cache directory
+tar -v -C "${CACHE_DIR}/wheels" --wildcards -x "*/wheels/*.whl" -f "${TARBALL}" 2>/dev/null || true
 
 # Clean up some wheels we don't want to cache
-find ~/.cache/pip/wheels -name "fiaas*.whl" -delete
+find "${CACHE_DIR}/wheels" -name "fiaas*.whl" -delete

@@ -1,30 +1,37 @@
 language: python
+dist: bionic
 python:
-- '3.6'
+  - '3.6'
 sudo: required
-addons:
-  apt:
-    packages:
-      - docker-ce
-services:
-- docker
 cache: pip
 env:
   global:
-  - HELM_VERSION="v2.8.2"
-  - DOCKER_USERNAME=captainfiaas
-  - DOCKER_CLI_EXPERIMENTAL=enabled
-  - secure: "PM9LanQe58AN18oTqQ+DXqDQ4vMove/AbG5oqZCCL1aEQHuG46fp8xNml5GRqD9dFl67U8Ml/FziWGWYqr6QSChq3cyZvjxjtcfwytmLyb9cWt3U0z8giveN01c4grdetbhTlyliCxy3nU+VyyMBK8Fd8IZUYU9nVNemGYQhX+7x/wzyxS9gmhGZvx1RxXG6iyI6vN+SFF2UXHxvIz/bTgRiOEz4wXcl1nY/X2EH5AxYDKzvaUGg+2YKvP9ktfU1P9B08XqmQgcaJnzgwaOSWA7EMcSAp67tCtFk7qqZKvN1dce5uSRtHt9kYBWKEnShCYHq9p5m4kekBzycR4Xw11eoygkB+minFceTtTkbahCKaEaOIBsleUYal1mnDv8eNTuct0S7MXXyQ/pViLmfFPvmRsgG0p5ZEDwdeqzbyDwMbsmOAhnrCV2dtZR+hXivFNNodR2OMX2wq/1Vy3dxw2aeS61RYreXqhNHmMMK411QTJxFUQw8CH9KeplX3NBpPh+HjaxME6q2vniqnHq2YSoLlirjugq1vnC43/kt4ifQiN3ZAsRY7C+dDFDBsMJzsLpPkcDWh75MRYhj+/Yux8nExhGAFpZltv+F25xMmPfJYgPb5RtyEQ4pLxnngGzdG2eIOu7V4zdF0y1MmUqDqNuvHvtz8IGFkVoRBlmnMu8=" # DOCKER_PASSWORD
+    - HELM_VERSION="v2.8.2"
+    - DOCKER_USERNAME=captainfiaas
+    - DOCKER_CLI_EXPERIMENTAL=enabled
+    - secure: "PM9LanQe58AN18oTqQ+DXqDQ4vMove/AbG5oqZCCL1aEQHuG46fp8xNml5GRqD9dFl67U8Ml/FziWGWYqr6QSChq3cyZvjxjtcfwytmLyb9cWt3U0z8giveN01c4grdetbhTlyliCxy3nU+VyyMBK8Fd8IZUYU9nVNemGYQhX+7x/wzyxS9gmhGZvx1RxXG6iyI6vN+SFF2UXHxvIz/bTgRiOEz4wXcl1nY/X2EH5AxYDKzvaUGg+2YKvP9ktfU1P9B08XqmQgcaJnzgwaOSWA7EMcSAp67tCtFk7qqZKvN1dce5uSRtHt9kYBWKEnShCYHq9p5m4kekBzycR4Xw11eoygkB+minFceTtTkbahCKaEaOIBsleUYal1mnDv8eNTuct0S7MXXyQ/pViLmfFPvmRsgG0p5ZEDwdeqzbyDwMbsmOAhnrCV2dtZR+hXivFNNodR2OMX2wq/1Vy3dxw2aeS61RYreXqhNHmMMK411QTJxFUQw8CH9KeplX3NBpPh+HjaxME6q2vniqnHq2YSoLlirjugq1vnC43/kt4ifQiN3ZAsRY7C+dDFDBsMJzsLpPkcDWh75MRYhj+/Yux8nExhGAFpZltv+F25xMmPfJYgPb5RtyEQ4pLxnngGzdG2eIOu7V4zdF0y1MmUqDqNuvHvtz8IGFkVoRBlmnMu8=" # DOCKER_PASSWORD
+before_install:
+  - sudo rm -rf /var/lib/apt/lists/*
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) edge"
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  - mkdir -vp ~/.docker/cli-plugins/
+  - curl --silent -L "https://github.com/docker/buildx/releases/download/v0.4.1/buildx-v0.4.1.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
+  - chmod a+x ~/.docker/cli-plugins/docker-buildx
+  - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 install:
-- pip install -e .[ci]
+  - pip install -e .[ci]
 script:
   - tox
   - bin/docker_build
 after_success:
-- tox -e coverage
+  - tox -e coverage
 deploy:
   provider: script
-  script: VERSION=$(python setup.py --version) TAG=$(bin/tag_release|tail -1) bash -c 'bin/docker_push && bin/publish_helm_chart'
+  script:
+    - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+    - VERSION=$(python setup.py --version) TAG=$(bin/tag_release|tail -1) bash -c 'bin/docker_push && bin/publish_helm_chart'
   skip_cleanup: true
   on:
     branch: master
