@@ -18,7 +18,7 @@ echo "Building for ${PLATFORMS}"
 # Put cached wheels into the docker context so we can use it in our Dockerfile
 mkdir -p .wheel_cache
 mkdir -p "${CACHE_DIR}/wheels"
-find "${CACHE_DIR}/wheels" -name "*.whl" -execdir cp "{}" "${PWD}/.wheel_cache" \;
+find "${CACHE_DIR}/wheels" -name "*.whl" -print -execdir cp "{}" "${PWD}/.wheel_cache" \;
 
 # Create a multi-arch buildx builder if needed
 if docker buildx ls | grep docker-container | grep multi-arch &> /dev/null; then
