@@ -27,7 +27,7 @@ metadata:
     {{ $key }}: {{ $value }}
     {{- end }}
     {{- if .Values.ingress.enableTLS }}
-      kubernetes.io/tls-acme: "true"
+    kubernetes.io/tls-acme: "true"
       {{- if .Values.ingress.tlsClusterIssuer }}
     certmanager.k8s.io/cluster-issuer: "{{ .Values.ingress.tlsClusterIssuer }}"
       {{- end}}
