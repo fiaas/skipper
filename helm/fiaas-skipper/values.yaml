@@ -22,6 +22,8 @@ ingress:
   fqdn: fiaas-skipper.yourcluster.local
   enableTLS: true
   annotations: {}
+  tlsClusterIssuer: ""
+  tlsIssuer: ""
   suffix: yourcluster.local
 deployment:
   # include the resource requests and limits
