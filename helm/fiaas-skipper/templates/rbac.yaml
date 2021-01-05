@@ -64,6 +64,16 @@ rules:
       - update
       - watch
       - deletecollection
+  - apiGroups:
+      - "" # "" indicates the core API group
+    resources:
+      - serviceaccounts
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - update
 ---
 kind: ClusterRoleBinding
 {{- if semverCompare ">=1.8" .Capabilities.KubeVersion.GitVersion }}
