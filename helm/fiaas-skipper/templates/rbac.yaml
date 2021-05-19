@@ -1,12 +1,12 @@
 
 # Copyright 2017-2019 The FIAAS Authors
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,8 +29,6 @@ rules:
     resources:
       - applications
       - application-statuses
-      - paasbetaapplications
-      - paasbetastatuses
       - statuses
     verbs:
       - create
@@ -55,7 +53,6 @@ rules:
       - pods
       - resourcequotas
       - services
-      - thirdpartyresources
     verbs:
       - create
       - delete
@@ -74,6 +71,7 @@ rules:
       - get
       - list
       - update
+
 ---
 kind: ClusterRoleBinding
 {{- if semverCompare ">=1.8" .Capabilities.KubeVersion.GitVersion }}
@@ -87,6 +85,31 @@ subjects:
 - kind: Group
   name: system:serviceaccounts
   apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: fiaas-controller
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.name }}
+
+---
+kind: ClusterRoleBinding
+{{- if semverCompare ">=1.8" .Capabilities.KubeVersion.GitVersion }}
+apiVersion: rbac.authorization.k8s.io/v1
+{{- else }}
+apiVersion: rbac.authorization.k8s.io/v1beta1
+{{- end }}
+metadata:
+  name: {{ .Values.name }}
+subjects:
+- kind: ServiceAccount
+  name: {{ .Values.name }}
+  namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: fiaas-controller

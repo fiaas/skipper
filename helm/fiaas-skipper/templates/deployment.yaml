@@ -48,6 +48,7 @@ spec:
         {{ $key }}: {{ $value }}
         {{- end }}
     spec:
+      serviceAccountName: {{ .Values.Name }}
       containers:
       - name: "{{ .Values.name }}"
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
