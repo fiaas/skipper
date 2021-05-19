@@ -32,6 +32,11 @@ baseurl: 'https://fiaas.github.io/releases'
 annotations: {}
 rbac:
   enabled: false
+  clusterRoleBinding:
+    subjects:
+    - kind: Group
+      name: system:serviceaccounts
+      apiGroup: rbac.authorization.k8s.io
 statusUpdateInterval: 30
 # Add a fiaas-deploy-daemon configmap to the namespace where fiaas-skipper is installed
 addFiaasDeployDaemonConfigmap: false
