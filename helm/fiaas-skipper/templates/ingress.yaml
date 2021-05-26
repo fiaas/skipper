@@ -29,10 +29,10 @@ metadata:
     {{- if .Values.ingress.enableTLS }}
     kubernetes.io/tls-acme: "true"
       {{- if .Values.ingress.tlsClusterIssuer }}
-    cert-manager.io/cluster-issuer: "{{ .Values.ingress.tlsClusterIssuer }}"
+    "{{ .Values.certManager.keyAnnotationPrefix }}/cluster-issuer": "{{ .Values.ingress.tlsClusterIssuer }}"
       {{- end}}
       {{- if .Values.ingress.tlsIssuer }}
-    cert-manager.io/issuer: "{{ .Values.ingress.tlsIssuer }}"
+    "{{ .Values.certManager.keyAnnotationPrefix }}/issuer": "{{ .Values.ingress.tlsIssuer }}"
       {{- end}}
     {{- end }}
 spec:
