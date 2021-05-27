@@ -26,23 +26,35 @@ Skipper controls deployment and updates of FIAAS components
 
 ## How skipper works
 
-Skipper runs in your cluster, looking for namespaces configured for FIAAS. This is defined as having a ConfigMap named `fiaas-deploy-daemon` in the namespace. The ConfigMap supports two keys, one of which is required.
+### Configuration
+Skipper runs in your cluster, looking for namespaces configured for FIAAS. This is defined as having a ConfigMap named `fiaas-deploy-daemon` in the namespace. The ConfigMap supports two keys:
+- `cluster_config.yaml` (required), contains configuration for fiaas-deploy-daemon. You should see the [FIAAS operators guide] for details about this file.
+- `tag` (optional, defaults to `stable`). Currently the only valid values are `stable` and `latest`. This controls which version of fiaas-deploy-daemon to deploy to this namespace. See below for more details about what these tags mean.
 
-The required key is `cluster_config.yaml`, which configures fiaas-deploy-daemon. You should see the [FIAAS operators guide] for details about this file.
+### fiaas-deploy-daemon tags
+- `latest` is the development version of fiaas-deploy-daemon and is updated on every master build. It can break on occasion, and upgrading between `latest` versions may not always work perfectly. You probably only want to use this if you are involved in development and/or testing of fiaas-deploy-daemon.
+- `stable` is the version currently considered stable, and is usually promoted from the `latest` version when it has been tested for a while.
 
-The second key is `tag`, which defaults to the value `stable` if left out. Currently the only other valid value is `latest`. This controls which version of fiaas-deploy-daemon to deploy to this namespace.
+### How skipper deploys fiaas-deploy-daemon
 
 When triggered by a request to the `/api/deploy` endpoint, Skipper will list all configured namespaces, and create or update an Application object for fiaas-deploy-daemon in each namespace. This will point to the current `latest` or `stable` image, depending on the value of `tag`.
+Skipper relies on fiaas-deploy-daemon to deploy itself, and skipper manages the Application resource which tells fiaas-deploy-daemon how it should deploy iteself. This means that if fiaas-deploy-daemon is not already running in the namespace, it must be bootstrapped first.
 
-If no Deployment of fiaas-deploy-daemon exists in the namespace, a special "bare pod" is created, which runs fiaas-deploy-daemon in bootstrap mode. This pod will make a proper deployment of fiaas-deploy-daemon into the namespace, and then exit. The properly deployed fiaas-deploy-daemon will start by re-deploying itself, in order to do a final configuration load, and then start deploying applications in the namespace.
+#### When fiaas-deploy-daemon not running in namespace (bootstrap)
+If fiaas-deploy-daemon isn't running in the namespace, skipper will create/update the Application resource for fiaas-deploy-daemon, including setting the label `fiaas/bootstrap=true`, then create a one-off (`restartPolicy=Never`) pod running fiaas-deploy-daemon in bootstrap mode. In this mode fiaas-deploy-daemon runs with minimal configuration and only deploys Application resources with `fiaas/bootstrap=true` set once and waits for the deployments to be successful, then exits. Then fiaas-deploy-daemon which is now running in normal mode will redeploy itself with full configuration, just as below.
 
-If there are many configured namespaces in the cluster, it might be useful to deploy only to a selected set of namespaces. This is possible by using the API, or the web UI of Skipper.
+#### When fiaas-deploy-daemon already running
+If fiaas-deploy-daemon is already running in the namespace, skipper will update the Application resource for fiaas-deploy-daemon, then fiaas-deploy-daemon will pick up the change and redeploy the new version of itself.
 
-Skipper will detect when new versions of fiaas-deploy-daemon is available, and automatically update all configured namespaces with the new version. This enables a fully automatic continuous deploy solution for fiaas-deploy-daemon.
+### Updating fiaas-deploy-daemon
 
-Skipper allows operators to force an update of fiaas-deploy-daemon in a given namespace.
+To update fiaas-deploy-daemon in a namespace, or in all configured namespaces, use skipper's web interface at `/status`.
+It is also possible to use skipper's API directly, see "Deploying fiaas-deploy-daemon to a new namespace" below for details.
 
-### How skipper will work differently once currently planned features are completed
+#### Automatic updates
+When installed with the helm chart value `autoUpdate: true`, skipper will automatically update fiaas-deploy-daemon whenever the configured tag (`stable` or `latest`) is updated. This enables a fully automatic continuous deploy solution for fiaas-deploy-daemon, but means you don't control when or which updates are rolled out. You probably only want to use this if you are involved in development and/or testing of fiaas-deploy-daemon. Use this feature at your own risk.
+
+## How skipper will work differently once currently planned features are completed
 
 We are not done. We have planned some further features, which will improve the experience of using Skipper significantly. Here are some of the planned changes:
 
