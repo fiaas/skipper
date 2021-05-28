@@ -9,7 +9,10 @@ CACHE_DIR=${PIP_CACHE_DIR:-~/.cache/pip}
 mkdir -p build
 
 if [[ "${CI:-}" == "true" ]]; then
-  PLATFORMS=linux/arm,linux/arm64,linux/amd64
+  # Disabling arm builds for the time being - ARM builds are taking too long and exceed the limit of a build job in travis
+  # For additional context, see https://kubernetes.slack.com/archives/CNASTE7CP/p1622055933020700
+  #PLATFORMS=linux/arm,linux/arm64,linux/amd64
+  PLATFORMS=linux/amd64
 else
   PLATFORMS=linux/amd64
 fi

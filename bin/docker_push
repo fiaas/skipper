@@ -10,7 +10,7 @@ if [[ "${CI:-}" == "true" ]]; then
   docker buildx build --pull \
     --tag "${IMAGE_NAME}:latest" \
     --tag "${DOCKER_IMAGE}" \
-    --platform=linux/arm,linux/arm64,linux/amd64 \
+    --platform=linux/amd64 \
     --push .
     echo "Pushed image ${DOCKER_IMAGE}"
 fi
