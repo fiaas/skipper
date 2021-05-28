@@ -14,6 +14,8 @@
 # limitations under the License.
 
 {{- if .Values.rbac.enabled }}
+
+---
 kind: ClusterRole
 {{- if semverCompare ">=1.8" .Capabilities.KubeVersion.GitVersion }}
 apiVersion: rbac.authorization.k8s.io/v1
@@ -89,13 +91,71 @@ roleRef:
   kind: ClusterRole
   name: fiaas-controller
   apiGroup: rbac.authorization.k8s.io
-{{- end }}
 
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ .Values.name }}
+
+---
+kind: ClusterRole
+{{- if semverCompare ">=1.8" .Capabilities.KubeVersion.GitVersion }}
+apiVersion: rbac.authorization.k8s.io/v1
+{{- else }}
+apiVersion: rbac.authorization.k8s.io/v1beta1
+{{- end }}
+metadata:
+  name: {{ .Values.name }}
+rules:
+  - apiGroups:
+      - fiaas.schibsted.io
+      - schibsted.io
+    resources:
+      - applications
+      - application-statuses
+      - statuses
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - update
+      - watch
+  - apiGroups:
+      - "" # "" indicates the core API group
+      - apps
+      - autoscaling
+      - apiextensions
+      - apiextensions.k8s.io
+      - extensions
+    resources:
+      - configmaps
+      - customresourcedefinitions
+      - deployments
+      - horizontalpodautoscalers
+      - ingresses
+      - pods
+      - resourcequotas
+      - services
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - update
+      - watch
+      - deletecollection
+  - apiGroups:
+      - "" # "" indicates the core API group
+    resources:
+      - serviceaccounts
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - update
 
 ---
 kind: ClusterRoleBinding
@@ -112,6 +172,7 @@ subjects:
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
-  name: fiaas-controller
+  name: {{ .Values.name }}
   apiGroup: rbac.authorization.k8s.io
+
 {{- end }}
