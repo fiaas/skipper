@@ -6,7 +6,7 @@ sudo: required
 cache: pip
 env:
   global:
-    - HELM_VERSION="v2.8.2"
+    - HELM_VERSION="v3.6.0"
     - DOCKER_USERNAME=captainfiaas
     - DOCKER_CLI_EXPERIMENTAL=enabled
     - secure: "PM9LanQe58AN18oTqQ+DXqDQ4vMove/AbG5oqZCCL1aEQHuG46fp8xNml5GRqD9dFl67U8Ml/FziWGWYqr6QSChq3cyZvjxjtcfwytmLyb9cWt3U0z8giveN01c4grdetbhTlyliCxy3nU+VyyMBK8Fd8IZUYU9nVNemGYQhX+7x/wzyxS9gmhGZvx1RxXG6iyI6vN+SFF2UXHxvIz/bTgRiOEz4wXcl1nY/X2EH5AxYDKzvaUGg+2YKvP9ktfU1P9B08XqmQgcaJnzgwaOSWA7EMcSAp67tCtFk7qqZKvN1dce5uSRtHt9kYBWKEnShCYHq9p5m4kekBzycR4Xw11eoygkB+minFceTtTkbahCKaEaOIBsleUYal1mnDv8eNTuct0S7MXXyQ/pViLmfFPvmRsgG0p5ZEDwdeqzbyDwMbsmOAhnrCV2dtZR+hXivFNNodR2OMX2wq/1Vy3dxw2aeS61RYreXqhNHmMMK411QTJxFUQw8CH9KeplX3NBpPh+HjaxME6q2vniqnHq2YSoLlirjugq1vnC43/kt4ifQiN3ZAsRY7C+dDFDBsMJzsLpPkcDWh75MRYhj+/Yux8nExhGAFpZltv+F25xMmPfJYgPb5RtyEQ4pLxnngGzdG2eIOu7V4zdF0y1MmUqDqNuvHvtz8IGFkVoRBlmnMu8=" # DOCKER_PASSWORD
