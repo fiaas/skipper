@@ -36,7 +36,7 @@ statusUpdateInterval: 30
 # Add a fiaas-deploy-daemon configmap to the namespace where fiaas-skipper is installed
 addFiaasDeployDaemonConfigmap: false
 fiaasDeployDaemonTag: stable
-autoUpdate: true
+autoUpdate: false
 service:
   type: ClusterIP
 fiaas_override_yaml: null
