@@ -49,7 +49,7 @@ spec:
         {{ $key }}: {{ $value }}
         {{- end }}
     spec:
-      {{- if .Value.rbac.enabled }}
+      {{- if .Values.rbac.enabled }}
       serviceAccountName: {{ .Values.name }}
       {{- end }}
       containers:
