@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -48,6 +49,9 @@ spec:
         {{ $key }}: {{ $value }}
         {{- end }}
     spec:
+      {{- if .Value.rbac.enabled }}
+      serviceAccountName: {{ .Values.name }}
+      {{- end }}
       containers:
       - name: "{{ .Values.name }}"
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
