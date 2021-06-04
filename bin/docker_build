@@ -2,9 +2,9 @@
 
 set -evuo pipefail
 
-IMAGE_NAME=${TRAVIS_REPO_SLUG:-${USER}/skipper}
+IMAGE_NAME=$DOCKER_REPO
 TARBALL=build/skipper.tar
-CACHE_DIR=${PIP_CACHE_DIR:-~/.cache/pip}
+CACHE_DIR=$(pip cache dir)
 
 mkdir -p build
 
@@ -37,12 +37,14 @@ docker buildx ls
 
 # Run multi-arch build
 docker buildx build --pull \
+  --progress plain \
   --tag "${IMAGE_NAME}:latest" \
   --platform="${PLATFORMS}" \
   --output=type=tar,dest="${TARBALL}" .
 
 # Rebuild to load the docker image for local testing
 docker buildx build --pull \
+  --progress plain \
   --tag "${IMAGE_NAME}:latest" \
   --load .
 

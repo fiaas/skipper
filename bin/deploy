@@ -3,4 +3,12 @@
 set -evuo pipefail
 
 echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-VERSION=$(python setup.py --version) TAG=$(bin/tag_release|tail -1) bash -c 'bin/docker_push && bin/publish_helm_chart'
+
+export VERSION=$(python setup.py --version)
+export TAG=$(bin/tag_release|tail -1)
+
+echo "using version $VERSION"
+echo "using tag $TAG"
+
+bin/docker_push
+bin/publish_helm_chart
