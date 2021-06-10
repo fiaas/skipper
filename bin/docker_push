@@ -2,15 +2,23 @@
 
 set -evuo pipefail
 
-IMAGE_NAME=${TRAVIS_REPO_SLUG:-${USER}/skipper}
-DOCKER_IMAGE="${IMAGE_NAME}:${VERSION/+/-}"
+TAG_LATEST="${DOCKER_REPO}:latest"
+TAG_VERSION="${DOCKER_REPO}:${VERSION/+/-}"
 
 if [[ "${CI:-}" == "true" ]]; then
-  # Run multi-arch build and push it
-  docker buildx build --pull \
-    --tag "${IMAGE_NAME}:latest" \
-    --tag "${DOCKER_IMAGE}" \
-    --platform=linux/amd64 \
-    --push .
-    echo "Pushed image ${DOCKER_IMAGE}"
+  docker tag ${TAG_LATEST} ${TAG_VERSION}
+  docker push ${TAG_LATEST}
+  docker push ${TAG_VERSION}
+  echo "Pushed image ${TAG_VERSION}"
+
+  ## just push the regular images since we've already built and we're currently only using one architecture
+  #
+  # # Run multi-arch build and push it
+  # docker buildx build --pull \
+  #   --progress plain \
+  #   --tag "${IMAGE_NAME}:latest" \
+  #   --tag "${DOCKER_IMAGE}" \
+  #   --platform=linux/amd64 \
+  #   --push .
+  #   echo "Pushed image ${DOCKER_IMAGE}"
 fi
