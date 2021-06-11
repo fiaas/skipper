@@ -13,7 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-# SKIPPER [![https://fiaas-svc.semaphoreci.com/badges/skipper/branches/master.svg?style=shields]][https://fiaas-svc.semaphoreci.com/projects/skipper]
+# SKIPPER
+[![Build Status](https://fiaas-svc.semaphoreci.com/badges/skipper/branches/master.svg?style=shields)](https://fiaas-svc.semaphoreci.com/projects/skipper)
 
 Skipper controls deployment and updates of FIAAS components
 [build_status_badge]: "https://fiaas-svc.semaphoreci.com/badges/skipper/branches/master.svg?style=shields" "Build Status"
