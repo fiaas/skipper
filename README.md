@@ -19,10 +19,10 @@ Skipper controls deployment and updates of FIAAS components
 
 [build_status_badge]: https://travis-ci.org/fiaas/skipper.svg?branch=master "Build Status"
 [build_status]: https://travis-ci.org/fiaas/skipper
-[codacy_grade_badge]: https://api.codacy.com/project/badge/Grade/59dbd659e01f4e04ad724ae4c8abe2d5 "Codacy Grade"
-[codacy_grade]: https://app.codacy.com/app/fiaas/skipper?utm_source=github.com&utm_medium=referral&utm_content=fiaas/skipper&utm_campaign=badger
-[codacy_coverage_badge]: https://api.codacy.com/project/badge/Coverage/59dbd659e01f4e04ad724ae4c8abe2d5 "Codacy Coverage"
-[codacy_coverage]: https://www.codacy.com/app/fiaas/skipper?utm_source=github.com&utm_medium=referral&utm_content=fiaas/skipper&utm_campaign=Badge_Coverage
+[codacy_grade_badge]: https://app.codacy.com/project/badge/Grade/83b7598937694e1b92d706347d5124a3 "Codacy Grade"
+[codacy_grade]: https://www.codacy.com/gh/fiaas/skipper/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fiaas/skipper&amp;utm_campaign=Badge_Grade
+[codacy_coverage_badge]: https://app.codacy.com/project/badge/Coverage/83b7598937694e1b92d706347d5124a3 "Codacy Coverage"
+[codacy_coverage]: https://www.codacy.com/gh/fiaas/skipper/dashboard?utm_source=github.com&utm_medium=referral&utm_content=fiaas/skipper&utm_campaign=Badge_Coverage
 
 ## How skipper works
 
