@@ -16,9 +16,8 @@ limitations under the License.
 # SKIPPER [![build_status_badge]][build_status] [![codacy_grade_badge]][codacy_grade] [![codacy_coverage_badge]][codacy_coverage]
 
 Skipper controls deployment and updates of FIAAS components
-
-[build_status_badge]: https://travis-ci.org/fiaas/skipper.svg?branch=master "Build Status"
-[build_status]: https://travis-ci.org/fiaas/skipper
+[build_status_badge]: https://fiaas-svc.semaphoreci.com/badges/skipper/branches/master.svg?style=shields "Build Status"
+[build_status]: https://fiaas-svc.semaphoreci.com/projects/skipper
 [codacy_grade_badge]: https://app.codacy.com/project/badge/Grade/83b7598937694e1b92d706347d5124a3 "Codacy Grade"
 [codacy_grade]: https://www.codacy.com/gh/fiaas/skipper/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fiaas/skipper&amp;utm_campaign=Badge_Grade
 [codacy_coverage_badge]: https://app.codacy.com/project/badge/Coverage/83b7598937694e1b92d706347d5124a3 "Codacy Coverage"
