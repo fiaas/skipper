@@ -1,14 +1,116 @@
 #!/usr/bin/env bash
 
-set -evuo pipefail
+set -eo pipefail
 
-echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+if [[ "$CI" != "true" ]]; then
+    echo "CI env var is not set to true. Exiting as this script should only be run by the CI server."
+    exit 0
+fi
 
-export VERSION=$(python setup.py --version)
-export TAG=$(bin/tag_release|tail -1)
+set -u
 
-echo "using version $VERSION"
-echo "using tag $TAG"
+# some of these are checks for required variables
+DOCKER_USERNAME=$DOCKER_USERNAME
+DOCKER_PASSWORD=$DOCKER_PASSWORD
+HELM_VERSION=$HELM_VERSION
+DOCKER_REPO=$DOCKER_REPO
+GITHUBKEY=$GITHUBKEY
+GITHUB_REPO=github.com/fiaas/skipper
+TMPDIR=${PWD}/tmp
+GITVERSION=${TMPDIR}/gitversion
 
-bin/docker_push
-bin/publish_helm_chart
+function dockerLogin() {
+    echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+}
+
+function installHelm() {
+    local version=$1
+    local output="${TMPDIR}/git-helm.sh"
+    echo "Installing helm"
+    curl -s https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > $output
+    chmod +x $output
+    $output --version $version
+    rm -f $output
+}
+
+function installGitVersion() {
+    echo "Installing gitversion"
+    local output=$1
+    local url="https://github.com/screwdriver-cd/gitversion/releases/download/v1.1.3/gitversion_linux_amd64"
+    curl -sLo $output $url
+    chmod +x $output
+}
+
+function tagRelease() {
+    local tag=$1
+    git push "https://${GITHUBKEY}@${GITHUB_REPO}" $tag
+    echo "successfully tagged release with: $tag"
+}
+
+function dockerPush() {
+    local repo=$1
+    local version=$2
+    local tag_latest="${repo}:latest"
+    local tag_version="${repo}:${version/+/-}"
+    docker tag ${tag_latest} ${tag_version}
+    docker push ${tag_latest}
+    docker push ${tag_version}
+    echo "Pushed image ${tag_version}"
+}
+
+function publishHelmChart() {
+    local version=$1
+    local tag=$2
+    local helm_repo_dir="$TMPDIR/helm-repo"
+
+    echo "Publishing helm chart"
+    sed -i 's/tag:.*/tag: '"${version/+/-}"'/g' helm/fiaas-skipper/values.yaml
+    sed -i 's/version:.*/version: '"${tag/v/}"'/g' helm/fiaas-skipper/Chart.yaml
+
+    helm package helm/fiaas-skipper | xargs -n1 | tail -1 > ${TMPDIR}/chart-tarball
+    local chart_tarball=$(cat ${TMPDIR}/chart-tarball | tr -d '\n')
+    rm -f ${TMPDIR}/chart-tarball
+
+    git clone https://github.com/fiaas/helm $helm_repo_dir
+    mv $chart_tarball $helm_repo_dir/
+
+    pushd $helm_repo_dir
+    helm repo index . --url https://fiaas.github.io/helm/
+    git add .
+    git commit -a -m "Release fiaas-skipper ${tag}"
+    git push https://${GITHUBKEY}@github.com/fiaas/helm
+    popd
+    rm -rf $helm_repo_dir
+    echo "Successfully pushed helm chart"
+}
+
+function skipperVersion() {
+    python setup.py --version
+}
+
+function gitTagBump() {
+    $GITVERSION --prefix=v bump auto
+}
+
+function gitTagShow() {
+    $GITVERSION --prefix=v show
+}
+
+mkdir -p $TMPDIR
+
+installGitVersion $GITVERSION
+installHelm $HELM_VERSION
+dockerLogin
+
+echo -n "skipper version: "
+skipperVersion
+
+gitTagBump
+echo -n "git tag: "
+gitTagShow
+
+dockerPush $DOCKER_REPO $(skipperVersion)
+
+publishHelmChart $(skipperVersion) $(gitTagShow)
+
+tagRelease $(gitTagShow)

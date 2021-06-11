@@ -33,6 +33,7 @@ blocks:
     task:
       secrets:
         - name: docker
+        - name: fdd-github
       env_vars:
         - name: DOCKER_REPO
           value: fiaas/skipper
@@ -42,6 +43,9 @@ blocks:
         - name: deploy
           commands:
             - checkout
+            - sem-version python 3.6
+            - git config --global user.email "semaphore@example.org"
+            - git config --global user.name "Semaphore CI"
             - cache restore ${SEMAPHORE_GIT_BRANCH}-${SEMAPHORE_WORKFLOW_ID}-build
             - docker tag $(docker import build/skipper.tar) $DOCKER_REPO:latest
             - ./bin/deploy
