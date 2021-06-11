@@ -13,16 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-# SKIPPER
-[![Build Status](https://fiaas-svc.semaphoreci.com/badges/skipper/branches/master.svg?style=shields)](https://fiaas-svc.semaphoreci.com/projects/skipper)
+# SKIPPER [![Build Status](https://fiaas-svc.semaphoreci.com/badges/skipper/branches/master.svg?style=shields)](https://fiaas-svc.semaphoreci.com/projects/skipper) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/83b7598937694e1b92d706347d5124a3)](https://www.codacy.com/gh/fiaas/skipper/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fiaas/skipper&amp;utm_campaign=Badge_Grade) [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/83b7598937694e1b92d706347d5124a3)](https://www.codacy.com/gh/fiaas/skipper/dashboard?utm_source=github.com&utm_medium=referral&utm_content=fiaas/skipper&utm_campaign=Badge_Coverage)
 
 Skipper controls deployment and updates of FIAAS components
-[build_status_badge]: "https://fiaas-svc.semaphoreci.com/badges/skipper/branches/master.svg?style=shields" "Build Status"
-[build_status]: "https://fiaas-svc.semaphoreci.com/projects/skipper"
-[codacy_grade_badge]: "https://app.codacy.com/project/badge/Grade/83b7598937694e1b92d706347d5124a3" "Codacy Grade"
-[codacy_grade]: "https://www.codacy.com/gh/fiaas/skipper/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fiaas/skipper&amp;utm_campaign=Badge_Grade"
-[codacy_coverage_badge]: "https://app.codacy.com/project/badge/Coverage/83b7598937694e1b92d706347d5124a3" "Codacy Coverage"
-[codacy_coverage]: "https://www.codacy.com/gh/fiaas/skipper/dashboard?utm_source=github.com&utm_medium=referral&utm_content=fiaas/skipper&utm_campaign=Badge_Coverage"
 
 ## How skipper works
 
