@@ -35,18 +35,13 @@ fi
 echo "Buildx nodes:"
 docker buildx ls
 
-# Run multi-arch build
+# Build the docker image for local testing
 docker buildx build --pull \
   --progress plain \
-  --tag "${IMAGE_NAME}:latest" \
-  --platform="${PLATFORMS}" \
-  --output=type=tar,dest="${TARBALL}" .
+  --tag "${IMAGE_NAME}:latest" .
 
-# Rebuild to load the docker image for local testing
-docker buildx build --pull \
-  --progress plain \
-  --tag "${IMAGE_NAME}:latest" \
-  --load .
+# Save the container to cache for deployment job
+docker save -o "${TARBALL}" "${IMAGE_NAME}:latest" 
 
 # Grab the wheels out of the tarball and stuff them in the pip cache directory
 tar -v -C "${CACHE_DIR}/wheels" --wildcards -x "*/wheels/*.whl" -f "${TARBALL}" 2>/dev/null || true
