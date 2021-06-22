@@ -38,7 +38,8 @@ docker buildx ls
 # Build the docker image for local testing
 docker buildx build --pull \
   --progress plain \
-  --tag "${IMAGE_NAME}:latest" .
+  --tag "${IMAGE_NAME}:latest" \
+  --load .
 
 # Save the container to cache for deployment job
 docker save -o "${TARBALL}" "${IMAGE_NAME}:latest" 
