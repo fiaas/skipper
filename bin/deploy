@@ -84,10 +84,6 @@ function publishHelmChart() {
     echo "Successfully pushed helm chart"
 }
 
-function skipperVersion() {
-    python setup.py --version
-}
-
 function gitTagBump() {
     $GITVERSION --prefix=v bump auto
 }
@@ -102,15 +98,16 @@ installGitVersion $GITVERSION
 installHelm $HELM_VERSION
 dockerLogin
 
-echo -n "skipper version: "
-skipperVersion
+skipper_version="$(python setup.py --version)"
+echo "skipper version: $skipper_version"
+
 
 gitTagBump
 echo -n "git tag: "
 gitTagShow
 
-dockerPush $DOCKER_REPO $(skipperVersion)
+dockerPush $DOCKER_REPO "$skipper_version"
 
-publishHelmChart $(skipperVersion) $(gitTagShow)
+publishHelmChart "$skipper_version" $(gitTagShow)
 
 tagRelease $(gitTagShow)
