@@ -32,9 +32,6 @@ baseurl: 'https://fiaas.github.io/releases'
 annotations: {}
 rbac:
   enabled: false
-  # namespaces in which to create rbac resources for fiaas deploy daemon
-  fiaasDeployDaemonNamespaces:
-  - default
 statusUpdateInterval: 30
 # Add a fiaas-deploy-daemon configmap to the namespace where fiaas-skipper is installed
 addFiaasDeployDaemonConfigmap: false
