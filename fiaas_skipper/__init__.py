@@ -2,13 +2,13 @@
 # -*- coding: utf-8
 
 # Copyright 2017-2019 The FIAAS Authors
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -90,7 +90,8 @@ def main():
                 log.exception("Unable to load spec config extension file {!r} using defaults"
                               .format(cfg.spec_file_override))
         deployer = CrdDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
-                               bootstrap=CrdBootstrapper(), spec_config_extension=spec_config_extension)
+                               bootstrap=CrdBootstrapper(), spec_config_extension=spec_config_extension,
+                               rbac=cfg.rbac)
         # Do period checking of deployment status across all namespaces
         status_tracker = StatusTracker(cluster=cluster, application=FiaasApplication,
                                        interval=cfg.status_update_interval)
