@@ -28,7 +28,7 @@ from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
 from k8s.models.deployment import Deployment
 from prometheus_client import Counter, Gauge
-from rbac import deploy_rbac
+from .rbac import deploy_rbac
 
 LOG = logging.getLogger(__name__)
 NAME = 'fiaas-deploy-daemon'
