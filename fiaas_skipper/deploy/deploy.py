@@ -2,13 +2,13 @@
 # -*- coding: utf-8
 
 # Copyright 2017-2019 The FIAAS Authors
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,6 +28,7 @@ from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
 from k8s.models.deployment import Deployment
 from prometheus_client import Counter, Gauge
+from rbac import deploy_rbac
 
 LOG = logging.getLogger(__name__)
 NAME = 'fiaas-deploy-daemon'
@@ -52,12 +53,13 @@ class DeploymentStatus(object):
 
 class Deployer(object):
     def __init__(self, cluster, release_channel_factory, bootstrap, spec_config_extension=None,
-                 deploy_interval=DEPLOY_INTERVAL):
+                 deploy_interval=DEPLOY_INTERVAL, rbac=False):
         self._cluster = cluster
         self._release_channel_factory = release_channel_factory
         self._bootstrap = bootstrap
         self._spec_extension = spec_config_extension
         self._deploy_interval = deploy_interval
+        self.rbac = rbac
 
     def deploy(self, namespaces=None, force_bootstrap=False):
         deploy_counter.inc()
@@ -74,6 +76,8 @@ class Deployer(object):
                 self._deploy(deployment_config, channel, spec_config)
                 if force_bootstrap or requires_bootstrap(deployment_config):
                     self._bootstrap(deployment_config, channel, spec_config)
+                if self.rbac:
+                    deploy_rbac(deployment_config.namespace)
             except Exception:
                 LOG.exception("Failed to deploy %s in %s", deployment_config.name, deployment_config.namespace)
             time.sleep(self._deploy_interval)
