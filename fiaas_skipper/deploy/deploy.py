@@ -75,7 +75,7 @@ class Deployer(object):
                 LOG.debug(spec_config)
                 self._deploy(deployment_config, channel, spec_config)
                 if force_bootstrap or requires_bootstrap(deployment_config):
-                    self._bootstrap(deployment_config, channel, spec_config)
+                    self._bootstrap(deployment_config, channel, spec_config, rbac=self.rbac)
                 if self.rbac:
                     deploy_rbac(deployment_config.namespace)
             except Exception:
