@@ -38,7 +38,9 @@ deploy_histogram = request_histogram.labels("deploy")
 @status_histogram.time()
 def status():
     deployment_statuses = api.status()
-    return make_response(json.dumps(deployment_statuses, default=_encode), 200)
+    response = make_response(json.dumps(deployment_statuses, default=_encode), 200)
+    response.headers['Content-Type'] = 'application/json'
+    return response
 
 
 def _encode(obj):
@@ -65,7 +67,9 @@ def deploy():
     force_bootstrap = _force_bootstrap(request)
     threading.Thread(target=_deploy, kwargs={'namespaces': namespaces,
                                              'force_bootstrap': force_bootstrap}).start()
-    return make_response('', 200)
+    response = make_response('', 200)
+    response.headers['Content-Type'] = 'application/json'
+    return response
 
 
 def _deploy(namespaces=None, force_bootstrap=False):
