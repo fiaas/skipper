@@ -32,6 +32,16 @@ data:
     {{with .Values.debug}}debug: true{{end}}
     {{with .Values.statusUpdateInterval}}status-update-interval: {{.}}{{end}}
     {{with not .Values.autoUpdate}}disable-autoupdate: true{{end}}
+    {{with .Values.releaseChannelMetadata -}}release-channel-metadata:
+      {{- range $key, $value := . }}
+      {{ $key }}: {{ $value }}
+      {{- end }}
+    {{ end -}}
+    {{with .Values.releaseChannelMetadataSpec -}}release-channel-metadata-spec:
+      {{- range $key, $value := . }}
+      {{ $key }}: {{ $value }}
+      {{- end }}
+    {{ end -}}
   fiaas_override.yaml: |-
 {{ if .Values.fiaas_override_yaml -}}
 {{ .Values.fiaas_override_yaml | indent 4 }}
