@@ -73,11 +73,11 @@ class Deployer(object):
                 channel = self._release_channel_factory(deployment_config.name, deployment_config.tag)
                 spec_config = self._load_spec(channel)
                 LOG.debug(spec_config)
+                if self.rbac:
+                    deploy_rbac(deployment_config.namespace)
                 self._deploy(deployment_config, channel, spec_config)
                 if force_bootstrap or requires_bootstrap(deployment_config):
                     self._bootstrap(deployment_config, channel, spec_config, rbac=self.rbac)
-                if self.rbac:
-                    deploy_rbac(deployment_config.namespace)
             except Exception:
                 LOG.exception("Failed to deploy %s in %s", deployment_config.name, deployment_config.namespace)
             time.sleep(self._deploy_interval)
