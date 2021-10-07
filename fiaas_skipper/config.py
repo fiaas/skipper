@@ -65,8 +65,8 @@ class Configuration(Namespace):
                             action="store_true")
         parser.add_argument("--status-update-interval", help="How frequently to check status of namespaces.", type=int,
                             default=30)
-        parser.add_argument("--manage-rbac", help="Have Skipper create namespaced RBAC resources when deploying fiaas-deploy-daemon",
-                            action="store_true", default=False)
+        parser.add_argument("--manage-rbac", action="store_true", default=False,
+                            help="Have Skipper create namespaced RBAC resources when deploying fiaas-deploy-daemon")
         api_parser = parser.add_argument_group("API server")
         api_parser.add_argument("--api-server", help="Address of the api-server to use (IP or name)",
                                 default="https://kubernetes.default.svc.cluster.local")

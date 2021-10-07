@@ -19,7 +19,6 @@ from __future__ import absolute_import
 
 import logging
 
-from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
 from k8s.models.role import Role, PolicyRule
 from k8s.models.role_binding import RoleBinding, RoleRef, Subject
@@ -41,10 +40,9 @@ def deploy_rbac(namespace):
     role_binding = RoleBinding.get_or_create(
         metadata=metadata,
         roleRef=RoleRef(apiGroup="rbac.authorization.k8s.io", kind="Role", name=NAME),
-        subjects=[Subject(kind="ServiceAccount", name=Name, namespace=namespace)],
+        subjects=[Subject(kind="ServiceAccount", name=NAME, namespace=namespace)],
     )
     role_binding.save()
-
 
 def _create_policy_rules():
     return [
