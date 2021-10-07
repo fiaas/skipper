@@ -22,6 +22,7 @@ import logging
 from k8s.models.common import ObjectMeta
 from k8s.models.role import Role, PolicyRule
 from k8s.models.role_binding import RoleBinding, RoleRef, Subject
+from k8s.models.service_account import ServiceAccount
 
 NAME = "fiaas-deploy-daemon"
 
@@ -32,6 +33,9 @@ def deploy_rbac(namespace):
     LOG.info("Deploying RBAC resources in %s", namespace)
 
     metadata = _create_metadata(namespace)
+
+    service_account = ServiceAccount.get_or_create(metadata=metadata, automountServiceAccountToken=True)
+    service_account.save()
 
     rules = _create_policy_rules()
     role = Role.get_or_create(metadata=metadata, rules=rules)
