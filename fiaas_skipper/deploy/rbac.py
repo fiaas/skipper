@@ -31,30 +31,19 @@ LOG = logging.getLogger(__name__)
 
 def deploy_rbac(namespace):
     LOG.info("Deploying RBAC resources in %s", namespace)
-    try:
-        Role.delete(name=NAME, namespace=namespace)
-    except NotFound:
-        pass
+
     metadata = _create_metadata(namespace)
+
     rules = _create_policy_rules()
-    role = Role(metadata=metadata, rules=rules)
+    role = Role.get_or_create(metadata=metadata, rules=rules)
     role.save()
 
-    try:
-        RoleBinding.delete(name=NAME, namespace=namespace)
-    except NotFound:
-        pass
-    role_binding = _create_role_binding(namespace)
-    role_binding.save()
-
-
-def _create_role_binding(namespace):
-    metadata = _create_metadata(namespace)
-    return RoleBinding(
+    role_binding = RoleBinding.get_or_create(
         metadata=metadata,
         roleRef=RoleRef(apiGroup="rbac.authorization.k8s.io", kind="Role", name=NAME),
-        subjects=[Subject(kind="ServiceAccount", name=NAME, namespace=namespace)],
+        subjects=[Subject(kind="ServiceAccount", name=Name, namespace=namespace)],
     )
+    role_binding.save()
 
 
 def _create_policy_rules():
