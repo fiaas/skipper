@@ -48,6 +48,7 @@ def deploy_rbac(namespace):
     )
     role_binding.save()
 
+
 def _create_policy_rules():
     return [
         PolicyRule(
