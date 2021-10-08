@@ -68,13 +68,16 @@ class TestApi(object):
             "version": "fiaas/fiaas-deploy-daemon:123",
             "channel": "stable"
         }]
+        assert response.headers['Content-Type'] == 'application/json'
 
     def test_deploy(self, app, deployer):
         response = app.post('/api/deploy')
         assert response.status_code == 200
+        assert response.headers['Content-Type'] == 'application/json'
         deployer.deploy.assert_called_with(force_bootstrap=False, namespaces=None)
 
     def test_deploy_force_bootstrap(self, app, deployer):
         response = app.post('/api/deploy', json={'force_bootstrap': True, 'namespaces': ['test1']})
         assert response.status_code == 200
+        assert response.headers['Content-Type'] == 'application/json'
         deployer.deploy.assert_called_with(force_bootstrap=True, namespaces=['test1'])
