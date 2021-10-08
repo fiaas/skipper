@@ -53,7 +53,7 @@ class Configuration(Namespace):
         parser.add_argument("--port", help="Port to use for the web-interface (default: %(default)s)", type=int,
                             default=5000)
         parser.add_argument("--baseurl", help="Url to server hosting release channel meta data.",
-                            default="http://fiaas-release.delivery-pro.schibsted.io")
+                            default="https://fiaas.github.io/releases")
         parser.add_argument("--release-channel-metadata",
                             help="Provide hardcoded release channel metadata (Used for debugging purposes).")
         parser.add_argument("--release-channel-metadata-spec",
