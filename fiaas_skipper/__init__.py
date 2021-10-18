@@ -2,13 +2,13 @@
 # -*- coding: utf-8
 
 # Copyright 2017-2019 The FIAAS Authors
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -77,7 +77,8 @@ def main():
         cluster = Cluster()
         if cfg.release_channel_metadata:
             log.warning("!!Using hardcoded release channel metadata {!r}".format(cfg.release_channel_metadata))
-            log.warning("!!Reading hardcoded release channel metadata spec file from {!r}".format(cfg.release_channel_metadata_spec))
+            log.warning("!!Reading hardcoded release channel metadata spec file from {!r}".format(
+                cfg.release_channel_metadata_spec))
             spec = _read_file(cfg.release_channel_metadata_spec)
             release_channel_factory = FakeReleaseChannelFactory(json.loads(cfg.release_channel_metadata), spec)
         else:
