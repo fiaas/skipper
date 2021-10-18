@@ -37,6 +37,20 @@ statusUpdateInterval: 30
 addFiaasDeployDaemonConfigmap: false
 fiaasDeployDaemonTag: stable
 autoUpdate: false
+#debug: false
+# releaseChannelMetadata: Useful if you have autoUpdate off, and want to hardcode which fiaas release to use.
+# Metadata for the stable channel can be found by default at: https://fiaas.github.io/releases/fiaas-deploy-daemon/stable.json
+releaseChannelMetadata: {}
+#releaseChannelMetadata:
+#  image: "fiaas/fiaas-deploy-daemon:20210902130955-8d6e989"
+#  build: "https://fiaas.semaphoreci.com/jobs/8ac837af-cd8d-4ccc-be3f-a0b692f19c00"
+#  commit: "https://github.com/fiaas/fiaas-deploy-daemon/commit/8d6e9897f140f73bc05b7b34bc484250cf9839b8"
+#  spec: "https://fiaas.github.io/releases/artifacts/20210902130955-8d6e989/fiaas.yml"
+#  spec: "/var/run/config/fiaas/release_channel_metadata_spec_fiaas.yaml" # Alternative if provided in releaseChannelMetadataSpecContentAsYAML
+#  updated: "2021-09-22T08:24:21+00:00"
+releaseChannelMetadataSpecContentAsYAML: null
+# spec will be found at: "/var/run/config/fiaas/release_channel_metadata_spec_fiaas.yaml"
+# If the spec is provided here, ensure that releaseChannelMetadata.spec points to the file above.
 service:
   type: ClusterIP
 fiaas_override_yaml: null

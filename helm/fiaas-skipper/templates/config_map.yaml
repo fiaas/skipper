@@ -32,6 +32,11 @@ data:
     {{with .Values.debug}}debug: true{{end}}
     {{with .Values.statusUpdateInterval}}status-update-interval: {{.}}{{end}}
     {{with not .Values.autoUpdate}}disable-autoupdate: true{{end}}
+    {{with .Values.releaseChannelMetadata -}}release-channel-metadata: {{ . | toJson | quote }}{{end}}
+    {{with .Values.releaseChannelMetadataSpecContentAsYAML -}}release-channel-metadata-spec: "/var/run/config/fiaas/release_channel_metadata_spec_fiaas.yaml"
+  release_channel_metadata_spec_fiaas.yaml: |-
+{{ . | indent 4 }}
+{{ end }}
   fiaas_override.yaml: |-
 {{ if .Values.fiaas_override_yaml -}}
 {{ .Values.fiaas_override_yaml | indent 4 }}

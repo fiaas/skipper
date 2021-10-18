@@ -76,7 +76,8 @@ def main():
         log.info("fiaas-skipper starting with configuration {!r}".format(cfg))
         cluster = Cluster()
         if cfg.release_channel_metadata:
-            log.debug("!!Using hardcoded release channel metadata {!r}".format(cfg.release_channel_metadata))
+            log.warning("!!Using hardcoded release channel metadata {!r}".format(cfg.release_channel_metadata))
+            log.warning("!!Reading hardcoded release channel metadata spec file from {!r}".format(cfg.release_channel_metadata_spec))
             spec = _read_file(cfg.release_channel_metadata_spec)
             release_channel_factory = FakeReleaseChannelFactory(json.loads(cfg.release_channel_metadata), spec)
         else:
