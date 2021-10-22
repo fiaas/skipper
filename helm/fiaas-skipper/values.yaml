@@ -28,6 +28,14 @@ ingress:
 deployment:
   # include the resource requests and limits
   includeResourceUsage: true
+  customResourceUsage: null
+# example of customResourceUsage: (better reflects what's required)
+#    limits:
+#      cpu: 100m
+#      memory: 256Mi
+#    requests:
+#      cpu: 25m
+#      memory: 64Mi
 baseurl: 'https://fiaas.github.io/releases'
 annotations: {}
 rbac:
