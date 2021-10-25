@@ -14,7 +14,6 @@
 # limitations under the License.
 
 {{- if .Values.rbac.enabled }}
-
 ---
 kind: ClusterRole
 {{- if semverCompare ">=1.8" .Capabilities.KubeVersion.GitVersion }}
