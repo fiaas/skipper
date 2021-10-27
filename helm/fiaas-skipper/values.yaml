@@ -38,7 +38,8 @@ deployment:
 baseurl: 'https://fiaas.github.io/releases'
 annotations: {}
 rbac:
-  enabled: false
+  enabled: false # create RBAC resources giving Skipper the permissions it needs
+manageRBAC: false # have Skipper create RBAC resources for any FDD it deploys
 statusUpdateInterval: 30
 # Add a fiaas-deploy-daemon configmap to the namespace where fiaas-skipper is installed
 addFiaasDeployDaemonConfigmap: false
