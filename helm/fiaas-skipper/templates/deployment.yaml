@@ -76,12 +76,7 @@ spec:
             scheme: HTTP
 {{- if .Values.deployment.includeResourceUsage }}
         resources:
-          limits:
-            cpu: 125m
-            memory: 256Mi
-          requests:
-            cpu: 125m
-            memory: 256Mi
+{{ toYaml .Values.deployment.resources | indent 10 }}
 {{- end }}
         volumeMounts:
         - name: {{ .Chart.Name }}
