@@ -1,12 +1,11 @@
-
 # Copyright 2017-2019 The FIAAS Authors
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -72,22 +71,30 @@ class TestBarePodBootstrapper():
         spec = ResourceQuotaSpec.from_dict(resourcequota_spec)
         return ResourceQuota(metadata=metadata, spec=spec)
 
-    @pytest.mark.parametrize("namespace,resourcequota_spec,resources,spec_config", [
-        ("default", None, spec_config()['resources'], spec_config()),
-        ("other-namespace", None, spec_config()['resources'], spec_config()),
-        ("default", None, OVERRIDE_ALL_RESOURCES, spec_config(resources=OVERRIDE_ALL_RESOURCES)),
-        ("other-namespace", None, OVERRIDE_ALL_RESOURCES, spec_config(resources=OVERRIDE_ALL_RESOURCES)),
-        ("other-namespace", None, spec_config()['resources'], spec_config()),
-        ("default", ONLY_BEST_EFFORT_ALLOWED, None, spec_config()),
-        ("other-namespace", ONLY_BEST_EFFORT_ALLOWED, None, spec_config()),
-        ("default", BEST_EFFORT_NOT_ALLOWED, spec_config()['resources'], spec_config()),
-        ("other-namespace", BEST_EFFORT_NOT_ALLOWED, spec_config()['resources'], spec_config()),
-        ("default", ONLY_BEST_EFFORT_ALLOWED, None, spec_config(resources=OVERRIDE_ALL_RESOURCES)),
-        ("other-namespace", ONLY_BEST_EFFORT_ALLOWED, None, spec_config(resources=OVERRIDE_ALL_RESOURCES)),
-        ("default", BEST_EFFORT_NOT_ALLOWED, OVERRIDE_ALL_RESOURCES, spec_config(OVERRIDE_ALL_RESOURCES)),
-        ("other-namespace", BEST_EFFORT_NOT_ALLOWED, OVERRIDE_ALL_RESOURCES, spec_config(OVERRIDE_ALL_RESOURCES)),
+    @pytest.mark.parametrize("namespace,resourcequota_spec,resources,spec_config,rbac", [
+        ("default", None, spec_config()['resources'], spec_config(), False),
+        ("default", None, spec_config()['resources'], spec_config(), True),
+        ("other-namespace", None, spec_config()['resources'], spec_config(), False),
+        ("default", None, OVERRIDE_ALL_RESOURCES, spec_config(resources=OVERRIDE_ALL_RESOURCES), False),
+        ("other-namespace", None, OVERRIDE_ALL_RESOURCES, spec_config(resources=OVERRIDE_ALL_RESOURCES), False),
+        ("other-namespace", None, spec_config()['resources'], spec_config(), False),
+        ("default", ONLY_BEST_EFFORT_ALLOWED, None, spec_config(), False),
+        ("other-namespace", ONLY_BEST_EFFORT_ALLOWED, None, spec_config(), False),
+        ("default", BEST_EFFORT_NOT_ALLOWED, spec_config()['resources'],
+            spec_config(), False),
+        ("other-namespace", BEST_EFFORT_NOT_ALLOWED, spec_config()['resources'],
+            spec_config(), False),
+        ("default", ONLY_BEST_EFFORT_ALLOWED, None,
+            spec_config(resources=OVERRIDE_ALL_RESOURCES), False),
+        ("other-namespace", ONLY_BEST_EFFORT_ALLOWED, None,
+            spec_config(resources=OVERRIDE_ALL_RESOURCES), False),
+        ("default", BEST_EFFORT_NOT_ALLOWED, OVERRIDE_ALL_RESOURCES,
+            spec_config(OVERRIDE_ALL_RESOURCES), False),
+        ("other-namespace", BEST_EFFORT_NOT_ALLOWED, OVERRIDE_ALL_RESOURCES,
+            spec_config(OVERRIDE_ALL_RESOURCES), False),
     ])
-    def test_bootstrap(self, post, delete, resourcequota_list, namespace, resourcequota_spec, resources, spec_config):
+    def test_bootstrap(self, post, delete, resourcequota_list, namespace,
+                       resourcequota_spec, resources, spec_config, rbac):
         resourcequota_list.return_value = \
             [self.create_resourcequota(namespace, resourcequota_spec)] if resourcequota_spec else []
         bootstrapper = BarePodBootstrapper()
@@ -106,6 +113,7 @@ class TestBarePodBootstrapper():
                 'containers': [{
                     'name': 'fiaas-deploy-daemon-bootstrap',
                     'image': 'example.com/image:tag',
+                    'args': [],
                     'ports': [],
                     'env': [],
                     'envFrom': [],
@@ -122,9 +130,11 @@ class TestBarePodBootstrapper():
         }
         if resources:
             expected_pod['spec']['containers'][0]['resources'] = resources
+        if rbac:
+            expected_pod['spec']['serviceAccountName'] = 'fiaas-deploy-daemon'
 
         with mock.patch('pyrfc3339.parse'):
-            bootstrapper(deployment_config, channel, spec_config=spec_config)
+            bootstrapper(deployment_config, channel, spec_config=spec_config, rbac=rbac)
 
         pytest.helpers.assert_any_call(delete, self.pod_uri(namespace=namespace, name='fiaas-deploy-daemon-bootstrap'))
         pytest.helpers.assert_any_call(post, self.pod_uri(namespace=namespace), expected_pod)

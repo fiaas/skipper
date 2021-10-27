@@ -2,13 +2,13 @@
 # -*- coding: utf-8
 
 # Copyright 2017-2019 The FIAAS Authors
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@ class BarePodBootstrapper(object):
     def __init__(self, cmd_args=None):
         self._cmd_args = [] if cmd_args is None else cmd_args
 
-    def __call__(self, deployment_config, channel, spec_config=None):
+    def __call__(self, deployment_config, channel, spec_config=None, rbac=False):
         namespace = deployment_config.namespace
         bootstrap_counter.inc()
         LOG.info("Bootstrapping %s in %s", deployment_config.name, namespace)
@@ -44,13 +44,13 @@ class BarePodBootstrapper(object):
             Pod.delete(name=BOOTSTRAP_POD_NAME, namespace=namespace)
         except NotFound:
             pass
-        pod_spec = _create_pod_spec(self._cmd_args, channel, namespace, spec_config)
+        pod_spec = _create_pod_spec(self._cmd_args, channel, namespace, spec_config, rbac=rbac)
         pod_metadata = _create_pod_metadata(namespace, spec_config)
         pod = Pod(metadata=pod_metadata, spec=pod_spec)
         pod.save()
 
 
-def _create_pod_spec(args, channel, namespace, spec_config):
+def _create_pod_spec(args, channel, namespace, spec_config, rbac=False):
     container = Container(
         name="fiaas-deploy-daemon-bootstrap",
         image=channel.metadata['image'],
@@ -58,6 +58,8 @@ def _create_pod_spec(args, channel, namespace, spec_config):
         resources=_create_resource_requirements(namespace, spec_config)
     )
     pod_spec = PodSpec(containers=[container], serviceAccountName="default", restartPolicy="Never")
+    if rbac:
+        pod_spec.serviceAccountName = "fiaas-deploy-daemon"
     return pod_spec
 
 

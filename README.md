@@ -64,8 +64,9 @@ helm install --repo https://fiaas.github.io/helm fiaas-skipper --name fiaas-skip
 With Helm (including rbac):
 
 ```commandline
-helm install --repo https://fiaas.github.io/helm fiaas-skipper --name fiaas-skipper --set rbac.enabled="true"
+helm install --repo https://fiaas.github.io/helm fiaas-skipper --name fiaas-skipper --set rbac.enabled="true" --set manageRBAC="true"
 ```
+NOTE: setting manageRBAC to "true" will have Skipper create serviceaccount, role and rolebinding resources named "fiaas-deploy-daemon", overwriting any existing resources with the same name.
 
 For more information on permissions required for fiaas-controller see [FIAAS operators guide].
 
@@ -126,3 +127,4 @@ If you follow the above steps, but fiaas-deploy-daemon for some reason does not 
 
 When changes are merged to master the master branch is built using [travis](https://travis-ci.org/fiaas/skipper). The build generates a docker image that is published to the [fiaas/skipper](https://cloud.docker.com/u/fiaas/repository/docker/fiaas/skipper) respository on docker hub and is publicly available.
 Additionally a helm chart is created and published to the [fiaas helm repository](https://github.com/fiaas/helm).
+
