@@ -56,10 +56,6 @@ spec:
       - name: "{{ .Values.name }}"
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: "{{ .Values.image.pullPolicy }}"
-        args:
-        {{- if .Values.manageRBAC }}
-        - "--manage-rbac"
-        {{- end }}
         ports:
         - containerPort: 5000
           name: http5000

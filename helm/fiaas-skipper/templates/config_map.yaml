@@ -30,6 +30,7 @@ data:
     log-format: plain
     {{with .Values.baseurl}}baseurl: {{.}}{{end}}
     {{with .Values.debug}}debug: true{{end}}
+    {{with .Values.manageRBAC}}manage-rbac: true{{end}}
     {{with .Values.statusUpdateInterval}}status-update-interval: {{.}}{{end}}
     {{with not .Values.autoUpdate}}disable-autoupdate: true{{end}}
     {{with .Values.releaseChannelMetadata -}}release-channel-metadata: {{ . | toJson | quote }}{{end}}
