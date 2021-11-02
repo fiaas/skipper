@@ -93,7 +93,7 @@ def main():
                               .format(cfg.spec_file_override))
         deployer = CrdDeployer(cluster=cluster, release_channel_factory=release_channel_factory,
                                bootstrap=CrdBootstrapper(), spec_config_extension=spec_config_extension,
-                               rbac=cfg.rbac)
+                               rbac=cfg.manage_rbac)
         # Do period checking of deployment status across all namespaces
         status_tracker = StatusTracker(cluster=cluster, application=FiaasApplication,
                                        interval=cfg.status_update_interval)
