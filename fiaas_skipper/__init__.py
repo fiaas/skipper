@@ -50,7 +50,7 @@ class ExitOnSignal(Exception):
 
 def signal_handler(signum, frame):
     signame = signal.Signals(signum).name
-    LOG.fatal(f"Received signal {signame}({signum}), exiting")
+    LOG.critical(f"Received signal {signame}({signum}), exiting")
     raise ExitOnSignal()
 
 
