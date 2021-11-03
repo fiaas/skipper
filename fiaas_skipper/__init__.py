@@ -17,8 +17,6 @@
 
 from __future__ import absolute_import
 
-import signal
-
 from gevent import monkey
 
 monkey.patch_all()  # NOQA
@@ -26,6 +24,7 @@ monkey.patch_all()  # NOQA
 import json
 import logging
 import os
+import signal
 
 import yaml
 from k8s import config as k8s_config
@@ -50,6 +49,8 @@ class ExitOnSignal(Exception):
 
 
 def signal_handler(signum, frame):
+    signame = signal.Signals(signum).name
+    LOG.fatal(f"Received signal {signame}({signum}), exiting")
     raise ExitOnSignal()
 
 
