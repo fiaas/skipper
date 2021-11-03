@@ -24,6 +24,7 @@ monkey.patch_all()  # NOQA
 import json
 import logging
 import os
+import signal
 
 import yaml
 from k8s import config as k8s_config
@@ -40,8 +41,17 @@ from .web import create_webapp
 
 from gevent.pywsgi import WSGIServer, LoggingLogAdapter
 
-
 LOG = logging.getLogger(__name__)
+
+
+class ExitOnSignal(Exception):
+    pass
+
+
+def signal_handler(signum, frame):
+    signame = signal.Signals(signum).name
+    LOG.fatal(f"Received signal {signame}({signum}), exiting")
+    raise ExitOnSignal()
 
 
 def init_k8s_client(config):
@@ -72,6 +82,8 @@ def main():
     init_logging(cfg)
     init_k8s_client(cfg)
     log = logging.getLogger(__name__)
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        signal.signal(sig, signal_handler)
     try:
         log.info("fiaas-skipper starting with configuration {!r}".format(cfg))
         cluster = Cluster()
@@ -110,6 +122,8 @@ def main():
         # Run web-app in main thread
         http_server = WSGIServer(("", cfg.port), webapp, log=log, error_log=error_log)
         http_server.serve_forever()
+    except ExitOnSignal:
+        pass
     except BaseException:
         log.exception("General failure! Inspect traceback and make the code better!")
 
