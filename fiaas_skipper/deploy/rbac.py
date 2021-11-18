@@ -52,7 +52,7 @@ def deploy_rbac(namespace):
 def _create_policy_rules():
     return [
         PolicyRule(
-            apiGroups=["fiaas-schibsted.io", "schibsted.io"],
+            apiGroups=["fiaas.schibsted.io", "schibsted.io"],
             resources=["applications", "application-statuses", "statuses"],
             verbs=["create", "delete", "get", "list", "update", "watch"],
         ),
