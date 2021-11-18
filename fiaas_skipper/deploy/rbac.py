@@ -53,7 +53,12 @@ def _create_policy_rules():
     return [
         PolicyRule(
             apiGroups=["fiaas.schibsted.io"],
-            resources=["applications", "application-statuses"],
+            resources=["applications"],
+            verbs=["get", "list", "watch"],
+        ),
+        PolicyRule(
+            apiGroups=["fiaas.schibsted.io"],
+            resources=["application-statuses"],
             verbs=["create", "delete", "get", "list", "update", "watch"],
         ),
         PolicyRule(
@@ -74,14 +79,10 @@ def _create_policy_rules():
                 "pods",
                 "resourcequotas",
                 "services",
+                "serviceaccounts",
             ],
-            verbs=["create", "delete", "get", "list", "update", "watch", "deletecollection"],
+            verbs=["create", "delete", "get", "list", "update", "watch"],
         ),
-        PolicyRule(
-            apiGroups=[""],
-            resources=["serviceaccounts"],
-            verbs=["create", "delete", "get", "list", "update"],
-        )
     ]
 
 
