@@ -156,15 +156,15 @@ rules:
       - list
       - update
   - apiGroups:
-    - rbac.authorization.k8s.io
+      - rbac.authorization.k8s.io
     resources:
-    - roles
-    - rolebindings
+      - roles
+      - rolebindings
     verbs:
-    - get
-    - list
-    - create
-    - update
+      - get
+      - list
+      - create
+      - update
 
 ---
 kind: ClusterRoleBinding
