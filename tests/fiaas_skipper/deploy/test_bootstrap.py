@@ -99,7 +99,7 @@ class TestBarePodBootstrapper():
             [self.create_resourcequota(namespace, resourcequota_spec)] if resourcequota_spec else []
         bootstrapper = BarePodBootstrapper()
         channel = ReleaseChannel(None, None, {'image': 'example.com/image:tag'}, None)
-        deployment_config = DeploymentConfig('foo', namespace, 'latest', False)
+        deployment_config = DeploymentConfig('foo', namespace, 'latest', True)
         expected_pod = {
             'metadata': {
                 'name': 'fiaas-deploy-daemon-bootstrap',

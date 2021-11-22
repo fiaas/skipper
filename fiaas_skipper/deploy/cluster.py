@@ -23,7 +23,7 @@ from k8s.models.configmap import ConfigMap
 LOG = logging.getLogger(__name__)
 
 DeploymentConfig = collections.namedtuple(
-    'DeploymentConfig', ['name', 'namespace', 'tag', 'service_account_per_app'])
+    'DeploymentConfig', ['name', 'namespace', 'tag', 'enable_service_account_per_app'])
 
 
 class Cluster(object):
@@ -43,6 +43,6 @@ class Cluster(object):
                 name=name,
                 namespace=c.metadata.namespace,
                 tag=tag,
-                service_account_per_app=sa_per_app,
+                enable_service_account_per_app=sa_per_app,
             ))
         return res
