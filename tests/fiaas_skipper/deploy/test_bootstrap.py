@@ -71,30 +71,30 @@ class TestBarePodBootstrapper():
         spec = ResourceQuotaSpec.from_dict(resourcequota_spec)
         return ResourceQuota(metadata=metadata, spec=spec)
 
-    @pytest.mark.parametrize("namespace,resourcequota_spec,resources,spec_config,rbac", [
-        ("default", None, spec_config()['resources'], spec_config(), False),
-        ("default", None, spec_config()['resources'], spec_config(), True),
-        ("other-namespace", None, spec_config()['resources'], spec_config(), False),
-        ("default", None, OVERRIDE_ALL_RESOURCES, spec_config(resources=OVERRIDE_ALL_RESOURCES), False),
-        ("other-namespace", None, OVERRIDE_ALL_RESOURCES, spec_config(resources=OVERRIDE_ALL_RESOURCES), False),
-        ("other-namespace", None, spec_config()['resources'], spec_config(), False),
-        ("default", ONLY_BEST_EFFORT_ALLOWED, None, spec_config(), False),
-        ("other-namespace", ONLY_BEST_EFFORT_ALLOWED, None, spec_config(), False),
+    @pytest.mark.parametrize("namespace,resourcequota_spec,resources,spec_config,rbac,sa_per_app", [
+        ("default", None, spec_config()['resources'], spec_config(), False, False),
+        ("default", None, spec_config()['resources'], spec_config(), True, False),
+        ("other-namespace", None, spec_config()['resources'], spec_config(), False, False),
+        ("default", None, OVERRIDE_ALL_RESOURCES, spec_config(resources=OVERRIDE_ALL_RESOURCES), False, False),
+        ("other-namespace", None, OVERRIDE_ALL_RESOURCES, spec_config(resources=OVERRIDE_ALL_RESOURCES), False, False),
+        ("other-namespace", None, spec_config()['resources'], spec_config(), False, False),
+        ("default", ONLY_BEST_EFFORT_ALLOWED, None, spec_config(), False, False),
+        ("other-namespace", ONLY_BEST_EFFORT_ALLOWED, None, spec_config(), False, False),
         ("default", BEST_EFFORT_NOT_ALLOWED, spec_config()['resources'],
-            spec_config(), False),
+            spec_config(), False, False),
         ("other-namespace", BEST_EFFORT_NOT_ALLOWED, spec_config()['resources'],
-            spec_config(), False),
+            spec_config(), False, False),
         ("default", ONLY_BEST_EFFORT_ALLOWED, None,
-            spec_config(resources=OVERRIDE_ALL_RESOURCES), False),
+            spec_config(resources=OVERRIDE_ALL_RESOURCES), False, False),
         ("other-namespace", ONLY_BEST_EFFORT_ALLOWED, None,
-            spec_config(resources=OVERRIDE_ALL_RESOURCES), False),
+            spec_config(resources=OVERRIDE_ALL_RESOURCES), False, False),
         ("default", BEST_EFFORT_NOT_ALLOWED, OVERRIDE_ALL_RESOURCES,
-            spec_config(OVERRIDE_ALL_RESOURCES), False),
+            spec_config(OVERRIDE_ALL_RESOURCES), False, False),
         ("other-namespace", BEST_EFFORT_NOT_ALLOWED, OVERRIDE_ALL_RESOURCES,
-            spec_config(OVERRIDE_ALL_RESOURCES), False),
+            spec_config(OVERRIDE_ALL_RESOURCES), False, False),
     ])
     def test_bootstrap(self, post, delete, resourcequota_list, namespace,
-                       resourcequota_spec, resources, spec_config, rbac):
+                       resourcequota_spec, resources, spec_config, rbac, sa_per_app):
         resourcequota_list.return_value = \
             [self.create_resourcequota(namespace, resourcequota_spec)] if resourcequota_spec else []
         bootstrapper = BarePodBootstrapper()
@@ -113,7 +113,7 @@ class TestBarePodBootstrapper():
                 'containers': [{
                     'name': 'fiaas-deploy-daemon-bootstrap',
                     'image': 'example.com/image:tag',
-                    'args': ["--enable-service-account-per-app"],
+                    'args': [],
                     'ports': [],
                     'env': [],
                     'envFrom': [],
@@ -132,6 +132,8 @@ class TestBarePodBootstrapper():
             expected_pod['spec']['containers'][0]['resources'] = resources
         if rbac:
             expected_pod['spec']['serviceAccountName'] = 'fiaas-deploy-daemon'
+        if sa_per_app:
+            expected_pod['spec']['containers'][0]['args'].append('--enable-service-account-per-app')
 
         with mock.patch('pyrfc3339.parse'):
             bootstrapper(deployment_config, channel, spec_config=spec_config, rbac=rbac)
