@@ -45,7 +45,7 @@ class BarePodBootstrapper(object):
         except NotFound:
             pass
         args = self._cmd_args
-        if deployment_config.enable_service_account_per_app:
+        if deployment_config.service_account_per_app:
             args.append("--enable-service-account-per-app")
         pod_spec = _create_pod_spec(args, channel, namespace, spec_config, rbac=rbac)
         pod_metadata = _create_pod_metadata(namespace, spec_config)
