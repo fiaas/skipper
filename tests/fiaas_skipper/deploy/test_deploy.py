@@ -2,13 +2,13 @@
 # -*- coding: utf-8
 
 # Copyright 2017-2019 The FIAAS Authors
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -69,8 +69,8 @@ class TestDeployer(object):
     def cluster(self):
         cluster = mock.NonCallableMagicMock(name="cluster")
         cluster.find_deployment_configs.return_value = (
-            DeploymentConfig("test1", "test1", "stable"),
-            DeploymentConfig("test2", "test2", "stable"),
+            DeploymentConfig("test1", "test1", "stable", False),
+            DeploymentConfig("test2", "test2", "stable", False),
         )
         return cluster
 
