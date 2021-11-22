@@ -109,11 +109,9 @@ metadata:
 rules:
   - apiGroups:
       - fiaas.schibsted.io
-      - schibsted.io
     resources:
       - applications
       - application-statuses
-      - statuses
     verbs:
       - create
       - delete
@@ -128,6 +126,7 @@ rules:
       - apiextensions
       - apiextensions.k8s.io
       - extensions
+      - networking.k8s.io
     resources:
       - configmaps
       - customresourcedefinitions
@@ -137,6 +136,7 @@ rules:
       - pods
       - resourcequotas
       - services
+      - serviceaccounts
     verbs:
       - create
       - delete
@@ -145,16 +145,6 @@ rules:
       - update
       - watch
       - deletecollection
-  - apiGroups:
-      - "" # "" indicates the core API group
-    resources:
-      - serviceaccounts
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - update
   - apiGroups:
       - rbac.authorization.k8s.io
     resources:
