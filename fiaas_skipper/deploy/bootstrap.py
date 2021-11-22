@@ -57,7 +57,8 @@ def _create_pod_spec(args, channel, namespace, spec_config, rbac=False):
     container = Container(
         name="fiaas-deploy-daemon-bootstrap",
         image=channel.metadata['image'],
-        command=["fiaas-deploy-daemon-bootstrap"] + args,
+        command=["fiaas-deploy-daemon-bootstrap"],
+        args=args,
         resources=_create_resource_requirements(namespace, spec_config)
     )
     pod_spec = PodSpec(containers=[container], serviceAccountName="default", restartPolicy="Never")
