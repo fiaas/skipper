@@ -68,7 +68,8 @@ def _create_policy_rules():
                 "autoscaling",
                 "apiextensions",
                 "apiextensions.k8s.io",
-                "extensions"
+                "extensions",
+                "networking.k8s.io",
             ],
             resources=[
                 "configmaps",
@@ -81,7 +82,7 @@ def _create_policy_rules():
                 "services",
                 "serviceaccounts",
             ],
-            verbs=["create", "delete", "get", "list", "update", "watch"],
+            verbs=["create", "delete", "deletecollection", "get", "list", "update", "watch"],
         ),
     ]
 
