@@ -32,13 +32,8 @@ class Cluster(object):
         res = []
         configmaps = ConfigMap.find(name, namespace)
         for c in configmaps:
-            tag = 'stable'
-            sa_per_app = False
-            for k, v in c.data.items():
-                if k == 'tag':
-                    tag = v
-                elif k == 'enable-service-account-per-app':
-                    sa_per_app = v
+            tag = c.data.get('tag', 'stable')
+            sa_per_app = c.data.get('enable-service-account-per-app', False)
             res.append(DeploymentConfig(
                 name=name,
                 namespace=c.metadata.namespace,
