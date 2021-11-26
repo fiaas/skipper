@@ -17,6 +17,7 @@
 
 import collections
 import logging
+import yaml
 
 from k8s.models.configmap import ConfigMap
 
@@ -33,7 +34,10 @@ class Cluster(object):
         configmaps = ConfigMap.find(name, namespace)
         for c in configmaps:
             tag = c.data.get('tag', 'stable')
-            sa_per_app = c.data.get('enable-service-account-per-app', False)
+
+            cluster_config = yaml.safe_load(c.data.get('cluster_config.yaml', "{}"))
+            sa_per_app = cluster_config.get('enable-service-account-per-app', False)
+
             res.append(DeploymentConfig(
                 name=name,
                 namespace=c.metadata.namespace,
