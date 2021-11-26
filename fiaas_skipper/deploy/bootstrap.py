@@ -44,7 +44,12 @@ class BarePodBootstrapper(object):
             Pod.delete(name=BOOTSTRAP_POD_NAME, namespace=namespace)
         except NotFound:
             pass
-        pod_spec = _create_pod_spec(self._cmd_args, channel, namespace, spec_config, rbac=rbac)
+        args = self._cmd_args
+        if deployment_config.enable_service_account_per_app:
+            pod_spec = _create_pod_spec(args + ["--enable-service-account-per-app"],
+                                        channel, namespace, spec_config, rbac=rbac)
+        else:
+            pod_spec = _create_pod_spec(args, channel, namespace, spec_config, rbac=rbac)
         pod_metadata = _create_pod_metadata(namespace, spec_config)
         pod = Pod(metadata=pod_metadata, spec=pod_spec)
         pod.save()
@@ -54,7 +59,8 @@ def _create_pod_spec(args, channel, namespace, spec_config, rbac=False):
     container = Container(
         name="fiaas-deploy-daemon-bootstrap",
         image=channel.metadata['image'],
-        command=["fiaas-deploy-daemon-bootstrap"] + args,
+        command=["fiaas-deploy-daemon-bootstrap"],
+        args=args,
         resources=_create_resource_requirements(namespace, spec_config)
     )
     pod_spec = PodSpec(containers=[container], serviceAccountName="default", restartPolicy="Never")
