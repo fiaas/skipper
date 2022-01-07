@@ -18,7 +18,6 @@
 from __future__ import absolute_import
 
 import logging
-import os
 from argparse import Namespace
 
 import configargparse
@@ -34,7 +33,6 @@ class Configuration(Namespace):
         super(Configuration, self).__init__(**kwargs)
         self._logger = logging.getLogger(__name__)
         self._parse_args(args)
-        self._resolve_api_config()
 
     def _parse_args(self, args):
         parser = configargparse.ArgParser(auto_env_var_prefix="",
@@ -78,13 +76,6 @@ class Configuration(Namespace):
         client_cert_parser.add_argument("--client-cert", help="Client certificate to use", default=None)
         client_cert_parser.add_argument("--client-key", help="Client certificate key to use", default=None)
         parser.parse_args(args, namespace=self)
-
-    def _resolve_api_config(self):
-        token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-        if os.path.exists(token_file):
-            with open(token_file) as fobj:
-                self.api_token = fobj.read().strip()
-            self.api_cert = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 
     def __repr__(self):
         return "Configuration({})".format(
