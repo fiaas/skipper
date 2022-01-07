@@ -31,7 +31,7 @@ def version():
 
 
 GENERIC_REQ = [
-    "k8s==0.19.0",
+    "k8s==0.20.0",
     "ConfigArgParse==0.13.0",
     "six==1.12.0",
     "PyYAML==3.13",
