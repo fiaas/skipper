@@ -17,4 +17,4 @@ apiVersion: v1
 description: Skipper controls deployment and updates of FIAAS components
 name: fiaas-skipper
 home: https://github.com/fiaas/skipper
-version: 0.2.0
+version: 0.3.0
