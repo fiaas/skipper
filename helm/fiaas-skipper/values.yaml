@@ -87,3 +87,4 @@ certManager:
   # annotations was changed. From certmanager.k8s.io to cert-manager.io - see link for more details. In order to allow new behavior this
   # parameter was added. Keeps previous behaviour but lets overwride for compatibility of newer versions
   keyAnnotationPrefix: "certmanager.k8s.io"
+useApiextensionsV1CRD: false
