@@ -66,6 +66,9 @@ class Configuration(Namespace):
                             default=30)
         parser.add_argument("--manage-rbac", action="store_true", default=False,
                             help="Have Skipper create namespaced RBAC resources when deploying fiaas-deploy-daemon")
+        parser.add_argument("--use-apiextensionsv1-crd",
+                            help="Use apiextensions/v1 CustomResourceDefinition instead of apiextensions/v1beta1",
+                            action="store_true", default=False)
         api_parser = parser.add_argument_group("API server")
         api_parser.add_argument("--api-server", help="Address of the api-server to use (IP or name)",
                                 default="https://kubernetes.default.svc.cluster.local")

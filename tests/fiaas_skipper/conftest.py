@@ -40,6 +40,12 @@ def delete():
         yield mockk
 
 
+@pytest.fixture()
+def put():
+    with mock.patch('k8s.client.Client.put') as mockk:
+        yield mockk
+
+
 @pytest.helpers.register
 def assert_any_call(mockk, first, *args):
     __tracebackhide__ = True
