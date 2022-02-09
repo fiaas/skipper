@@ -69,8 +69,8 @@ class TestDeployer(object):
     def cluster(self):
         cluster = mock.NonCallableMagicMock(name="cluster")
         cluster.find_deployment_configs.return_value = (
-            DeploymentConfig("test1", "test1", "stable", False),
-            DeploymentConfig("test2", "test2", "stable", False),
+            DeploymentConfig("test1", "test1", "stable", False, False),
+            DeploymentConfig("test2", "test2", "stable", False, False),
         )
         return cluster
 
@@ -118,12 +118,12 @@ class TestStatusTracker(object):
     def cluster(self):
         cluster = mock.NonCallableMagicMock(name="cluster")
         cluster.find_deployment_configs.return_value = (
-            DeploymentConfig("fdd", "ns1", "stable", False),
-            DeploymentConfig("fdd", "ns2", "latest", False),
-            DeploymentConfig("fdd", "ns3", "stable", False),
-            DeploymentConfig("fdd", "ns4", "latest", False),
-            DeploymentConfig("fdd", "ns5", "stable", False),
-            DeploymentConfig("fdd", "ns6", "stable", False),
+            DeploymentConfig("fdd", "ns1", "stable", False, False),
+            DeploymentConfig("fdd", "ns2", "latest", False, False),
+            DeploymentConfig("fdd", "ns3", "stable", False, False),
+            DeploymentConfig("fdd", "ns4", "latest", False, False),
+            DeploymentConfig("fdd", "ns5", "stable", False, False),
+            DeploymentConfig("fdd", "ns6", "stable", False, False),
         )
         return cluster
 

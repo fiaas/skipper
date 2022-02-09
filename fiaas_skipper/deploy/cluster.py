@@ -24,7 +24,7 @@ from k8s.models.configmap import ConfigMap
 LOG = logging.getLogger(__name__)
 
 DeploymentConfig = collections.namedtuple(
-    'DeploymentConfig', ['name', 'namespace', 'tag', 'enable_service_account_per_app'])
+    'DeploymentConfig', ['name', 'namespace', 'tag', 'enable_service_account_per_app', 'use_networkingv1_ingress'])
 
 
 class Cluster(object):
@@ -37,11 +37,13 @@ class Cluster(object):
 
             cluster_config = yaml.safe_load(c.data.get('cluster_config.yaml', "{}"))
             sa_per_app = cluster_config.get('enable-service-account-per-app', False)
+            networkingv1_ingress = cluster_config.get('use-networkingv1-ingress', False)
 
             res.append(DeploymentConfig(
                 name=name,
                 namespace=c.metadata.namespace,
                 tag=tag,
                 enable_service_account_per_app=sa_per_app,
+                use_networkingv1_ingress=networkingv1_ingress,
             ))
         return res
