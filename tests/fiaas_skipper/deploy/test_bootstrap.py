@@ -71,35 +71,35 @@ class TestBarePodBootstrapper():
         spec = ResourceQuotaSpec.from_dict(resourcequota_spec)
         return ResourceQuota(metadata=metadata, spec=spec)
 
-    @pytest.mark.parametrize("namespace,resourcequota_spec,resources,spec_config,rbac,sa_per_app", [
-        ("default", None, spec_config()['resources'], spec_config(), False, False),
-        ("default", None, spec_config()['resources'], spec_config(), True, True),
-        ("other-namespace", None, spec_config()['resources'], spec_config(), False, False),
-        ("default", None, OVERRIDE_ALL_RESOURCES, spec_config(resources=OVERRIDE_ALL_RESOURCES), False, False),
-        ("other-namespace", None, OVERRIDE_ALL_RESOURCES, spec_config(resources=OVERRIDE_ALL_RESOURCES), False, False),
-        ("other-namespace", None, spec_config()['resources'], spec_config(), False, False),
-        ("default", ONLY_BEST_EFFORT_ALLOWED, None, spec_config(), False, False),
-        ("other-namespace", ONLY_BEST_EFFORT_ALLOWED, None, spec_config(), False, False),
+    @pytest.mark.parametrize("namespace,resourcequota_spec,resources,spec_config,rbac,sa_per_app,networkingv1_ingress", [
+        ("default", None, spec_config()['resources'], spec_config(), False, False, False),
+        ("default", None, spec_config()['resources'], spec_config(), True, True, True),
+        ("other-namespace", None, spec_config()['resources'], spec_config(), False, False, False),
+        ("default", None, OVERRIDE_ALL_RESOURCES, spec_config(resources=OVERRIDE_ALL_RESOURCES), False, False, False),
+        ("other-namespace", None, OVERRIDE_ALL_RESOURCES, spec_config(resources=OVERRIDE_ALL_RESOURCES), False, False, False),
+        ("other-namespace", None, spec_config()['resources'], spec_config(), False, False, False),
+        ("default", ONLY_BEST_EFFORT_ALLOWED, None, spec_config(), False, False, False),
+        ("other-namespace", ONLY_BEST_EFFORT_ALLOWED, None, spec_config(), False, False, False),
         ("default", BEST_EFFORT_NOT_ALLOWED, spec_config()['resources'],
-            spec_config(), False, False),
+            spec_config(), False, False, False),
         ("other-namespace", BEST_EFFORT_NOT_ALLOWED, spec_config()['resources'],
-            spec_config(), False, False),
+            spec_config(), False, False, False),
         ("default", ONLY_BEST_EFFORT_ALLOWED, None,
-            spec_config(resources=OVERRIDE_ALL_RESOURCES), False, False),
+            spec_config(resources=OVERRIDE_ALL_RESOURCES), False, False, False),
         ("other-namespace", ONLY_BEST_EFFORT_ALLOWED, None,
-            spec_config(resources=OVERRIDE_ALL_RESOURCES), False, False),
+            spec_config(resources=OVERRIDE_ALL_RESOURCES), False, False, False),
         ("default", BEST_EFFORT_NOT_ALLOWED, OVERRIDE_ALL_RESOURCES,
-            spec_config(OVERRIDE_ALL_RESOURCES), False, False),
+            spec_config(OVERRIDE_ALL_RESOURCES), False, False, False),
         ("other-namespace", BEST_EFFORT_NOT_ALLOWED, OVERRIDE_ALL_RESOURCES,
-            spec_config(OVERRIDE_ALL_RESOURCES), False, False),
+            spec_config(OVERRIDE_ALL_RESOURCES), False, False, False),
     ])
     def test_bootstrap(self, post, delete, resourcequota_list, namespace,
-                       resourcequota_spec, resources, spec_config, rbac, sa_per_app):
+                       resourcequota_spec, resources, spec_config, rbac, sa_per_app, networkingv1_ingress):
         resourcequota_list.return_value = \
             [self.create_resourcequota(namespace, resourcequota_spec)] if resourcequota_spec else []
         bootstrapper = BarePodBootstrapper()
         channel = ReleaseChannel(None, None, {'image': 'example.com/image:tag'}, None)
-        deployment_config = DeploymentConfig('foo', namespace, 'latest', sa_per_app)
+        deployment_config = DeploymentConfig('foo', namespace, 'latest', sa_per_app, networkingv1_ingress)
         expected_pod = {
             'metadata': {
                 'name': 'fiaas-deploy-daemon-bootstrap',
@@ -134,6 +134,8 @@ class TestBarePodBootstrapper():
             expected_pod['spec']['serviceAccountName'] = 'fiaas-deploy-daemon'
         if sa_per_app:
             expected_pod['spec']['containers'][0]['args'].append('--enable-service-account-per-app')
+        if networkingv1_ingress:
+            expected_pod['spec']['containers'][0]['args'].append('--use-networkingv1-ingress')
 
         with mock.patch('pyrfc3339.parse'):
             bootstrapper(deployment_config, channel, spec_config=spec_config, rbac=rbac)
