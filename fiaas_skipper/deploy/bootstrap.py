@@ -18,6 +18,7 @@
 from __future__ import absolute_import
 
 import logging
+from copy import copy
 
 from k8s.client import NotFound
 from k8s.models.common import ObjectMeta
@@ -44,12 +45,12 @@ class BarePodBootstrapper(object):
             Pod.delete(name=BOOTSTRAP_POD_NAME, namespace=namespace)
         except NotFound:
             pass
-        args = self._cmd_args
+        args = copy(self._cmd_args)
         if deployment_config.enable_service_account_per_app:
-            pod_spec = _create_pod_spec(args + ["--enable-service-account-per-app"],
-                                        channel, namespace, spec_config, rbac=rbac)
-        else:
-            pod_spec = _create_pod_spec(args, channel, namespace, spec_config, rbac=rbac)
+            args.append("--enable-service-account-per-app")
+        if deployment_config.use_networkingv1_ingress:
+            args.append("--use-networkingv1-ingress")
+        pod_spec = _create_pod_spec(args, channel, namespace, spec_config, rbac=rbac)
         pod_metadata = _create_pod_metadata(namespace, spec_config)
         pod = Pod(metadata=pod_metadata, spec=pod_spec)
         pod.save()

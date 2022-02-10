@@ -30,7 +30,7 @@ class TestCrdDeployer(object):
     def cluster(self):
         cluster = mock.NonCallableMagicMock(name="cluster")
         cluster.find_deployment_configs.return_value = (
-            DeploymentConfig("testapp", "test1", "stable", False),
+            DeploymentConfig("testapp", "test1", "stable", False, False),
         )
         return cluster
 
