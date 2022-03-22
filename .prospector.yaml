@@ -11,7 +11,7 @@ ignore-paths:
   - .tox
   - .cachedocs
 
-pep8:
+pycodestyle:
   options:
     max-line-length: 120
   disable:
@@ -35,5 +35,5 @@ frosted:
 vulture:
   run: false
 
-pep257:
+pydocstyle:
   run: false
