@@ -52,6 +52,7 @@ class TestCluster(object):
                 _create_configmap("ns3", cluster_config="log-format: json\nenable-service-account-per-app: true"),
                 _create_configmap("ns4", "latest"),
                 _create_configmap("ns5", "stable"),
+                _create_configmap("ns6", cluster_config="special-char: 👋"),
             )
             yield finder
 
@@ -60,7 +61,7 @@ class TestCluster(object):
         cluster = Cluster()
         results = cluster.find_deployment_configs(NAME)
 
-        assert len(results) == 5
+        assert len(results) == 6
         _assert_deployment_config(results[0], "ns1", "stable", True)
         _assert_deployment_config(results[1], "ns2", "latest", False)
         _assert_deployment_config(results[2], "ns3", "stable", True)
