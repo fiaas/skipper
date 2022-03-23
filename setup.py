@@ -34,7 +34,7 @@ GENERIC_REQ = [
     "k8s==0.21.0",
     "ConfigArgParse==0.13.0",
     "six==1.12.0",
-    "PyYAML==3.13",
+    "PyYAML==5.4.1",
     "pyaml==17.12.1",
     "prometheus_client==0.4.0",
     'requests==2.22.0',
