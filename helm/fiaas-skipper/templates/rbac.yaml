@@ -189,7 +189,7 @@ roleRef:
   name: fiaas-deploy-daemon
   apiGroup: rbac.authorization.k8s.io
 subjects:
-{{- range .Values.rbac.fddClusterRoleNamespaces }}
+{{- range .Values.rbac.fddClusterRole.namespaces }}
 - kind: ServiceAccount
   name: fiaas-deploy-daemon
   namespace: {{ . }}
