@@ -41,6 +41,10 @@ annotations: {}
 rbac:
   enabled: false # create RBAC resources giving Skipper the permissions it needs
   enableFIAASController: true # enable the fiaas-controller clusterrole/clusterrolebinding, giving all service accounts great permissions
+  # Bind the fiaas-deploy-daemon clusterrole to the fiaas-deploy-daemon service account in these namespaces.
+  # This is necessary for FDD to be able to create/update the CRD's on startup.
+  fddClusterRoleNamespaces:
+  - default
 manageRBAC: false # have Skipper create RBAC resources for any FDD it deploys
 statusUpdateInterval: 30
 # Add a fiaas-deploy-daemon configmap to the namespace where fiaas-skipper is installed
