@@ -162,6 +162,8 @@ roleRef:
   name: {{ .Values.name }}
   apiGroup: rbac.authorization.k8s.io
 
+
+{{- if .Values.rbac.fddClusterRole.enabled }}
 ---
 ## this must be created so FDD is able to create/update the CRD on startup
 kind: ClusterRole
@@ -189,10 +191,11 @@ roleRef:
   name: fiaas-deploy-daemon
   apiGroup: rbac.authorization.k8s.io
 subjects:
-{{- range .Values.rbac.fddClusterRole.namespaces }}
-- kind: ServiceAccount
-  name: fiaas-deploy-daemon
-  namespace: {{ . }}
+  {{- range .Values.rbac.fddClusterRole.namespaces }}
+  - kind: ServiceAccount
+    name: fiaas-deploy-daemon
+    namespace: {{ . }}
+  {{- end }}
 {{- end }}
 
 {{- end }}
