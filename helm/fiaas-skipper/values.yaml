@@ -41,10 +41,17 @@ annotations: {}
 rbac:
   enabled: false # create RBAC resources giving Skipper the permissions it needs
   enableFIAASController: true # enable the fiaas-controller clusterrole/clusterrolebinding, giving all service accounts great permissions
-  # Bind the fiaas-deploy-daemon clusterrole to the fiaas-deploy-daemon service account in these namespaces.
-  # This is necessary for FDD to be able to create/update the CRD's on startup.
+
+  # Bind the fiaas-deploy-daemon clusterrole to the fiaas-deploy-daemon service
+  # account in these namespaces. This is necessary for FDD to be able to
+  # create/update the CRD's on startup. If rbac.enableFIAASController == true,
+  # or if crd-creation is disabled, there is no need to enable
+  # rbac.fddClusterRole. These permissions can alternatively be managed outside
+  # of this helm chart.
   fddClusterRole:
     enabled: false
+    # bind the created clusterRole to fiaas-deploy-daemon's serviceAccount in
+    # these namespaces.
     namespaces:
     - default
 manageRBAC: false # have Skipper create RBAC resources for any FDD it deploys
