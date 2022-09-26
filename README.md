@@ -17,6 +17,10 @@ limitations under the License.
 
 Skipper controls deployment and updates of FIAAS components
 
+## Note!
+Using skipper to deploy fiaas-deploy-daemon is deprecated. The recommended way to install fiaas-deploy-daemon is by using its helm chart. You can find the latest release [here](https://github.com/fiaas/fiaas-deploy-daemon/releases).
+For more information see https://github.com/fiaas/fiaas-deploy-daemon/issues/163.
+
 ## How skipper works
 
 ### Configuration
