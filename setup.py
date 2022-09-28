@@ -78,7 +78,7 @@ setup(
     zip_safe=False,
     # Requirements
     install_requires=GENERIC_REQ + WEB_REQ,
-    setup_requires=['pytest-runner', 'wheel', 'setuptools_scm'],
+    setup_requires=['pytest-runner', 'wheel', 'setuptools_scm==6.4.2'],
     extras_require={
         "dev": TESTS_REQ + CODE_QUALITY_REQ + CI_REQ,
         "ci": CI_REQ,
