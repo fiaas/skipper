@@ -47,5 +47,5 @@ blocks:
             - git config --global user.email "semaphore@example.org"
             - git config --global user.name "Semaphore CI"
             - cache restore ${SEMAPHORE_GIT_BRANCH}-${SEMAPHORE_WORKFLOW_ID}-build
-            - docker load -i build/skipper.tar
+            - echo docker load -i build/skipper.tar #temporarily disable
             - ./bin/deploy
