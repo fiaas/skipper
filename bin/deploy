@@ -106,7 +106,7 @@ gitTagBump
 echo -n "git tag: "
 gitTagShow
 
-dockerPush $DOCKER_REPO "$skipper_version"
+# dockerPush $DOCKER_REPO "$skipper_version" # temporarily disable
 
 publishHelmChart "$skipper_version" $(gitTagShow)
 
