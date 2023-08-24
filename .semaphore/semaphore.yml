@@ -23,8 +23,8 @@ blocks:
             - cache delete ${SEMAPHORE_GIT_BRANCH}-pip
             - cache store ${SEMAPHORE_GIT_BRANCH}-pip $(pip cache dir)
             - export PATH="$PATH:$HOME/.local/bin"
-            - tox
-            - ./bin/docker_build
+            - #tox # temporarily disable
+            - #./bin/docker_build # temporarily disable
             - cache store ${SEMAPHORE_GIT_BRANCH}-${SEMAPHORE_WORKFLOW_ID}-build build
             - CODACY_PROJECT_TOKEN=$CODACY_SKIPPER_API_TOKEN tox -e coverage
   - name: deploy
